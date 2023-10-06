@@ -10,7 +10,7 @@ import {
 export default function CustomButton({Title, onPress, style, Title2}) {
   return (
     <View>
-      <TouchableOpacity style={style} onPress={onPress}>
+      <TouchableOpacity style={style} onPress={onPress} activeOpacity={0.5}>
         <Text style={styles.text}>{Title}</Text>
         {/* <Text style={styles.text1}>{Title2}</Text> */}
       </TouchableOpacity>
@@ -31,9 +31,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: responsiveFontSize(2),
     color: '#fff',
+    fontWeight: 'bold',
   },
   text1: {
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(2.5),
     color: 'purple',
   },
 });

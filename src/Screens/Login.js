@@ -15,9 +15,10 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
-import CustomButton from './src/component/CustomButton/CustomButton';
+import CustomButton from '../component/CustomButton/CustomButton';
+import Color from '../Utils/Color';
 
-function Login() {
+function Login({navigation}) {
   const [text, onChangeText] = React.useState('');
   const [password, setPassword] = React.useState('');
   return (
@@ -49,7 +50,7 @@ function Login() {
         </View>
         <CustomButton
           Title={'Login'}
-          onPress={() => navigation.navigate('Passport')}
+          onPress={() => navigation.navigate('Store')}
           style={styles.btnStyle}
         />
       </KeyboardAvoidingView>
@@ -71,15 +72,15 @@ const styles = StyleSheet.create({
     marginTop: responsiveHeight(2),
   },
   btnStyle: {
-    backgroundColor: 'purple',
+    backgroundColor: Color.Green_Top,
     height: responsiveHeight(8),
     width: responsiveWidth(70),
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: responsiveWidth(3),
-    borderWidth: 1,
-    borderColor: 'purple',
+    //borderWidth: 1,
+    borderColor: 'Color.Green_Top',
     marginTop: responsiveHeight(6),
   },
   texting: {
