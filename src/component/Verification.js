@@ -27,6 +27,14 @@ import {
 } from 'react-native-responsive-dimensions';
 import CustomRadioButton from './CustomRadioButton';
 import ImagePicker from 'react-native-image-crop-picker';
+import Custombtn from './CustomButton/Custombtn';
+import {RadioButton} from 'react-native-paper';
+import Color from '../Utils/Color';
+import {docsVerification} from '../features/APIs/apiRequest';
+import Toast from 'react-native-simple-toast';
+import {useDispatch} from 'react-redux';
+import {setCurrentStep} from '../features/requireDataReducer/requiredata.reducer';
+
 // {onPress, selected, children}
 
 export default function Verification() {
@@ -35,12 +43,27 @@ export default function Verification() {
   const [shouldShowNo, setShouldShowNo] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImage1, setSelectedImage1] = useState(null);
-  const [selectedImage2, setSelectedImage2] = useState(null);
-  const [selectedImage3, setSelectedImage3] = useState(null);
-  const [selectedImage4, setSelectedImage4] = useState(null);
-  const [selectedImage5, setSelectedImage5] = useState(null);
+  const [frontAdhar, setFrontAdhar] = useState(null);
 
+  const [selectedImage1, setSelectedImage1] = useState(null);
+  const [backAdhar, setBackAdhar] = useState(null);
+
+  const [selectedImage2, setSelectedImage2] = useState(null);
+  const [pancard, setPan] = useState(null);
+  const [selectedImage3, setSelectedImage3] = useState(null);
+  const [selfie, setSelfie] = useState(null);
+  const [selectedImage4, setSelectedImage4] = useState(null);
+  const [rentBill, setRentBill] = useState(null);
+  const [uploadRent, setUploadRent] = useState(false);
+
+  const [electricityBill, setElectricityBill] = useState(null);
+  const [UploadElectricity, setUploadElectricity] = useState(false);
+
+  const [selectedImage5, setSelectedImage5] = useState(null);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [checked, setChecked] = React.useState('');
+  const [isStoreRented, setIsStoreRented] = useState('');
+  const dispatch = useDispatch();
   const pickDocument = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -67,38 +90,113 @@ export default function Verification() {
   const handleRadioButtonPress = value => {
     setSelectedOption(value);
   };
-  const pickImage = () => {
-    ImagePicker.openPicker({
-      width: responsiveWidth(40),
-      height: responsiveHeight(18),
-      cropping: true,
-    })
-      .then(image => {
-        console.log(image);
-        setSelectedImage(image);
-        //setSelectedImage1(image.path);
-      })
-      .catch(error => {
-        console.log('Error selecting image: ', error);
+
+  const HandleuploadAlldocs = async () => {
+    Toast.show('Please Wait...', Toast.LONG);
+    let formData = new FormData();
+    // ====================frontAdhar================
+    formData.append('aadharFront', {
+      name: frontAdhar?.path?.replace(/^.*[\\\/]/, ''),
+      type: frontAdhar?.mime,
+      uri:
+        Platform.OS === 'android'
+          ? frontAdhar?.path
+          : frontAdhar?.path?.replace('file://', ''),
+    });
+
+    // ==================backAdhar==================
+    formData.append('aadharBack', {
+      name: backAdhar?.path?.replace(/^.*[\\\/]/, ''),
+      type: backAdhar?.mime,
+      uri:
+        Platform.OS === 'android'
+          ? backAdhar?.path
+          : backAdhar?.path?.replace('file://', ''),
+    });
+
+    // ==================pancard==================
+    formData.append('pancard', {
+      name: pancard?.path?.replace(/^.*[\\\/]/, ''),
+      type: pancard?.mime,
+      uri:
+        Platform.OS === 'android'
+          ? pancard?.path
+          : pancard?.path?.replace('file://', ''),
+    });
+
+    // ==================selfie==================
+    formData.append('selfie', {
+      name: selfie?.path?.replace(/^.*[\\\/]/, ''),
+      type: selfie?.mime,
+      uri:
+        Platform.OS === 'android'
+          ? selfie?.path
+          : selfie?.path?.replace('file://', ''),
+    });
+
+    if (isStoreRented == 'Yes') {
+      // ==================rentBill==================
+      formData.append('image', {
+        name: rentBill?.path?.replace(/^.*[\\\/]/, ''),
+        type: rentBill?.mime,
+        uri:
+          Platform.OS === 'android'
+            ? rentBill?.path
+            : rentBill?.path?.replace('file://', ''),
       });
+    } else {
+      // ====================================
+      formData.append('image', {
+        name: electricityBill?.path?.replace(/^.*[\\\/]/, ''),
+        type: electricityBill?.mime,
+        uri:
+          Platform.OS === 'android'
+            ? electricityBill?.path
+            : electricityBill?.path?.replace('file://', ''),
+      });
+    }
+
+    formData.append('isStoreRented', isStoreRented);
+    console.log(formData, '=====formdata');
+    return formData;
+    // const result = await _getUploadProfilePic(formData);
+
+    // if (result?.data) {
+    //   console.log('UPLOAD Profile Pic', result?.data?.message);
+    //   SimpleToast({title: result?.data?.message, isLong: true});
+    //   setState({...state, profileImg: null});
+    //   setState({
+    //     ...state,
+    //     isLoading: false,
+    //   });
+    // } else {
+    //   console.log('catch error update profile pic', result?.data);
+    //   SimpleToast({title: 'Server Error:', isLong: true});
+    //   setState({...state, profileImg: null});
+    //   setState({
+    //     ...state,
+    //     isLoading: false,
+    //   });
+    // }
   };
-  const pickImages = () => {
+
+  const uploadFrontAdhar = () => {
     ImagePicker.openPicker({
       width: responsiveWidth(40),
       height: responsiveHeight(18),
       cropping: true,
     })
       .then(image => {
-        console.log(image);
-        //setSelectedImage(image.path);
-        setSelectedImage1(image);
+        console.log('image===>', image);
+        // setSelectedImage(image);
+        setFrontAdhar(image);
       })
       .catch(error => {
         console.log('Error selecting image: ', error);
       });
   };
 
-  const pickImage1 = () => {
+  const uploadBackAdhar = () => {
     ImagePicker.openPicker({
       width: responsiveWidth(40),
       height: responsiveHeight(18),
@@ -106,15 +204,31 @@ export default function Verification() {
     })
       .then(image => {
         console.log(image);
-        //setSelectedImage(image.path);
-        setSelectedImage2(image);
+        // setSelectedImage1(image);
+        setBackAdhar(image);
       })
       .catch(error => {
         console.log('Error selecting image: ', error);
       });
   };
 
-  const pickImage2 = () => {
+  const uploadPan = () => {
+    ImagePicker.openPicker({
+      width: responsiveWidth(40),
+      height: responsiveHeight(18),
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        // setSelectedImage2(image);
+        setPan(image);
+      })
+      .catch(error => {
+        console.log('Error selecting image: ', error);
+      });
+  };
+
+  const uploadRentBill = () => {
     ImagePicker.openPicker({
       width: responsiveWidth(30),
       height: responsiveHeight(15),
@@ -123,12 +237,31 @@ export default function Verification() {
       .then(image => {
         console.log(image);
         //setSelectedImage(image.path);
-        setSelectedImage4(image);
+        // setSelectedImage4(image);
+        setRentBill(image);
       })
       .catch(error => {
         console.log('Error selecting image: ', error);
       });
   };
+
+  const uploadElectricityBill = () => {
+    ImagePicker.openPicker({
+      width: responsiveWidth(30),
+      height: responsiveHeight(15),
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        //setSelectedImage(image.path);
+        // setSelectedImage4(image);
+        setElectricityBill(image);
+      })
+      .catch(error => {
+        console.log('Error selecting image: ', error);
+      });
+  };
+
   const pickImage3 = () => {
     ImagePicker.openPicker({
       width: responsiveWidth(30),
@@ -145,15 +278,16 @@ export default function Verification() {
       });
   };
 
-  const takeImage = () => {
+  const uploadSelfie = () => {
     ImagePicker.openCamera({
       width: responsiveWidth(40),
       height: responsiveHeight(18),
       cropping: true,
     })
       .then(image => {
-        console.log(image);
-        setSelectedImage3(image);
+        console.log('uploadSelfie ===image', image);
+        // setSelectedImage3(image);
+        setSelfie(image);
       })
       .catch(error => {
         console.log('Error taking image: ', error);
@@ -162,9 +296,7 @@ export default function Verification() {
 
   const _updateFrontAadhar = async () => {
     console.log(selectedImage);
-
     const tokenObj = await AsyncStorage.getItem('token');
-
     const axiosConfig = {
       Authorization: `Bearer ${tokenObj}`,
     };
@@ -248,6 +380,28 @@ export default function Verification() {
       //ToastAndroid.show('Server error❗', ToastAndroid.LONG);
     }
   };
+
+  const HandleDocsVerification = async () => {
+    setButtonLoading(true);
+    const formData = await HandleuploadAlldocs();
+    console.log(formData, 'formData=========>');
+    const res = await docsVerification(formData);
+    if (res.data) {
+      setButtonLoading(false);
+      console.log('response of HandleDocsVerification :', res.data);
+      if (res.data.status) {
+        dispatch(setCurrentStep(2));
+        Toast.show(res.data.message, Toast.SHORT);
+      }
+    } else {
+      setButtonLoading(false);
+      console.log(
+        'catch error(response.message) of  HandleDocsVerification:',
+        res,
+      );
+    }
+  };
+
   return (
     <View>
       <Text
@@ -273,15 +427,13 @@ export default function Verification() {
           justifyContent: 'space-between',
         }}>
         <View>
-          {selectedImage ? (
-            <Image
-              source={{uri: selectedImage?.path}}
-              style={styles.image}
-              // onPress={pickImage}
-            />
+          {frontAdhar ? (
+            <TouchableOpacity onPress={uploadFrontAdhar}>
+              <Image source={{uri: frontAdhar?.path}} style={styles.image} />
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={pickImage}
+              onPress={uploadFrontAdhar}
               style={{
                 width: responsiveWidth(40),
                 height: responsiveHeight(18),
@@ -291,7 +443,7 @@ export default function Verification() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Icon color={'#000'} name="camera" size={40} />
+              <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
           )}
           <Text
@@ -308,15 +460,19 @@ export default function Verification() {
         </View>
 
         <View>
-          {selectedImage1 ? (
-            <Image
-              source={{uri: selectedImage1?.path}}
-              style={styles.image}
-              //onPress={pickImages}
-            />
+          {backAdhar ? (
+            (console.log(backAdhar, '===================on view backAdhar'),
+            (
+              <Image
+                source={{uri: backAdhar?.path}}
+                style={styles.image}
+                //onPress={pickImages}
+              />
+            ))
           ) : (
             <TouchableOpacity
-              onPress={pickImages}
+              // onPress={pickImages}
+              onPress={uploadBackAdhar}
               style={{
                 width: responsiveWidth(40),
                 height: responsiveHeight(18),
@@ -326,7 +482,7 @@ export default function Verification() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Icon color={'#000'} name="camera" size={40} />
+              <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
           )}
 
@@ -379,15 +535,16 @@ export default function Verification() {
         }}>
         <View>
           <View>
-            {selectedImage2 ? (
+            {pancard ? (
               <Image
-                source={{uri: selectedImage2?.path}}
+                source={{uri: pancard?.path}}
                 style={styles.image}
-                //onPress={pickImage1}
+                // onPress={pickImage1}
+                onPress={uploadPan}
               />
             ) : (
               <TouchableOpacity
-                onPress={pickImage1}
+                onPress={uploadPan}
                 style={{
                   width: responsiveWidth(40),
                   height: responsiveHeight(18),
@@ -397,22 +554,26 @@ export default function Verification() {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Icon color={'#000'} name="camera" size={40} />
+                <Icon color={'#000'} name="camera" size={55} />
               </TouchableOpacity>
             )}
           </View>
         </View>
 
         <View>
-          {selectedImage3 ? (
-            <Image
-              source={{uri: selectedImage3?.path}}
-              style={styles.image}
-              //onPress={takeImage}
-            />
+          {selfie ? (
+            (console.log(selfie, '===================on view selfie'),
+            (
+              <Image
+                source={{uri: selfie?.path}}
+                style={styles.image}
+                //onPress={takeImage}
+              />
+            ))
           ) : (
             <TouchableOpacity
-              onPress={takeImage}
+              // onPress={takeImage}
+              onPress={uploadSelfie}
               style={{
                 width: responsiveWidth(40),
                 height: responsiveHeight(18),
@@ -422,7 +583,7 @@ export default function Verification() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-              <Icon color={'#000'} name="camera" size={40} />
+              <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
           )}
         </View>
@@ -432,44 +593,100 @@ export default function Verification() {
           color: 'black',
           marginTop: 12,
           textAlign: 'center',
-          fontWeight: 'bold',
-          fontSize: responsiveFontSize(1.8),
+          fontWeight: '900',
+          fontSize: responsiveFontSize(2),
           marginLeft: 12,
         }}>
         Is the Store rented?
       </Text>
       <View style={styles.container}>
-        <CustomRadioButton
-          label="Yes"
+        {/* <CustomRadioButton
+          label={
+            <View style={{margin: 10, padding: 5}}>
+              <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
+                Yes
+              </Text>
+            </View>
+          }
           selected={selectedOption === 'Yes'}
           onPress={() => {
             handleRadioButtonPress('Yes'), setShouldShow(!shouldShow);
           }}
         />
+
         <CustomRadioButton
-          label="No"
+          label={
+            <View style={{margin: 10, padding: 5}}>
+              <Text style={{color: '#000', fontSize: 16, fontWeight: '600'}}>
+                No
+              </Text>
+            </View>
+          }
           selected={selectedOption === 'No'}
           onPress={() => {
             handleRadioButtonPress('No'), setShouldShowNo(!shouldShowNo);
           }}
-        />
+        /> */}
+
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <RadioButton
+            color={Colors.Green_Top}
+            uncheckedColor={Colors.DARK_GRAY}
+            value="Yes"
+            status={checked === 'first' ? 'checked' : 'unchecked'}
+            onPress={() => {
+              setChecked('first'),
+                setUploadElectricity(false),
+                setUploadRent(true);
+              setIsStoreRented('Yes');
+            }}
+          />
+          <Text style={{color: Colors.BLACK, fontSize: 15, fontWeight: '700'}}>
+            Yes
+          </Text>
+        </View>
+
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <RadioButton
+            color={Colors.Green_Top}
+            uncheckedColor={Colors.DARK_GRAY}
+            value="Yes"
+            status={checked === 'second' ? 'checked' : 'unchecked'}
+            onPress={() => {
+              setChecked('second'),
+                setUploadElectricity(true),
+                setUploadRent(false);
+              setIsStoreRented('No');
+            }}
+          />
+          <Text style={{color: Colors.BLACK, fontSize: 15, fontWeight: '700'}}>
+            No
+          </Text>
+        </View>
       </View>
-      {shouldShow ? (
+
+      {uploadRent ? (
         <>
           <View
             style={{
               //backgroundColor: 'teal',
               width: responsiveWidth(90),
-              height: responsiveHeight(17),
+              height: responsiveHeight(19),
               alignSelf: 'center',
+              // backgroundColor: 'red',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
             <Text
               style={{
+                // alignSelf: 'center',
                 color: 'black',
-                marginTop: 3,
-                marginRight: 35,
+                // marginTop: 3,
+                // marginRight: 35,
                 //fontWeight: 'bold',
-                fontSize: responsiveFontSize(1.5),
+                fontSize: responsiveFontSize(1.8),
+                marginVertical: 5,
+                fontWeight: '600',
               }}>
               Upload Rent/Lease Bill
             </Text>
@@ -479,15 +696,16 @@ export default function Verification() {
                 alignItems: 'center',
               }}>
               <View>
-                {selectedImage4 ? (
+                {rentBill ? (
                   <Image
-                    source={{uri: selectedImage5?.path}}
+                    source={{uri: rentBill?.path}}
                     style={styles.image1}
                     //onPress={takeImage}
                   />
                 ) : (
                   <TouchableOpacity
-                    onPress={pickImage2}
+                    // onPress={pickImage2}
+                    onPress={uploadRentBill}
                     style={{
                       width: responsiveWidth(30),
                       height: responsiveHeight(15),
@@ -506,28 +724,33 @@ export default function Verification() {
         </>
       ) : null}
 
-      {shouldShowNo ? (
+      {UploadElectricity ? (
         <>
           <View
             style={{
               //backgroundColor: 'teal',
               width: responsiveWidth(90),
-              height: responsiveHeight(17),
+              height: responsiveHeight(19),
               alignSelf: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
             <Text
               style={{
+                // alignSelf: 'center',
                 color: 'black',
-                marginTop: 3,
-                marginRight: 35,
+                // marginTop: 3,
+                // marginRight: 35,
                 //fontWeight: 'bold',
-                fontSize: responsiveFontSize(1.5),
+                fontSize: responsiveFontSize(1.8),
+                marginVertical: 5,
+                fontWeight: '600',
               }}>
               Upload Electricity Bill
             </Text>
             <View
               style={{
-                backgroundColor: 'green',
+                // backgroundColor: 'green',
                 //height: responsiveHeight(),
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -561,15 +784,28 @@ export default function Verification() {
               </TouchableOpacity> */}
 
               <View>
-                {selectedImage5 ? (
+                {electricityBill ? (
                   <Image
-                    source={{uri: selectedImage5?.path}}
+                    source={{uri: electricityBill?.path}}
                     style={styles.image1}
                     //onPress={takeImage}
                   />
                 ) : (
+                  // <TouchableOpacity
+                  //   onPress={pickImage3}
+                  //   style={{
+                  //     width: responsiveWidth(30),
+                  //     height: responsiveHeight(15),
+                  //     alignSelf: 'center',
+                  //     backgroundColor: '#545454',
+                  //     borderRadius: 8,
+                  //     alignItems: 'center',
+                  //     justifyContent: 'center',
+                  //   }}>
+                  //   <Icon color={'#000'} name="camera" size={40} />
+                  // </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={pickImage3}
+                    onPress={uploadElectricityBill}
                     style={{
                       width: responsiveWidth(30),
                       height: responsiveHeight(15),
@@ -588,15 +824,16 @@ export default function Verification() {
         </>
       ) : null}
 
-      <TouchableOpacity
-        onPress={() => _updateFrontAadhar()}
-        style={{
-          backgroundColor: 'purple',
-          height: responsiveHeight(2),
-          width: responsiveWidth(90),
-        }}>
-        <Text>hiiii</Text>
-      </TouchableOpacity>
+      <View style={{paddingHorizontal: 20, marginTop: 15}}>
+        <Custombtn
+          title={'NEXT'}
+          color={'#ffff'}
+          onPress={HandleDocsVerification}
+          loadingColor={'#ffff'}
+          loadingSize={27}
+          loading={buttonLoading}
+        />
+      </View>
     </View>
   );
 }
@@ -610,12 +847,13 @@ const styles = StyleSheet.create({
   container: {
     //flex: 1,
     //backgroundColor: 'green',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    width: responsiveWidth(80),
+    width: responsiveWidth(75),
     alignSelf: 'center',
     marginTop: responsiveHeight(2),
+    // backgroundColor: 'red',
   },
 
   button: {

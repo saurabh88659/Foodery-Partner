@@ -138,12 +138,11 @@ function ViewDetails({navigation}) {
         height: responsiveHeight(100),
       }}>
       <StatusBar backgroundColor={Color.Green_Top} barStyle={Color.WHITE} />
-
       <View
         style={{
-          height: responsiveHeight(30),
+          // height: responsiveHeight(30),
           width: responsiveWidth(100),
-          //backgroundColor: 'pink',
+          // backgroundColor: '#ffff',
         }}>
         <ImageBackground
           source={require('../Assests/Images/Mask.png')}

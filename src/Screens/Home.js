@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   SafeAreaView,
@@ -11,7 +11,10 @@ import {
   KeyboardAvoidingView,
   FlatList,
   TouchableOpacity,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
+
 import {
   responsiveHeight,
   responsiveWidth,
@@ -21,8 +24,23 @@ import {
 import Color from '../Utils/Color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HeaderHome from '../component/HeaderHome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  handleGetAllCategoryList,
+  handleGetAllproductCategory,
+  handleGetNotificationCount,
+} from '../features/APIs/apiRequest';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {useSelector} from 'react-redux';
+// import Lottie from 'lottie-react-native';
+// import {ActivityIndicator} from 'react-native-paper';
+import AllPoductCategoryComponent from '../component/AllPoductCategoryComponent';
 
 function Home({navigation}) {
+  const userData = useSelector(state => state.requiredata.userData);
+  console.log('home.js userData===>', userData);
+  const [allCategory, setAllCategory] = useState([]);
+  const [loading, setLoading] = useState(false);
   const items = [
     {
       id: 0,
@@ -67,25 +85,38 @@ function Home({navigation}) {
     },
   ];
 
-  const getProduct = async () => {
-    const token = await AsyncStorage.getItem('token');
-    console.log(token, '---------->i am token');
-    try {
-      const response = await axios(mobileRecharge, {
-        headers: {Authorization: `Bearer ${token}`},
-      });
-      console.log('resp--->>>', response.data.data);
-    } catch (err) {
-      console.log('errrr----->>>', err);
+  //   {
+  //     "_id": "652fbbf83eabc5820f3715c3",
+  //     "categoryName": "category",
+  //     "categoryIcon": "https://kickrproject.s3.amazonaws.com/84959b81-3f1f-4b69-9f8d-7756ea690de4.png",
+  //     "categoryBanner": "https://kickrproject.s3.ap-northeast-1.amazonaws.com/64229ae4-6811-41c2-834c-6e50019a0163.png",
+  //     "createdAt": "2023-10-18T11:05:28.964Z",
+  //     "updatedAt": "2023-10-18T11:05:28.964Z",
+  //     "__v": 0
+  // }
 
-      //Toast.show('server error.');
+  const GetAllCategoryList = async () => {
+    setLoading(true);
+    const res = await handleGetAllCategoryList();
+    if (res.data.result) {
       setLoading(false);
+      // console.log('res of GetAllCategoryList', res.data.result);
+      setAllCategory(res.data.result);
+    } else {
+      setLoading(false);
+      console.log('error==', res);
     }
   };
 
-  // useEffect(() => {
-  //   getProduct();
-  // }, []);
+  useEffect(() => {
+    // getProduct();
+    // clear();
+    // GetAllCategoryList();
+  }, []);
+
+  const clear = async () => {
+    await AsyncStorage.clear();
+  };
 
   const renderItem = ({item}) => {
     return (
@@ -95,6 +126,7 @@ function Home({navigation}) {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: 10,
+          // paddingBottom: 30,
         }}>
         <View
           style={{
@@ -103,53 +135,76 @@ function Home({navigation}) {
           }}>
           <View
             style={{
-              width: responsiveWidth(12),
-              height: responsiveWidth(12),
-              borderRadius: responsiveWidth(12),
-              backgroundColor: 'pink',
-            }}></View>
-          <Text style={{marginLeft: 8, color: 'black'}}>
-            {item.ProductName}
+              width: responsiveWidth(14),
+              height: responsiveWidth(14),
+              borderRadius: responsiveWidth(14),
+              backgroundColor: Color.LIGHT_GREEN_TOP,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              style={{
+                width: responsiveWidth(8),
+                height: responsiveWidth(8),
+                // borderRadius: responsiveWidth(12),
+              }}
+              source={{uri: item.categoryIcon}}
+            />
+          </View>
+          <Text
+            style={{
+              marginLeft: 15,
+              color: 'black',
+              fontWeight: '600',
+              fontSize: 15,
+            }}>
+            {item.categoryName}
           </Text>
         </View>
-        {item.qty >= 1 && (
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              backgroundColor: 'green',
-            }}>
-            <Text
-              style={{
-                alignItems: 'flex-end',
-                padding: 5,
-                fontSize: responsiveFontSize(1.5),
-              }}>
-              {item.qty}
-            </Text>
-          </TouchableOpacity>
-        )}
 
-        {item.qty == 0 && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ViewList')}
-            activeOpacity={0.7}
+        {/* <TouchableOpacity
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'green',
+          }}>
+          <Text
             style={{
-              alignItems: 'center',
-              backgroundColor: Color.LIGHT_GREEN,
-              //backgroundColor: 'green',
-              borderRadius: 5,
+              alignItems: 'flex-end',
+              padding: 5,
+              fontSize: responsiveFontSize(1.5),
             }}>
-            <Text
-              style={{
-                alignItems: 'flex-end',
-                padding: 5,
-                fontSize: responsiveFontSize(1.5),
-                color: Color.WHITE,
-              }}>
-              View List
-            </Text>
-          </TouchableOpacity>
-        )}
+            {item.qty}
+          </Text>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('AllMainProductSubcategory', {
+              itemId: item._id,
+              categoryName: item.categoryName,
+            })
+          }
+          activeOpacity={0.7}
+          style={{
+            alignItems: 'center',
+            backgroundColor: Color.LIGHT_GREEN,
+            //backgroundColor: 'green',
+            borderRadius: 5,
+            // marginVertical: 10,
+          }}>
+          <Text
+            style={{
+              alignItems: 'flex-end',
+              // padding: 5,
+              paddingHorizontal: 11,
+              paddingVertical: 7,
+              fontSize: responsiveFontSize(1.5),
+              color: Color.WHITE,
+              fontWeight: '400',
+            }}>
+            View List
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -159,14 +214,19 @@ function Home({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'#29C17E'} barStyle={Color.WHITE} />
-      <View style={styles.loginbox}>
+      <HeaderHome navigation={navigation} />
+      {/* <View style={styles.loginbox}>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.img}></View>
           <View style={styles.store}>
-            <Text style={styles.texting}>Store Name</Text>
-            <View style={{flexDirection: 'row'}}>
-              <Ionicons name="location" color={'black'} size={18} />
-              <Text style={styles.texting3}>Noida</Text>
+            <Text style={styles.texting}>
+              {userData?.shopsDetails?.shopName}
+            </Text>
+            <View style={{flexDirection: 'row', marginTop: 8}}>
+              <Ionicons name="location" color={Color.WHITE} size={18} />
+              <Text style={styles.texting3}>
+                {userData?.shopsDetails?.city}
+              </Text>
             </View>
           </View>
         </View>
@@ -177,10 +237,12 @@ function Home({navigation}) {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+          <TouchableOpacity 
+          onPress={() => navigation.navigate('Search')}
+          >
             <Ionicons
               name="search"
-              color={'black'}
+              color={Color.WHITE}
               size={20}
               style={{margin: responsiveWidth(2)}}
             />
@@ -188,15 +250,35 @@ function Home({navigation}) {
           <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
             <Ionicons
               name="notifications"
-              color={'black'}
+              color={Color.WHITE}
               size={20}
               style={{margin: responsiveWidth(2)}}
             />
           </TouchableOpacity>
         </View>
-      </View>
-
-      <FlatList data={items} renderItem={renderItem} />
+      </View> */}
+      {/* {loading ? (
+        <View
+          style={{
+            height: '75%',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : allCategory && allCategory.length > 0 ? (
+        <View style={{paddingBottom: '50%'}}>
+          <FlatList data={allCategory} renderItem={renderItem} />
+        </View>
+      ) : (
+        <Text style={{color: '#000'}}>No data found</Text>
+      )} */}
+      <AllPoductCategoryComponent
+        onPress={data =>
+          navigation.navigate('AllMainProductSubcategory', {data})
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -209,15 +291,16 @@ const styles = StyleSheet.create({
   },
   loginbox: {
     width: responsiveWidth(100),
-    backgroundColor: '#CBECE1',
-    paddingVertical: responsiveHeight(2),
+    // backgroundColor: '#CBECE1',
+    backgroundColor: '#29C17E',
+    paddingVertical: responsiveHeight(2.5),
     alignSelf: 'center',
     //marginTop: responsiveHeight(2),
     flexDirection: 'row',
     elevation: 3,
     justifyContent: 'space-between',
-    borderBottomRightRadius: 12,
-    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: responsiveHeight(2),
+    borderBottomLeftRadius: responsiveHeight(2),
   },
   img: {
     width: responsiveWidth(15),
@@ -225,8 +308,8 @@ const styles = StyleSheet.create({
     //backgroundColor: 'pink',
     borderRadius: responsiveWidth(15),
     marginLeft: responsiveWidth(1.5),
-    borderWidth: 1,
-    borderColor: Color.LIGHT_Gray,
+    borderWidth: 3,
+    borderColor: Color.WHITE,
   },
   btnStyle: {
     backgroundColor: 'purple',
@@ -243,13 +326,13 @@ const styles = StyleSheet.create({
   texting: {
     fontSize: responsiveFontSize(2.2),
     alignSelf: 'center',
-    color: Color.BLACK,
+    color: Color.WHITE,
     fontWeight: 'bold',
   },
   texting3: {
     fontSize: responsiveFontSize(2),
     alignSelf: 'center',
-    color: Color.BLACK,
+    color: Color.WHITE,
   },
   texting1: {
     fontSize: responsiveFontSize(2.2),
@@ -264,7 +347,7 @@ const styles = StyleSheet.create({
   store: {
     //backgroundColor: 'teal',
     padding: 5,
-    //marginLeft: responsiveWidth(2),
+    marginLeft: responsiveWidth(8),
   },
 });
 

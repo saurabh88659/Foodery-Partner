@@ -8,14 +8,15 @@ import {
 } from 'react-native-responsive-dimensions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Color from '../Utils/Color';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 export default function Header({Title, onPress, style, Title2}) {
   return (
-    <View>
+    <View style={{}}>
       <View style={styles.button}>
         <View style={styles.back}>
           <TouchableOpacity onPress={onPress}>
-            <Ionicons name="md-chevron-back" color={'white'} size={25} />
+            <FontAwesome6 name="arrow-left" color={'white'} size={25} />
           </TouchableOpacity>
         </View>
         <View style={styles.texting}>
@@ -37,7 +38,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    //marginTop: 40,
+    // marginTop: 40,
+    // paddingHorizontal: 20,
+    // marginHorizontal: 10,
+    paddingLeft: 15,
   },
   back: {
     height: responsiveHeight(8),

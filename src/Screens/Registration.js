@@ -35,6 +35,7 @@ import Bankdetails from '../component/Bankdetails';
 import Certification from '../component/Certification';
 import Custombtn from '../component/CustomButton/Custombtn';
 import Header from '../component/Header';
+import {useSelector} from 'react-redux';
 
 //var query = require('india-pincode-search');
 
@@ -49,7 +50,8 @@ const stepCount = labels.length;
 export default function Registration({navigation, route}) {
   // const mobnumber = route.params.phoneNumber;
   // console.log('mobnumber=====', mobnumber);
-  const [currentStep, setCurrentStep] = useState(0);
+  // const [currentStep, setCurrentStep] = useState(0);
+  const currentStep = useSelector(state => state.requiredata.currentStep);
   const [date, setDate] = useState(new Date());
   const [bankName, onBankName] = useState('');
   const [ifscCode, onIfscCode] = useState('');
@@ -146,7 +148,6 @@ export default function Registration({navigation, route}) {
 
   const fetchLocationInfo = () => {
     const CollectData = query.search(`${pincode}`);
-
     if (CollectData[0] == null) {
       ToastAndroid.show('Please Enter Correct Pincode', ToastAndroid.LONG);
     } else {
@@ -164,14 +165,15 @@ export default function Registration({navigation, route}) {
       setCityValue2(CollectData[0].city);
     }
   };
+
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar backgroundColor="#29C17E" />
       <Header
         bgColor={Colors.DARK_GREEN}
         color={Colors.WHITE}
         Title="Registration"
-        onPress={() => navigation.goBack()}
+        // onPress={() => navigation.goBack()}
       />
 
       <Text
@@ -192,14 +194,14 @@ export default function Registration({navigation, route}) {
           stepCount={stepCount}
         />
         {currentStep === 0 && (
-          <View style={{height: responsiveHeight(77)}}>
+          <View style={{height: responsiveHeight(81)}}>
             <ScrollView
               automaticallyAdjustContentInsets={true}
-              // contentContainerStyle={{paddingBottom: 1}}
+              // contentContainerStyle={{paddingBottom: 20}}
             >
               <PersonalDetails />
 
-              <View
+              {/* <View
                 style={{
                   //backgroundColor: 'purple',
                   paddingVertical: 12,
@@ -214,7 +216,7 @@ export default function Registration({navigation, route}) {
                     <Text style={Styles.buttonText}>Submit</Text>
                   </TouchableOpacity>
                 )}
-              </View>
+              </View> */}
             </ScrollView>
           </View>
         )}
@@ -226,7 +228,7 @@ export default function Registration({navigation, route}) {
             >
               <Verification />
 
-              <View
+              {/* <View
                 style={{
                   //backgroundColor: 'purple',
                   paddingVertical: 12,
@@ -241,7 +243,7 @@ export default function Registration({navigation, route}) {
                     <Text style={Styles.buttonText}>Submit</Text>
                   </TouchableOpacity>
                 )}
-              </View>
+              </View> */}
             </ScrollView>
           </View>
         )}
@@ -252,7 +254,7 @@ export default function Registration({navigation, route}) {
               // contentContainerStyle={{paddingBottom: 1}}
             >
               <Certification />
-              {currentStep < stepCount - 1 ? (
+              {/* {currentStep < stepCount - 1 ? (
                 <View
                   style={{
                     //backgroundColor: 'green',
@@ -267,7 +269,7 @@ export default function Registration({navigation, route}) {
                 <TouchableOpacity style={Styles.button} onPress={handleSubmit}>
                   <Text style={Styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
-              )}
+              )} */}
             </ScrollView>
           </View>
         )}
@@ -316,7 +318,7 @@ export default function Registration({navigation, route}) {
                     }}
                   />
                 </View> */}
-              <View
+              {/* <View
                 style={{
                   //backgroundColor: 'purple',
                   paddingVertical: 12,
@@ -329,13 +331,14 @@ export default function Registration({navigation, route}) {
                     <Text style={Styles.buttonText}>SUBMIT</Text>
                   </TouchableOpacity>
                 )}
-              </View>
+              </View> */}
             </ScrollView>
           </>
         )}
 
         <Modal
           visible={modalVisible}
+          // visible={true}
           animationType="slide"
           transparent={true}
           onRequestClose={toggleModal}>
@@ -385,6 +388,7 @@ export default function Registration({navigation, route}) {
     </SafeAreaView>
   );
 }
+
 const stepIndicatorStyles = {
   stepIndicatorSize: 30,
   currentStepIndicatorSize: 35,
@@ -407,7 +411,6 @@ const stepIndicatorStyles = {
   labelColor: '#29C17E',
   labelSize: 12,
   currentStepLabelColor: '#29C17E',
-
   // Customize the step indicator styles here (same as the previous example)
 };
 

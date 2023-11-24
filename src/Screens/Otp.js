@@ -26,48 +26,120 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 const Baseurl = 'http://192.168.68.123:8000/api/vendor/verifyOTPVendorApp';
 const Baseurl1 = 'http://192.168.68.123:8000/api/vendor/loginVendorApp';
 import {requestUserPermission} from '../Utils/Firebasemessage';
-
-function Otp({navigation, route}) {
+import {handleUserGetData, OtpVerification} from '../features/APIs/apiRequest';
+import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-simple-toast';
+import {CONSTANTS} from '../Utils/constants';
+import {setOfflineData} from '../features/commonservice';
+import {setLoggedIn} from '../features/auth/auth.reducer';
+import {el} from 'date-fns/locale';
+import {
+  setAdminIsAccepted,
+  setUserData,
+} from '../features/requireDataReducer/requiredata.reducer';
+import AllOutofStockProductScreen from './AllOutofStockProductScreen';
+function Otp({navigation}) {
+  const dispatch = useDispatch();
+  const phoneNumber = useSelector(state => state.requiredata.userPhoneNUmber);
+  console.log('phoneNumber ---useselecteor otp screen ', phoneNumber);
   const [text, onChangeText] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const phoneNumber = route.params.phoneDetails;
-  //const phone = phoneNumber;
-
-  const [pin, setPin] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [otp, setOtp] = useState(null);
+  // const phoneNumber = route.params.phoneDetails;
   const [counter, setCounter] = React.useState(30);
-  //console.log('heyyyyyyyyy', Verify);
-
   let splitNumberToArray = phoneNumber?.slice(-4);
   let f_number = parseFloat(splitNumberToArray?.toString().replace(/,/g, ''));
 
-  const OtpVerification = async () => {
+  // const OtpVerification = async () => {
+  //   const fcmToken = await AsyncStorage.getItem('fcmToken');
+  //   console.log('hiiiiii', fcmToken);
+  //   await AsyncStorage.setItem('phone', phoneNumber);
+  //   const Verify = {
+  //     mobileNumber: phoneNumber,
+  //     otp: pin,
+  //     deviceToken: fcmToken,
+  //   };
+  //   console.log('hiiiiiiii-------->', Verify);
+
+  //   axios
+  //     .post(Baseurl, Verify)
+  //     .then(async resp => {
+  //       console.log('---->data', resp.data);
+  //       await AsyncStorage.setItem('token', resp.data.token);
+  //       setPin(resp.data);
+  //       const mob1 = await AsyncStorage.getItem('Phone');
+  //       console.log('------------------>mob', mob1);
+  //       navigation.navigate('Registration');
+  //     })
+  //     .catch(error => {
+  //       console.log(error);
+  //     });
+  // };
+
+  const HandleOtpVerification = async () => {
     const fcmToken = await AsyncStorage.getItem('fcmToken');
-    console.log('hiiiiii', fcmToken);
-    await AsyncStorage.setItem('phone', phoneNumber);
-    const Verify = {
+    setButtonLoading(true);
+    const obj = {
       mobileNumber: phoneNumber,
-      otp: pin,
+      otp: otp,
       deviceToken: fcmToken,
     };
-    console.log('hiiiiiiii-------->', Verify);
-
-    axios
-      .post(Baseurl, Verify)
-      .then(async resp => {
-        console.log('---->data', resp.data);
-        await AsyncStorage.setItem('token', resp.data.token);
-
-        setPin(resp.data);
-
-        const mob1 = await AsyncStorage.getItem('Phone');
-        console.log('------------------>mob', mob1);
-
-        navigation.navigate('Registration');
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    console.log('====obj====', obj);
+    const res = await OtpVerification(obj);
+    if (res?.data) {
+      setButtonLoading(false);
+      console.log(
+        'response of HandleOtpVerification ======>:',
+        res.data.message,
+      );
+      if (res.data.status) {
+        console.log('res.data of HandleOtpVerification', res.data);
+        await setOfflineData(CONSTANTS.TOKEN, res.data.token);
+        await setOfflineData(CONSTANTS.REFRESH_TOKEN, res.data.refreshToken);
+        if (
+          res.data.message == 'Otp Verify Successfully..' ||
+          res.data.message == 'Already Registered..'
+        ) {
+          navigation.replace('Registration');
+        } else if (res.data.message == 'Welcome back') {
+          const res = await handleUserGetData();
+          dispatch(setUserData(res.data.result));
+          console.log(
+            '++++status in OTP screen ====>',
+            JSON.stringify(res?.data?.result?.status),
+          );
+          if (res.data.result.status == 'accepted') {
+            dispatch(setLoggedIn(true));
+          } else if (res.data.result.status == 'underReview') {
+            dispatch(setLoggedIn(true));
+            dispatch(setAdminIsAccepted(true));
+          } else if (res.data.result.status == 'complete') {
+            dispatch(setLoggedIn(false));
+            navigation.replace('AllProductCategory');
+          } else if (res.data.result.status == 'pending') {
+            dispatch(setLoggedIn(false));
+            navigation.replace('AllOutofStockProductScreen');
+          } else if (res.data.result.status == 'rejected') {
+            dispatch(setLoggedIn(false));
+            navigation.navigate('AdminRejectedScreen');
+          } else {
+            dispatch(setLoggedIn(false));
+          }
+        }
+        setButtonLoading(false);
+      }
+    } else {
+      setButtonLoading(false);
+      Toast.show(res.response?.data?.message, Toast.SHORT);
+      console.log('catch error of HandleOtpVerification :', res);
+      console.log(
+        'catch error(response.message) of  HandleOtpVerification:',
+        res?.response?.data?.message,
+      );
+    }
   };
+
   useEffect(() => {
     requestUserPermission();
   }, []);
@@ -88,14 +160,11 @@ function Otp({navigation, route}) {
   //console.log('hiiiiiiii-------->' + number);
   const resend = async () => {
     console.log('hiiiiiiii-------->', number);
-
     axios
       .post(Baseurl, number)
       .then(async resp => {
         console.log('---->data', resp.data);
-
         setPhoneNo(resp.data);
-
         //navigation.navigate('Otp', {phoneDetails: phoneNo});
       })
       .catch(error => {
@@ -115,7 +184,6 @@ function Otp({navigation, route}) {
               We've send an OTP to your Mobile Number
             </Text>
             <Text style={styles.texting4}>+91 ******{f_number}</Text>
-
             <View
             // style={{backgroundColor: 'purple'}}
             >
@@ -133,7 +201,7 @@ function Otp({navigation, route}) {
                 codeInputFieldStyle={styles.underlineStyleBase}
                 codeInputHighlightStyle={styles.underlineStyleHighLighted}
                 onCodeFilled={code => {
-                  setPin(code);
+                  setOtp(code);
                 }}
               />
             </View>
@@ -163,8 +231,11 @@ function Otp({navigation, route}) {
 
             <CustomButton
               Title={'LOGIN'}
-              onPress={() => OtpVerification()}
+              onPress={() => HandleOtpVerification()}
               style={styles.btnStyle}
+              loading={buttonLoading}
+              loadingColor={'#fff'}
+              loadingSize={25}
             />
           </View>
         </View>

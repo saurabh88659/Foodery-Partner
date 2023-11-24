@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 //import {COLORS} from '../utills/Colors';
 import {
@@ -7,11 +13,25 @@ import {
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 
-export default function CustomButton({Title, onPress, style, Title2}) {
+export default function CustomButton({
+  Title,
+  onPress,
+  style,
+  Title2,
+  loading,
+  loadingSize,
+  loadingColor,
+}) {
   return (
     <View>
       <TouchableOpacity style={style} onPress={onPress} activeOpacity={0.5}>
-        <Text style={styles.text}>{Title}</Text>
+        {loading ? (
+          <ActivityIndicator size={loadingSize} color={loadingColor} />
+        ) : (
+          <Text style={styles.text}>{Title}</Text>
+        )}
+        {/* <Text style={styles.text}>{Title}</Text> */}
+
         {/* <Text style={styles.text1}>{Title2}</Text> */}
       </TouchableOpacity>
     </View>

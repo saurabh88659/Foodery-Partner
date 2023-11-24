@@ -21,27 +21,74 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Dropdown} from 'react-native-element-dropdown';
 import DateTimePickerr from '@react-native-community/datetimepicker';
-
+import Toast from 'react-native-simple-toast';
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import {he} from 'date-fns/locale';
+import Custombtn from './CustomButton/Custombtn';
+import {PersonlDetialVerification} from '../features/APIs/apiRequest';
+import {getAuthHeaders} from '../features/commonservice';
+import {useDispatch, useSelector} from 'react-redux';
+import {setCurrentStep} from '../features/requireDataReducer/requiredata.reducer';
 const {height, width} = Dimensions.get('window');
 var query = require('india-pincode-search');
 
-export default function PersonalDetails({route}) {
-  // const mobile = route.params.phoneNumber;
-  //console.log('my phone is.............', mobile);
-  const [currentStep, setCurrentStep] = useState(0);
+export default function PersonalDetails({navigation}) {
+  const dispatch = useDispatch();
+  const userPhoneNUmber = useSelector(
+    state => state.requiredata.userPhoneNUmber,
+  );
+  console.log('userPhoneNUmber===================>>>', userPhoneNUmber);
+  const [Firstname, setfirstname] = useState('');
+  const [Lastname, setLastname] = useState('');
+  const [gender, setGender] = useState('');
+  const [emailId, setemailId] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [shopLocation, setShopLocation] = useState('');
+  const [shopAddress, setShopAddress] = useState('');
+  const [state, setState] = useState('');
+  const [pincode, setpincode] = useState('');
+  const [value, setValue] = useState(null);
+  const [city, setCity] = useState('');
+  // const [date, setDate] = useState(new Date());
   const [date, setDate] = useState(new Date());
   const [mobileNumber, setMobileNumber] = useState('');
   const [alternateNumber, setAlternatNumber] = useState('');
-
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const formattedDate = format(date, 'dd/MM/yyyy');
 
+  console.log('formattedDate---->', formattedDate);
+  // const [currentStep, setCurrentStep] = useState(0);
+
+  useEffect(() => {
+    // develperModeOn();
+  }, []);
+
+  useEffect(() => {
+    setMobileNumber(userPhoneNUmber);
+  }, []);
+
+  const develperModeOn = () => {
+    setfirstname('saurabh');
+    setLastname('kumar');
+    // setDate('03/08/2000');
+    setGender('male');
+    setemailId('saurya8979@gmail.com');
+    setMobileNumber(8979995967);
+    setAlternatNumber(8979995966);
+    setShopName('saurabh super mall');
+    setShopLocation('Rohini, Delhi, sector 2');
+    setShopAddress('near axis band , pilar no 69');
+    setState('delhi');
+    setCity('delhi');
+    setpincode(262401);
+  };
+
+  console.log('date-----', date);
   const handleNextStep = () => {
     setCurrentStep(prevStep => Math.min(prevStep + 1, stepCount - 1));
   };
@@ -50,20 +97,6 @@ export default function PersonalDetails({route}) {
     setCurrentStep(prevStep => Math.max(prevStep - 1, 0));
   };
 
-  // useEffect(() => {
-  //   var currentDate = new Date();
-  //   // var day = new Date().getDate(); //Current Date
-  //   // var month = new Date().getMonth() + 1; //Current Month
-  //   // var year = new Date().getFullYear(); //Current Year
-  //   var day = currentDate.getDate();
-  //   var month = currentDate.getMonth() + 1; // Add 1 to get the correct month
-  //   var year = currentDate.getFullYear();
-
-  //   var formattedDate = `${day}/${month}/${year}`;
-
-  //   setDate(formattedDate);
-  // }, []);
-
   const handleSubmit = () => {
     // Handle form submission here
     // For example, you can call an API or save the form data
@@ -71,7 +104,8 @@ export default function PersonalDetails({route}) {
   };
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
+    console.log('selectedDate and event', event, selectedDate);
+    const currentDate = selectedDate;
     setShowPicker(false);
     setDate(currentDate);
   };
@@ -80,16 +114,7 @@ export default function PersonalDetails({route}) {
     setShowPicker(true);
   };
 
-  const [Firstname, setfirstname] = useState('');
-  const [Lastname, setLastname] = useState('');
-
-  const [gender, setGender] = useState('');
-
-  const [emailId, setemailId] = useState('');
-  const [shopName, setShopName] = useState('');
-  const [shopLocation, setShopLocation] = useState('');
-  const [shopAddress, setShopAddress] = useState('');
-  // .................................state...................................
+  //.................................state...................................
 
   const statedata = [
     {label: 'Andhra Pradesh', value: '1'},
@@ -122,87 +147,100 @@ export default function PersonalDetails({route}) {
     {label: 'West Bengal', value: '28'},
   ];
 
-  const [value, setValue] = useState(null);
-  const [value2, setValue2] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
+  // const fetchLocationInfo = () => {
+  //   const CollectData = query.search(`${pincode}`);
 
-  //11111............................................City ........................................................
+  //   if (CollectData[0] == null) {
+  //     ToastAndroid.show('Please Enter Correct Pincode', ToastAndroid.LONG);
+  //   } else {
+  //     setCityValue(CollectData[0].city);
+  //     console.log('data', CollectData);
+  //   }
+  // };
 
-  const [cityvalue, setCityValue] = useState('');
+  // const personalDetail = async () => {
+  //   // if (!accountHolder || !bankAccount || !ifscCode || !bankName) {
+  //   //   Alert.alert('Please fill all the fields!');
+  //   //   return console.log('No field is filled up'); // do whatever you want to display
+  //   // }
+  //   const token = await AsyncStorage.getItem('token');
+  //   console.log(
+  //     token,
+  //     '---------->i am token mai hu tokennnnnnnnnnnnnnnnnnnnnnnnnnn',
+  //   );
+  //   const mobnumber = await AsyncStorage.getItem('phone');
+  //   console.log(
+  //     mobnumber,
+  //     '---------->i ammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm mobNuberqqq',
+  //   );
 
-  //22222............................................City ........................................................
+  //   const axiosConfig = {
+  //     Authorization: `Bearer ${token}`,
+  //   };
 
-  //....................................Pincode..........................
+  //   console.log('personal-------->', Personal);
 
-  const [pincode, setpincode] = useState(null);
+  //   try {
+  //     const resp = await axios({
+  //       url: 'http://192.168.68.123:8000/api/vendor/signUpVendorApp',
+  //       headers: axiosConfig,
+  //       data: Personal,
+  //       method: 'PUT',
+  //     });
+  //     console.log('resp--->>>', resp.data);
+  //   } catch (error) {
+  //     console.log('errrr----->>>', error.response?.data);
+  //     //Toast.show(error.response?.data);
+  //   }
+  // };
 
-  const fetchLocationInfo = () => {
-    const CollectData = query.search(`${pincode}`);
-
-    if (CollectData[0] == null) {
-      ToastAndroid.show('Please Enter Correct Pincode', ToastAndroid.LONG);
-    } else {
-      setCityValue(CollectData[0].city);
-      console.log('data', CollectData);
-    }
-  };
-
-  const personalDetail = async () => {
-    // if (!accountHolder || !bankAccount || !ifscCode || !bankName) {
-    //   Alert.alert('Please fill all the fields!');
-    //   return console.log('No field is filled up'); // do whatever you want to display
-    // }
-    const token = await AsyncStorage.getItem('token');
-    console.log(
-      token,
-      '---------->i am token mai hu tokennnnnnnnnnnnnnnnnnnnnnnnnnn',
-    );
-    const mobnumber = await AsyncStorage.getItem('phone');
-    console.log(
-      mobnumber,
-      '---------->i ammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm mobNuberqqq',
-    );
-
-    const axiosConfig = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let Personal = {
+  const PersonalDetailVerification = async () => {
+    setButtonLoading(true);
+    let PersonalDetailObj = {
       firstName: Firstname,
       lastName: Lastname,
-      DOB: '03/04/1999',
+      DOB: formattedDate,
       email: emailId,
       gender: gender,
-
-      alternateNumber: alternateNumber,
+      alternateNumber: alternateNumber.toString(),
       shopsDetails: {
         shopName: shopName,
         shopLocation: shopLocation,
         shopFullAddress: shopAddress,
-        city: cityvalue,
+        city: city,
         pin: pincode,
-        state: value,
+        state: state,
       },
     };
-    console.log('personal-------->', Personal);
 
-    try {
-      const resp = await axios({
-        url: 'http://192.168.68.123:8000/api/vendor/signUpVendorApp',
-        headers: axiosConfig,
-        data: Personal,
-        method: 'PUT',
+    console.log('====PersonalDetailObj====', PersonalDetailObj);
+    const res = await PersonlDetialVerification(PersonalDetailObj);
+    if (res?.data) {
+      setButtonLoading(false);
+      console.log('response of PersonalDetailVerification===> :', res.data);
+      if (res.data.status) {
+        if (res.data.message == 'Profile Updated successfully') {
+          Toast.show('Profile Updated successfully', Toast.LONG);
+          dispatch(setCurrentStep(1));
+        }
+        // navigation.replace('Registration');
+      }
+    } else {
+      setButtonLoading(false);
+      Toast.show(res.response.data.message, Toast.SHORT, {
+        backgroundColor: 'blue',
       });
-      console.log('resp--->>>', resp.data);
-    } catch (error) {
-      console.log('errrr----->>>', error.response?.data);
-      //Toast.show(error.response?.data);
+      console.log('catch error of PersonalDetailVerification ===>:', res);
+      console.log(
+        'catch error(response.message) of  PersonalDetailVerification:',
+        res?.response?.data?.message,
+      );
     }
   };
-  return (
-    <View>
-      {/* ..................First Name and Last Name.................... */}
 
+  return (
+    <View style={{paddingBottom: 30}}>
+      {/* ..................First Name and Last Name.................... */}
       <View
         style={{
           flexDirection: 'row',
@@ -215,7 +253,7 @@ export default function PersonalDetails({route}) {
         </Text>
         <Text
           style={{
-            color: Colors.black,
+            color: Colors.BLACK,
             right: width / 4.7,
             fontWeight: 'bold',
           }}>
@@ -233,20 +271,20 @@ export default function PersonalDetails({route}) {
         <TextInput
           placeholder="First name"
           value={Firstname}
-          // isValid={false}
-          // errors={false}
+          // isValid={true}
+          // errors={true}
           onChangeText={text => {
             setfirstname(text);
           }}
           // onChangeText={text => {
           //   _validateMobileNumber(text);
           // }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             borderRadius: 4,
             width: '45%',
             height: '90%',
@@ -262,10 +300,10 @@ export default function PersonalDetails({route}) {
           placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             width: '45%',
             height: '90%',
             color: Colors.BLACK,
@@ -283,10 +321,10 @@ export default function PersonalDetails({route}) {
           style={{
             height: 45,
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             marginTop: 0,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
           }}>
           <View
             style={{
@@ -297,7 +335,7 @@ export default function PersonalDetails({route}) {
               alignItems: 'center',
               top: 8,
             }}>
-            <Text style={{color: Colors.black}}>{formattedDate}</Text>
+            <Text style={{color: Colors.BLACK}}>{formattedDate}</Text>
             <TouchableOpacity onPress={handlePress}>
               <FontAwesome5Icon name="calendar-alt" color="#a9a9a9" size={28} />
             </TouchableOpacity>
@@ -312,6 +350,9 @@ export default function PersonalDetails({route}) {
             dateFormat="DD-MM-YYYY"
             display="default"
             onChange={handleDateChange}
+            maximumDate={new Date()}
+            // onConfirm={handleConfirm}
+            // onCancel={hideDatePicker}
           />
         )}
       </View>
@@ -319,22 +360,22 @@ export default function PersonalDetails({route}) {
       {/* .........................Gender................................. */}
 
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>Gender</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>Gender</Text>
         <TextInput
           placeholder="Gender"
           value={gender}
           onChangeText={text => {
             setGender(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
@@ -342,22 +383,22 @@ export default function PersonalDetails({route}) {
       {/* ...................................Email Id........................... */}
 
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>E-mail ID</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>E-mail ID</Text>
         <TextInput
-          placeholder="Plese enter Email Id"
+          placeholder="Email Id"
           value={emailId}
           onChangeText={text => {
             setemailId(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
@@ -365,25 +406,26 @@ export default function PersonalDetails({route}) {
       {/* ..........................................Mobile number.......................... */}
 
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>
           Mobile number
         </Text>
         <TextInput
           placeholder="Plese enter mobile number"
-          value={mobileNumber}
+          value={mobileNumber.toString()}
           onChangeText={text => {
             setMobileNumber(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          editable={false}
+          placeholderTextColor={Colors.DARK_GRAY}
           keyboardType="numeric"
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
@@ -391,97 +433,116 @@ export default function PersonalDetails({route}) {
       {/* ..........................................Mobile Alternate number.......................... */}
 
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>
           Alternate Mobile Number
         </Text>
         <TextInput
-          // placeholder="Plese enter mobile number"
-          value={alternateNumber}
+          placeholder="Alternate mobile number"
+          value={alternateNumber.toString()}
           onChangeText={text => {
             setAlternatNumber(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           keyboardType="numeric"
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
 
       {/* ..........................................Shop full Address.......................... */}
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>Shop Name</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>Shop Name</Text>
         <TextInput
           value={shopName}
           onChangeText={text => {
             setShopName(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholder="shop name"
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
 
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>Location</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>Location</Text>
         <TextInput
+          placeholder=" Shop Loacation"
           value={shopLocation}
           onChangeText={text => {
             setShopLocation(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>
           Shop full Address
         </Text>
         <TextInput
+          placeholder=" Shop Address"
           value={shopAddress}
           onChangeText={text => {
             setShopAddress(text);
           }}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             marginTop: 7,
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
 
       {/* ..........................................State......................................... */}
-
       <View style={{marginHorizontal: 20, marginTop: 15}}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>State</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>State</Text>
+        <TextInput
+          placeholder="State"
+          value={state}
+          onChangeText={text => {
+            setState(text);
+          }}
+          placeholderTextColor={Colors.DARK_GRAY}
+          style={{
+            borderWidth: 1,
+            borderColor: Colors.LIGHT_Gray,
+            borderRadius: 4,
+            paddingHorizontal: 15,
+            backgroundColor: Colors.WHITE,
+            marginTop: 7,
+            color: Colors.BLACK,
+          }}
+        />
 
-        <Dropdown
+        {/* <Dropdown
           style={[Styles.dropdown, isFocus && {borderColor: 'blue'}]}
           placeholderStyle={Styles.placeholderStyle}
           selectedTextStyle={Styles.selectedTextStyle}
@@ -509,7 +570,7 @@ export default function PersonalDetails({route}) {
               size={20}
             />
           )}
-        />
+        /> */}
       </View>
 
       {/* ..................Permanent address City Name and Pincode.................... */}
@@ -521,10 +582,10 @@ export default function PersonalDetails({route}) {
           marginHorizontal: 20,
           marginTop: 10,
         }}>
-        <Text style={{color: Colors.black, fontWeight: 'bold'}}>City</Text>
+        <Text style={{color: Colors.BLACK, fontWeight: 'bold'}}>City</Text>
         <Text
           style={{
-            color: Colors.black,
+            color: Colors.BLACK,
             right: width / 4.7,
             fontWeight: 'bold',
           }}>
@@ -537,57 +598,68 @@ export default function PersonalDetails({route}) {
           flexDirection: 'row',
           justifyContent: 'space-between',
           marginHorizontal: 20,
-          marginTop: 5,
+          marginTop: 10,
         }}>
         <TextInput
+          // keyboardType=""
           placeholder="City"
           onChangeText={text => {
-            setCityValue(text);
+            setCity(text);
           }}
-          value={cityvalue}
-          placeholderTextColor={Colors.darkGray}
+          value={city}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             borderRadius: 4,
             width: '45%',
             height: '90%',
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
 
         <TextInput
           placeholder="Pin Code"
-          value={pincode}
+          value={pincode.toString()}
           onChangeText={text => {
             setpincode(text);
           }}
           maxLength={6}
-          onBlur={fetchLocationInfo}
-          placeholderTextColor={Colors.darkGray}
+          placeholderTextColor={Colors.DARK_GRAY}
           style={{
             borderWidth: 1,
-            borderColor: Colors.lightGray,
+            borderColor: Colors.LIGHT_Gray,
             borderRadius: 4,
             paddingHorizontal: 15,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.WHITE,
             width: '45%',
             height: '90%',
-            color: Colors.black,
+            color: Colors.BLACK,
           }}
         />
       </View>
-      <TouchableOpacity
+      <View style={{paddingHorizontal: 20, marginTop: 15}}>
+        <Custombtn
+          title={'NEXT'}
+          color={'#ffff'}
+          onPress={() => {
+            PersonalDetailVerification();
+          }}
+          loadingColor={'#ffff'}
+          loadingSize={27}
+          loading={buttonLoading}
+        />
+      </View>
+      {/* <TouchableOpacity
         onPress={() => personalDetail()}
         style={{
           backgroundColor: 'purple',
           height: responsiveHeight(2),
           width: responsiveWidth(90),
         }}>
-        <Text>hiiii</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

@@ -12,20 +12,41 @@ import {
   Dimensions,
   ImageBackground,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
-
 //import ImagePicker from 'react-native-image-crop-picker';
+
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
+import {handleGetOrder} from '../features/APIs/apiRequest';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {useSelector} from 'react-redux';
 
 const {height, width} = Dimensions.get('window');
-
 function Order({navigation}) {
+  const userData = useSelector(state => state.requiredata.userData);
+  console.log('userdata===>', JSON.stringify(userData));
+
+  const [orderdata, setOrderData] = useState([]);
+
+  useEffect(() => {
+    getOrder();
+  }, []);
+
+  const getOrder = async () => {
+    const res = await handleGetOrder();
+    if (res.data.status) {
+      console.log('res of getOrder', res.data);
+      setOrderData(res.data.result);
+    } else {
+      console.log('error ===>', res);
+    }
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -54,18 +75,17 @@ function Order({navigation}) {
             }}>
             <Text
               style={{
-                fontSize: responsiveFontSize(2.5),
+                fontSize: responsiveFontSize(3),
                 fontWeight: 'bold',
                 padding: 2,
                 color: Color.WHITE,
               }}>
-              Prakash Singh
+              {userData.firstName} {userData.lastName}
             </Text>
             <Text
               style={{
                 fontSize: responsiveFontSize(2.2),
-                fontWeight: 'bold',
-
+                fontWeight: '400',
                 color: Color.WHITE,
                 alignSelf: 'center',
               }}>
@@ -78,131 +98,174 @@ function Order({navigation}) {
       <ScrollView
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            backgroundColor: Color.WHITE,
-            marginHorizontal: responsiveWidth(2),
-
-            borderRadius: 10,
-            elevation: 2,
-            marginTop: 10,
-          }}>
-          <View
-            style={{
-              paddingVertical: responsiveHeight(0.5),
-              marginLeft: responsiveWidth(3),
-            }}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: responsiveFontSize(2),
-                color: Color.Green_Top,
-              }}>
-              PRAKASH SINGH
-            </Text>
-          </View>
-          <View
-            style={{
-              //backgroundColor: 'skyblue',
-
-              paddingVertical: responsiveHeight(1),
-              borderRadius: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View>
+        {orderdata.map(
+          (item, index) => (
+            console.log('item===', JSON.stringify(item)),
+            (
               <View
+                key={index}
                 style={{
-                  //backgroundColor: 'pink',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: responsiveWidth(3),
+                  backgroundColor: Color.WHITE,
+                  // backgroundColor: 'red',
+                  marginHorizontal: responsiveWidth(2),
+                  borderRadius: 10,
+                  elevation: 2,
+                  marginTop: 10,
+                  marginBottom: 10,
+                  paddingVertical: 15,
                 }}>
-                <Text
+                <View
                   style={{
-                    fontWeight: 'bold',
-                    color: Color.BLACK,
-                    fontSize: responsiveFontSize(2),
+                    paddingVertical: responsiveHeight(0.5),
+                    marginLeft: responsiveWidth(3),
                   }}>
-                  Order ID:
-                </Text>
-                <Text style={{fontSize: responsiveFontSize(2)}}>
-                  Prakash Singh
-                </Text>
-              </View>
-              <View
-                style={{
-                  //backgroundColor: 'pink',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: responsiveWidth(3),
-                }}>
-                <Text
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: responsiveFontSize(2),
+                      color: Color.Green_Top,
+                      textTransform: 'uppercase',
+                    }}>
+                    {item.delieveryAddress.receiverName}
+                  </Text>
+                </View>
+                <View
                   style={{
-                    fontWeight: 'bold',
-                    color: Color.BLACK,
-                    fontSize: responsiveFontSize(2),
+                    //backgroundColor: 'skyblue',
+                    paddingVertical: responsiveHeight(1),
+                    borderRadius: 10,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  Products:
-                </Text>
-                <Text style={{fontSize: responsiveFontSize(2)}}>
-                  Bread ,milk,meggie
-                </Text>
-              </View>
-              <View
-                style={{
-                  // backgroundColor: 'pink',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: responsiveWidth(3),
-                }}>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    color: Color.BLACK,
-                    fontSize: responsiveFontSize(2),
-                  }}>
-                  Address:
-                </Text>
-                <Text style={{fontSize: responsiveFontSize(2)}}>
-                  Y-6 sector 62 Noida
-                </Text>
-              </View>
-            </View>
+                  <View>
+                    <View
+                      style={{
+                        //backgroundColor: 'pink',
+                        flexDirection: 'row',
+                        // justifyContent: 'space-between',
+                        paddingHorizontal: responsiveWidth(3),
+                      }}>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          color: Color.BLACK,
+                          fontSize: responsiveFontSize(2),
+                        }}>
+                        Order ID :
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: responsiveFontSize(2),
+                          color: '#000',
+                        }}>
+                        {' '}
+                        {item.orderId}
+                      </Text>
+                    </View>
 
-            <View
-              style={{
-                //backgroundColor: 'blue',
+                    <View
+                      key={index}
+                      style={{
+                        //backgroundColor: 'pink',
+                        flexDirection: 'row',
+                        // justifyContent: 'space-between',
+                        paddingHorizontal: responsiveWidth(3),
+                        // marginBottom: 4,
+                        // width: 120,
+                        marginTop: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          color: Color.BLACK,
+                          fontSize: responsiveFontSize(2),
+                        }}>
+                        Products :
+                      </Text>
+                      {item.orderedProducts?.map(
+                        (item, index) => (
+                          console.log(
+                            'item====>ofproductName ',
+                            item.productId.productName,
+                          ),
+                          (
+                            <Text
+                              key={index}
+                              numberOfLines={1}
+                              style={{
+                                fontSize: responsiveFontSize(2),
+                                color: '#000',
+                                width: '35%',
+                                // backgroundColor: 'red',
+                              }}>
+                              {' '}
+                              {item.productId.productName} |
+                            </Text>
+                          )
+                        ),
+                      )}
+                    </View>
 
-                width: responsiveWidth(35),
-                height: responsiveHeight(10),
-                alignItems: 'center',
-                justifyContent: 'center',
-                // borderRadius: 4,
-              }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ViewDetails')}
-                style={{
-                  backgroundColor: Color.Green_Top,
+                    <View
+                      style={{
+                        // backgroundColor: 'pink',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: responsiveWidth(3),
+                        alignItems: 'flex-end',
+                        // backgroundColor: 'red',
+                        width: '91%',
+                      }}>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            color: Color.BLACK,
+                            fontSize: responsiveFontSize(2),
+                          }}>
+                          Address :
+                        </Text>
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            fontSize: responsiveFontSize(2),
+                            // width: 160,
+                            color: '#000',
+                          }}>
+                          {' '}
+                          {item.delieveryAddress?.city}
+                        </Text>
+                      </View>
 
-                  width: responsiveWidth(28),
-                  height: responsiveHeight(5),
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 4,
-                }}>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    color: Color.WHITE,
-                    fontSize: responsiveFontSize(1.8),
-                  }}>
-                  View Details
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+                      <View>
+                        <TouchableOpacity
+                          onPress={() => navigation.navigate('ViewDetails')}
+                          style={{
+                            backgroundColor: Color.Green_Top,
+                            width: responsiveWidth(28),
+                            height: responsiveHeight(4),
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 4,
+                            marginRight: 5,
+                          }}>
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              color: Color.WHITE,
+                              fontSize: responsiveFontSize(1.8),
+                            }}>
+                            View Details
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )
+          ),
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -217,7 +280,8 @@ const styles = StyleSheet.create({
     //width: 40,
   },
   contentContainer: {
-    paddingVertical: 30,
+    // paddingVertical: 30,
+    paddingBottom: '20%',
   },
   TextDetails1: {
     fontSize: responsiveFontSize(1.5),

@@ -20,7 +20,6 @@ import {
 } from 'react-native-responsive-dimensions';
 //import CustomButton from './src/component/CustomButton/CustomButton';
 import Header from '../component/Header';
-import Lottie from 'lottie-react-native';
 import Color from '../Utils/Color';
 
 function BookingDetails() {

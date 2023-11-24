@@ -21,51 +21,87 @@ import axios from 'axios';
 import CustomButton from '../component/CustomButton/CustomButton';
 import Color from '../Utils/Color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {BASE_URL, makeApiRequest} from '../features/commonservice';
+import {useDispatch, useSelector} from 'react-redux';
+import {authloginWithNumber} from '../features/auth/auth.reducer';
+import {useNavigation} from '@react-navigation/native';
+import {LoginWithPhone} from '../features/APIs/apiRequest';
+import {useAppTheme} from 'react-native-paper/lib/typescript/src/core/theming';
+import {setUserPhoneNUmber} from '../features/requireDataReducer/requiredata.reducer';
+import {setUseProxies} from 'immer';
+import Toast from 'react-native-simple-toast';
 //import {Image} from 'react-native-paper/lib/typescript/src/components/Avatar/Avatar';
-const Baseurl = 'http://192.168.68.123:8000/api/vendor/loginVendorApp';
-function LoginPhone({navigation}) {
+const Baseurl = 'http://192.168.68.113:8000/api/vendor/loginVendorApp';
+function LoginPhone() {
+  const loding = useSelector(state => state.auth.loding);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [text, onChangeText] = React.useState('');
   const [phoneNo, setPhoneNo] = useState('');
   const [ErrorMobNumber, setErrorMobNumber] = useState(null);
-
-  const number = {
-    mobileNumber: phoneNo,
-  };
-  //console.log('hiiiiiiii-------->' + number);
-  const loginUser = async () => {
-    console.log('hiiiiiiii-------->', number);
-
-    axios
-      .post(Baseurl, number)
-      .then(async resp => {
-        console.log('---->data', resp.data);
-
-        setPhoneNo(resp.data);
-
-        navigation.navigate('Otp', {phoneDetails: phoneNo});
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
+  const [buttonLoading, setButtonLoading] = useState(false);
+  // const loginUser = async () => {
+  //   const obj = {
+  //     mobileNumber: phoneNo,
+  //   };
+  //   axios
+  //     .post(BASE_URL + 'vendor/loginVendorApp', obj)
+  //     .then(async resp => {
+  //       console.log('---->data', resp.data);
+  //       setPhoneNo(resp.data);
+  //       navigation.navigate('Otp', {phoneDetails: phoneNo});
+  //     })
+  //     .catch(error => {
+  //       console.log(error);
+  //     });
+  // };
 
   useEffect(() => {
-    getTokene();
+    getToken();
   }, []);
-  const getTokene = async () => {
+
+  const getToken = async () => {
     const fcmToken = await AsyncStorage.getItem('fcmToken');
+    // await AsyncStorage.removeItem('fcmToken');
+    // await AsyncStorage.setItem('fcmToken');
     console.log('fcmToken-----', fcmToken);
   };
 
-  const validate_mobNumber = mob_number => {
-    console.log('mob_number=====', mob_number);
-    var mobileNoRegex = /^[6-9]{1}[0-9]{9}$/;
-    if (mob_number == '' || mob_number == 'undefined' || mob_number == null) {
-      setErrorMobNumber('Please Enter a vaild Mobile Number');
-    } else if (!mobileNoRegex.test(mob_number)) {
-      setErrorMobNumber('Please Enter a Valid Mobile Number');
+  // const validate_mobNumber = mob_number => {
+  //   console.log('mob_number=====', mob_number);
+  //   var mobileNoRegex = /^[6-9]{1}[0-9]{9}$/;
+  //   if (mob_number == '' || mob_number == 'undefined' || mob_number == null) {
+  //     setErrorMobNumber('Please Enter a vaild Mobile Number');
+  //   } else if (!mobileNoRegex.test(mob_number)) {
+  //     setErrorMobNumber('Please Enter a Valid Mobile Number');
+  //   } else {
+  //     setErrorMobNumber(null);
+  //   }
+  // };
+
+  const HandleloginWithPhone = async () => {
+    setButtonLoading(true);
+    const obj = {
+      mobileNumber: phoneNo,
+    };
+    const res = await LoginWithPhone(obj);
+    if (res?.data) {
+      setButtonLoading(false);
+      if (res.data.message == 'OTP Sent Successfully') {
+        dispatch(setUserPhoneNUmber(phoneNo));
+        navigation.navigate('Otp');
+      }
+      console.log('response:', res.data);
     } else {
-      setErrorMobNumber(null);
+      setButtonLoading(false);
+      console.log('catch error of :', res);
+      console.log('catch error:', res.response.data.message);
+      if (
+        res.response.data.message ==
+        '"mobileNumber" must be greater than or equal to 1000000000'
+      ) {
+        Toast.show('Please Enter a valid phone number', Toast.SHORT);
+      }
     }
   };
 
@@ -79,6 +115,7 @@ function LoginPhone({navigation}) {
             <TextInput
               style={styles.input}
               placeholder="Mobile Number"
+              placeholderTextColor={'gray'}
               keyboardType="number-pad"
               maxLength={10}
               value={phoneNo}
@@ -88,14 +125,15 @@ function LoginPhone({navigation}) {
               }}
             />
             {ErrorMobNumber != null ? <Text>{ErrorMobNumber}</Text> : null}
-
             <CustomButton
               Title={'LOGIN'}
-              onPress={() => loginUser()}
+              onPress={() => HandleloginWithPhone()}
               style={styles.btnStyle}
+              loading={buttonLoading}
+              loadingColor={'#fff'}
+              loadingSize={25}
             />
             <Text style={styles.texting2}>Or Login with</Text>
-
             <View
               style={{
                 //backgroundColor: 'pink',
@@ -248,6 +286,7 @@ const styles = StyleSheet.create({
     marginLeft: responsiveWidth(4.1),
   },
   input: {
+    color: 'gray',
     height: responsiveHeight(7),
     margin: 14,
     borderWidth: 0.8,

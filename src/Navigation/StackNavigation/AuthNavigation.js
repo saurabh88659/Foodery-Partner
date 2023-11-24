@@ -3,7 +3,6 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../../Screens/Login';
 import {headerNone} from '../../Utils/Config';
-
 import ViewList from '../../Screens/ViewList';
 import ViewDetails from '../../Screens/ViewDetails';
 import Search from '../../Screens/Search';
@@ -35,8 +34,10 @@ export default function AuthNavigation() {
         component={LoginPhone}
         options={headerNone}
       />
+
       <Stack.Screen name="Otp" component={Otp} options={headerNone} />
       <Stack.Screen name="Login" component={Login} options={headerNone} />
+
       <Stack.Screen
         name="BottomNavigation"
         component={BottomNavigation}

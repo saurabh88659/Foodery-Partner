@@ -6,8 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ImageBackground,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Color from '../Utils/Color';
 import {
   responsiveHeight,
@@ -15,13 +16,33 @@ import {
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
 import CustomButton from '../component/CustomButton/CustomButton';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoggedIn} from '../features/auth/auth.reducer';
+import {handleGetAllOutOfStock} from '../features/APIs/apiRequest';
+import {set} from 'date-fns';
+import AllProductCategory from './AllProductCategory';
+import {setDesireFunctionKey} from '../features/requireDataReducer/requiredata.reducer';
 
-export default function Profile({navigation}) {
+export default function Profile({}) {
+  const userData = useSelector(state => state.requiredata.userData);
+
+  const dispatch = useDispatch();
   const [isModalVisible, setModalVisible] = React.useState(false);
+  const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    console.log('hello');
+    await AsyncStorage.clear();
+    dispatch(setLoggedIn(false));
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -30,19 +51,28 @@ export default function Profile({navigation}) {
   return (
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor={Color.Green_Top} />
-
       {/* -------------------------header--------------------------- */}
       <View style={styles.header}>
         <View style={styles.one}></View>
         <View style={styles.main}>
+          {/* <View style={styles.imageContainer}></View> */}
           <View style={styles.imageContainer}>
-            {/* <Image
-              source={require('../Assests/Images/fruits.png')}
-              style={{
-                width: responsiveWidth(100),
-                height: responsiveHeight(100),
-              }}
-            /> */}
+            <ImageBackground
+              source={require('../Assests/Images/profilePicture123.png')}
+              style={styles.imagebox}>
+              {userData.profileImageUrl ? (
+                <Image
+                  source={{uri: userData.profileImageUrl}}
+                  style={{
+                    width: responsiveWidth(27),
+                    height: responsiveWidth(27),
+                    borderRadius: responsiveWidth(32),
+                    resizeMode: 'cover',
+                    alignSelf: 'center',
+                  }}
+                />
+              ) : null}
+            </ImageBackground>
           </View>
         </View>
         <TouchableOpacity
@@ -51,6 +81,7 @@ export default function Profile({navigation}) {
           <Icon name="edit" color={'white'} size={18} />
         </TouchableOpacity>
       </View>
+
       {/* ------------------------------body------------------------------ */}
       <TouchableOpacity
         style={styles.card}
@@ -58,9 +89,11 @@ export default function Profile({navigation}) {
         <Icon name="edit" color={Color.DARK_PURPLE} size={18} />
         <Text style={styles.texting}>Wallet</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.card1}
-        onPress={() => navigation.navigate('Order')}>
+        // onPress={() => navigation.navigate('Order')}>
+        onPress={() => navigation.navigate('Booking')}>
         <MaterialCommunityIcons
           name="calendar-text-outline"
           color={Color.DARK_PURPLE}
@@ -68,9 +101,10 @@ export default function Profile({navigation}) {
         />
         <Text style={styles.texting}>My Order</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.card1}
-        onPress={() => navigation.navigate('ViewList')}>
+        onPress={() => navigation.navigate('AllOutofStockProductScreen')}>
         <MaterialCommunityIcons
           name="cube-off-outline"
           color={Color.DARK_PURPLE}
@@ -78,6 +112,17 @@ export default function Profile({navigation}) {
         />
         <Text style={styles.texting}>Out Of stock Items</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.card1}
+        onPress={() => {
+          navigation.navigate('AllProductCategory'),
+            dispatch(setDesireFunctionKey(true));
+        }}>
+        <FontAwesome5 name="plus-square" color={Color.DARK_PURPLE} size={19} />
+        <Text style={styles.texting}>Add Products</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.card1}
         onPress={() => navigation.navigate('About')}>
@@ -116,9 +161,7 @@ export default function Profile({navigation}) {
         />
         <Text style={styles.texting}>Logout</Text>
       </TouchableOpacity>
-
       {/* /--------------------------------------Modal------------------------------/ */}
-
       <Modal
         isVisible={isModalVisible}
         swipeDirection="left"
@@ -128,9 +171,11 @@ export default function Profile({navigation}) {
           style={{
             backgroundColor: Color.WHITE,
             width: responsiveWidth(90),
-            height: responsiveHeight(15),
-            borderRadius: 10,
+            height: responsiveHeight(20),
+            borderRadius: 5,
             alignItems: 'center',
+            justifyContent: 'space-between',
+            // marginVertical: 50,
           }}>
           <Text
             style={{
@@ -147,14 +192,19 @@ export default function Profile({navigation}) {
               width: responsiveWidth(80),
               height: responsiveHeight(7),
               //backgroundColor: Color.WHITE,
-              marginTop: responsiveHeight(2),
+              // marginTop: responsiveHeight(2),
               flexDirection: 'row',
-              justifyContent: 'space-evenly',
+              // justifyContent: 'space-evenly',
               alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: responsiveHeight(3),
+              // marginHorizontal: responsiveWidth(8),
+              // marginHorizontal,
+              paddingHorizontal: 15,
             }}>
             <CustomButton
               Title={'Yes'}
-              onPress={() => navigation.navigate('LoginPhone')}
+              onPress={() => handleLogout()}
               style={styles.btnStyle}
             />
             <CustomButton
@@ -175,11 +225,12 @@ const styles = StyleSheet.create({
     backgroundColor: Color.BG,
   },
   header: {
-    height: responsiveHeight(18),
+    height: responsiveHeight(16),
     width: responsiveWidth(100),
     backgroundColor: Color.Green_Top,
     flexDirection: 'row',
   },
+
   one: {
     height: responsiveHeight(20),
     width: responsiveWidth(15),
@@ -187,10 +238,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingBottom: responsiveHeight(5),
   },
+
   main: {
     height: responsiveHeight(20),
     width: responsiveWidth(70),
-    //backgroundColor: 'blue',
+    // backgroundColor: 'blue',
   },
   imageContainer: {
     height: responsiveWidth(32),
@@ -229,12 +281,25 @@ const styles = StyleSheet.create({
   btnStyle: {
     backgroundColor: Color.Green_Top,
     height: responsiveHeight(5),
-    width: responsiveWidth(25),
+    width: responsiveWidth(32),
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: responsiveWidth(2),
     borderColor: Color.Green_Top,
     borderWidth: 1,
+  },
+  imagebox: {
+    borderWidth: 1,
+    height: responsiveWidth(28),
+    width: responsiveWidth(28),
+    borderRadius: 100,
+    alignSelf: 'center',
+    zIndex: 0,
+    borderColor: 'grey',
+    backgroundColor: 'white',
+    // borderColor: 'grey',
+    justifyContent: 'center',
+    // backgroundColor: 'red',
   },
 });

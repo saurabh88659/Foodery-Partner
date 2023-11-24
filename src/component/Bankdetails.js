@@ -29,55 +29,55 @@ import {
 } from 'react-native-responsive-dimensions';
 import CustomRadioButton from './CustomRadioButton';
 import ImagePicker from 'react-native-image-crop-picker';
+import Custombtn from './CustomButton/Custombtn';
+import Color from '../Utils/Color';
+import {Instance} from '../features/commonservice';
+import {handleBankDetail} from '../features/APIs/apiRequest';
+import Toast from 'react-native-simple-toast';
+import {setLoggedIn} from '../features/auth/auth.reducer';
+import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import AllProductCategory from '../Screens/AllProductCategory';
+
 // {onPress, selected, children}
 
 export default function Bankdetails() {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [bankName, onBankName] = useState('');
   const [ifscCode, onIfscCode] = useState('');
   const [accountHolder, onAccountHolder] = useState('');
-  const [bankAccount, onBankAccount] = useState('');
+  const [bankAccountNumber, setbankAccountNumber] = useState('');
   const [upiNumber, setUpiNumber] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false);
 
-  const bankDetail = async () => {
-    // if (!accountHolder || !bankAccount || !ifscCode || !bankName) {
-    //   Alert.alert('Please fill all the fields!');
-    //   return console.log('No field is filled up'); // do whatever you want to display
-    // }
-    const token = await AsyncStorage.getItem('token');
-    console.log(
-      token,
-      '---------->i am token mai hu tokennnnnnnnnnnnnnnnnnnnnnnnnnn',
-    );
-
-    const axiosConfig = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let Bank = {
+  const submitBankDetails = async () => {
+    setButtonLoading(true);
+    const bankdataobj = {
       bankName: bankName,
-      accountNumber: bankAccount,
+      accountNumber: bankAccountNumber,
       accountHolder: accountHolder,
       ifscCode: ifscCode,
       upi: upiNumber,
     };
-    console.log('bank-------->', Bank);
-
-    try {
-      const resp = await axios({
-        url: 'http://192.168.68.118:8000/api/vendor/addBankAccount',
-        headers: axiosConfig,
-        data: Bank,
-        method: 'PUT',
-      });
-      console.log('resp--->>>', resp.data);
-    } catch (error) {
-      console.log('errrr----->>>', error.response?.data);
-      //Toast.show(error.response?.data);
+    const res = await handleBankDetail(bankdataobj);
+    if (res.data) {
+      setButtonLoading(false);
+      console.log('res of submitBankDetails', res.data);
+      if (res.data.success) {
+        Toast.show(res.data.message, Toast.SHORT);
+        navigation.replace('AllProductCategory');
+        dispatch(setLoggedIn(true));
+      }
+    } else {
+      setButtonLoading(false);
+      console.log('error of submitBankDetails', res?.response?.data?.message);
+      Toast.show(res?.response?.data?.message, Toast.SHORT);
     }
   };
 
   return (
-    <View>
+    <View style={{paddingBottom: 170}}>
       <Text
         style={{
           color: Colors.BLACK,
@@ -99,8 +99,8 @@ export default function Bankdetails() {
           elevation: 2,
         }}
         keyboardType="number-pad"
-        onChangeText={onBankAccount}
-        value={bankAccount}
+        onChangeText={setbankAccountNumber}
+        value={bankAccountNumber}
       />
 
       <Text
@@ -178,21 +178,45 @@ export default function Bankdetails() {
       <Text
         style={{
           color: Colors.BLACK,
-          fontWeight: 'bold',
-          fontSize: 16,
+          fontWeight: '500',
+          fontSize: 19,
           alignSelf: 'center',
-          paddingVertical: 10,
+          paddingVertical: 15,
         }}>
         OR
       </Text>
 
       <View
         style={{
-          backgroundColor: 'green',
+          // backgroundColor: 'red',
           width: responsiveWidth(92),
           height: responsiveHeight(10),
+          marginHorizontal: 10,
           alignSelf: 'center',
+          height: 150,
+          justifyContent: 'center',
+          borderRadius: 5,
+          backgroundColor: '#fff',
+          elevation: 2,
+          borderColor: Color.LIGHT_Gray,
+          borderWidth: 1,
         }}>
+        <Text
+          style={{
+            top: -9,
+            color: Colors.BLACK,
+            fontWeight: 'bold',
+            fontSize: 12,
+            // textAlign: 'left',
+            paddingVertical: 5,
+            alignSelf: 'center',
+            // marginLeft: ,
+            // marginHorizontal: 10,
+            height: 30,
+            // backgroundColor: 'red',
+          }}>
+          UPI ID
+        </Text>
         <Text
           style={{
             color: Colors.BLACK,
@@ -200,10 +224,20 @@ export default function Bankdetails() {
             fontSize: 12,
             textAlign: 'left',
             paddingVertical: 5,
-            marginLeft: 2,
+            // marginLeft: ,
+            marginHorizontal: 10,
           }}>
           Enter UPI ID
         </Text>
+        <View
+          style={{
+            height: 1,
+            // width: '100%',
+            backgroundColor: '#000',
+            // marginHorizontal: 10,
+            marginBottom: 5,
+            marginHorizontal: 10,
+          }}></View>
 
         <View
           style={{
@@ -214,18 +248,17 @@ export default function Bankdetails() {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            paddingHorizontal: 10,
           }}>
           <TextInput
             placeholder="ex.mobilenumber@upi"
             keyboardType="email-address"
             style={{
               backgroundColor: Colors.WHITE,
-
-              height: responsiveHeight(5),
-              width: responsiveWidth(70),
+              height: responsiveHeight(5.5),
+              width: responsiveWidth(60),
               borderRadius: 4,
               paddingLeft: 8,
-
               color: '#000',
               //elevation: 2,
               borderWidth: 1,
@@ -236,11 +269,12 @@ export default function Bankdetails() {
             onChangeText={setUpiNumber}
             value={upiNumber}
           />
+
           <TouchableOpacity
             style={{
               backgroundColor: Colors.DARK_GREEN,
-              width: responsiveWidth(20),
-              height: responsiveHeight(4),
+              width: responsiveWidth(23),
+              height: responsiveHeight(4.1),
               borderRadius: 5,
               justifyContent: 'center',
               alignItems: 'center',
@@ -258,16 +292,18 @@ export default function Bankdetails() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <TouchableOpacity
-        onPress={() => bankDetail()}
-        style={{
-          backgroundColor: 'pink',
-          width: responsiveWidth(90),
-          height: responsiveHeight(4),
-        }}>
-        <Text>Hellooooo</Text>
-      </TouchableOpacity>
+      <View style={{paddingHorizontal: 20, marginTop: 20}}>
+        <Custombtn
+          title={'NEXT'}
+          color={'#ffff'}
+          onPress={() => {
+            submitBankDetails();
+          }}
+          loadingColor={'#ffff'}
+          loadingSize={27}
+          loading={buttonLoading}
+        />
+      </View>
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   SafeAreaView,
@@ -22,8 +22,81 @@ import {
 import Color from '../Utils/Color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HeaderHome from '../component/HeaderHome';
+import {
+  handleGetAllproductCategory,
+  handleGetSelectedproducts,
+  handleInStockOutStockFunctionality,
+} from '../features/APIs/apiRequest';
+import Toast from 'react-native-simple-toast';
+import Header from '../component/Header';
+import {useSelector} from 'react-redux';
 
-function Store({navigation}) {
+function Store({navigation, route}) {
+  const [allCategoryProducts, setAllCategoryProducts] = useState();
+  const [refreshKey, setRefreshKey] = useState(0);
+  const userData = useSelector(state => state.requiredata.userData);
+
+  console.log('userData====>', JSON.stringify(userData._id));
+
+  // useEffect(() => {
+  //   // GetAllproductCategory();
+  // }, [refreshKey]);
+
+  const requireData = route.params.data;
+  console.log('itemId====>', requireData);
+
+  const GetSelectedproducts = async () => {
+    const res = await handleGetSelectedproducts(requireData.itemId);
+    console.log('GetSelectedproducts res ==========>', res.data);
+    if (res.data.result) {
+      setAllCategoryProducts(res.data.result);
+    } else {
+      console.log('GetAllproductCategory error===', res);
+    }
+  };
+
+  useEffect(() => {
+    GetSelectedproducts();
+  }, [refreshKey]);
+
+  const InStockStockFun = async productId => {
+    console.log('run InStockStockFun');
+    const handleInStockOutStockFunctionalityObj = {
+      inStock: true,
+      vendorId: userData._id,
+      productId: productId,
+    };
+    const res = await handleInStockOutStockFunctionality({
+      handleInStockOutStockFunctionalityObj,
+    });
+    console.log('res of InstockOutStockFun', res.data);
+    if (res.data.status) {
+      setRefreshKey(refreshKey + 1);
+      Toast.show(res.data.message, Toast.SHORT);
+    } else {
+      console.log('error of InstockOutStockFun==', res);
+    }
+  };
+
+  const OutStockStockFun = async productId => {
+    console.log('run OutStockStockFun');
+    const handleInStockOutStockFunctionalityObj = {
+      inStock: false,
+      vendorId: userData._id,
+      productId: productId,
+    };
+    const res = await handleInStockOutStockFunctionality({
+      handleInStockOutStockFunctionalityObj,
+    });
+    console.log('res of InstockOutStockFun', res.data);
+    if (res.data.status) {
+      setRefreshKey(refreshKey + 1);
+      Toast.show(res.data.message, Toast.SHORT);
+    } else {
+      console.log('error of InstockOutStockFun==', res);
+    }
+  };
+
   const items = [
     {
       id: 0,
@@ -73,8 +146,10 @@ function Store({navigation}) {
   ];
 
   const renderItem = ({item}) => {
+    console.log('item of getproductof Catagory', item);
     return (
       <View
+        key={refreshKey}
         style={{
           flexDirection: 'row',
           flexWrap: 'wrap',
@@ -82,9 +157,11 @@ function Store({navigation}) {
           backgroundColor: Color.BG,
           justifyContent: 'space-between',
           paddingBottom: 10,
+          // height: 200,
         }}>
         <View
           style={{
+            // height: 170,
             backgroundColor: '#fff',
             marginHorizontal: 16,
             marginVertical: 6,
@@ -97,7 +174,8 @@ function Store({navigation}) {
             //paddingHorizontal: responsiveWidth(6),
           }}>
           <Image
-            source={require('../Assests/Images/fruits.png')}
+            // source={require('../Assests/Images/fruits.png')}
+            source={{uri: item.productImage}}
             style={{
               height: responsiveWidth(15),
               width: responsiveWidth(24),
@@ -106,7 +184,9 @@ function Store({navigation}) {
             }}
           />
           <View style={{width: responsiveWidth(37)}}>
-            <Text style={styles.texting4}>{item.ProductName}</Text>
+            <Text numberOfLines={1} style={styles.texting4}>
+              {item.productName}
+            </Text>
           </View>
 
           <View
@@ -117,15 +197,19 @@ function Store({navigation}) {
               width: responsiveWidth(37),
               paddingVertical: responsiveHeight(1),
             }}>
-            <Text style={styles.texting4}>{item.Rate}</Text>
-
+            <Text style={styles.texting4}>₹ {item.productPrice}</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ViewDetails')}
+              // onPress={() => navigation.navigate('ViewDetails')}
+              onPress={() =>
+                item.inStock
+                  ? OutStockStockFun(item._id)
+                  : InStockStockFun(item._id)
+              }
               activeOpacity={0.7}
               style={{
                 alignItems: 'center',
                 backgroundColor: Color.WHITE,
-                borderColor: Color.LIGHT_GREEN,
+                borderColor: item.inStock ? Color.LIGHT_GREEN : Color.red,
                 borderWidth: 0.5,
                 borderRadius: 2,
               }}>
@@ -133,14 +217,16 @@ function Store({navigation}) {
                 style={{
                   padding: 2,
                   fontSize: responsiveFontSize(1.5),
-                  color: Color.LIGHT_GREEN,
+                  color: item.inStock ? Color.LIGHT_GREEN : Color.red,
                 }}>
-                In Stock
+                {/* {item.productStock == 'yes' ? 'In Stock' : 'Out Stock'} */}
+                {item.inStock ? 'In Stock' : 'Out Stock'}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-        <View
+
+        {/* <View
           style={{
             backgroundColor: '#fff',
             marginHorizontal: 12,
@@ -196,7 +282,7 @@ function Store({navigation}) {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </View>
     );
   };
@@ -204,10 +290,13 @@ function Store({navigation}) {
   const [text, onChangeText] = React.useState('');
   const [password, setPassword] = React.useState('');
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView key={refreshKey} style={styles.container}>
       <StatusBar />
+      {/* <HeaderHome navigation={navigation} />
+       */}
 
-      <View style={styles.loginbox}>
+      <Header Title={'Products'} onPress={() => navigation.goBack()} />
+      {/* <View style={styles.loginbox}>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.img}></View>
           <View style={styles.store}>
@@ -242,11 +331,16 @@ function Store({navigation}) {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
-      <Text style={styles.texting1}>Fruits & Vegetables</Text>
+      <Text style={styles.texting1}>{requireData.categoryName}</Text>
       <View style={{paddingBottom: responsiveHeight(22)}}>
-        <FlatList data={items} renderItem={renderItem} />
+        <FlatList
+          numColumns={2}
+          data={allCategoryProducts}
+          renderItem={renderItem}
+        />
+        {/* <FlatList numColumns={2} data={items} renderItem={renderItem} /> */}
       </View>
     </SafeAreaView>
   );

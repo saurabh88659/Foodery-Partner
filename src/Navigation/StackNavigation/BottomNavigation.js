@@ -1,9 +1,7 @@
 import React from 'react';
 import {AnimatedTabBarNavigator} from 'react-native-animated-nav-tab-bar';
 import {NavigationContainer} from '@react-navigation/native';
-
 import Icon from 'react-native-vector-icons/FontAwesome5';
-
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Store from '../../Screens/Home';
 import Wallet from '../../Screens/Wallet';
@@ -12,9 +10,11 @@ import Profile from '../../Screens/Profile';
 import Color from '../../Utils/Color';
 import ViewDetails from '../../Screens/ViewDetails';
 import Order from '../../Screens/Order';
+import OrderHistory from '../../Screens/OrderHistory';
+import OrderAndTransactionHistoryScreen from '../../Screens/OrderAndTransactionHistoryScreen';
+import MyOrderHistory from '../../Screens/MyOrderHistory';
 
 const Tabs = AnimatedTabBarNavigator();
-
 export default function BottomNavigation() {
   return (
     // <NavigationContainer>
@@ -41,7 +41,7 @@ export default function BottomNavigation() {
       />
       <Tabs.Screen
         name="Wallet"
-        component={Wallet}
+        component={MyOrderHistory}
         options={{
           tabBarIcon: ({focused, color, size}) => (
             <Fontisto
