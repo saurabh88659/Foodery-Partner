@@ -30,29 +30,35 @@ import {
 } from '../features/APIs/apiRequest';
 import Toast from 'react-native-simple-toast';
 import moment from 'moment-timezone';
+import {ActivityIndicator} from 'react-native-paper';
 
 export default function Notification({navigation}) {
   const [allNotifications, setAllNotifications] = useState([]);
   const [refresh, setRfresh] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     GetVendorOrderNotification();
   }, []);
 
   const GetVendorOrderNotification = async () => {
+    setLoading(true);
     setRfresh(true);
     const res = await handleGetVendorOrderNotification();
     console.log(
-      'res of GetVendorOrderNotification======>>',
+      '####res of GetVendorOrderNotification======>>',
       JSON.stringify(res.data),
     );
-    if (res.data.result) {
+    if (res.data?.result) {
       setRfresh(false);
       setAllNotifications(res.data.result);
+      setLoading(false);
+
       // if(res.data.message=="Data Not Founded"){
       // }
     } else {
       setRfresh(false);
+      setLoading(false);
       console.log('error of GetVendorOrderNotification==', res);
     }
   };
@@ -88,10 +94,7 @@ export default function Notification({navigation}) {
   };
 
   const renderItem = ({item}) => (
-    console.log(
-      'item of get allnotifications===>>>',
-      JSON.stringify(item.orderId),
-    ),
+    console.log('item of get allnotifications===>>>', JSON.stringify(item)),
     (
       <View
         style={{
@@ -126,10 +129,10 @@ export default function Notification({navigation}) {
             Product Details
           </Text>
           {item?.orderIdMongo?.orderedProducts.map((product, index) => {
-            console.log(
-              'item of get orderedProducts===>>>',
-              JSON.stringify(product),
-            );
+            // console.log(
+            //   'item of get orderedProducts===>>>',
+            //   JSON.stringify(product),
+            // );
             return (
               <View
                 key={index}
@@ -277,7 +280,6 @@ export default function Notification({navigation}) {
             </Text>
           </View>
         </View>
-
         {item?.orderIdMongo?.vendorStatus == 'pending' ? (
           <View
             style={{
@@ -346,6 +348,14 @@ export default function Notification({navigation}) {
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor={Color.Green_Top} />
       <Header Title={'Notification'} onPress={() => navigation.goBack('')} />
+
+      {/* {loading?(<ActivityIndicator/>):(
+
+
+
+
+      )} */}
+
       {allNotifications.length > 0 ? (
         <FlatList
           data={allNotifications}

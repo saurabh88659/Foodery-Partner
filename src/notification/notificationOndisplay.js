@@ -27,8 +27,6 @@ const getDeviceToken = async () => {
 };
 
 export async function notificationListeners() {
-
-  
   //on display====
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!=============>', remoteMessage);
@@ -36,6 +34,7 @@ export async function notificationListeners() {
   });
 
   // //=======on backgraoung=========
+
   // messaging().setBackgroundMessageHandler(async remoteMessage => {
   //   NotificationOnScreen(remoteMessage);
   //   console.log(

@@ -40,6 +40,7 @@ function AllProductsItem({navigation, route}) {
   }, [refreshKey]);
   const requireData = route.params.data;
   console.log('requireData====>>>====>', requireData);
+
   const GetAllproductItems = async () => {
     const res = await handleGetAllproductCategory(requireData.itemId);
     console.log('GetAllproductCategory res =====>', res.data);

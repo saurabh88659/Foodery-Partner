@@ -100,7 +100,7 @@ function Order({navigation}) {
         showsVerticalScrollIndicator={false}>
         {orderdata.map(
           (item, index) => (
-            console.log('item===', JSON.stringify(item)),
+            console.log('item=======>>>>', JSON.stringify(item)),
             (
               <View
                 key={index}
@@ -185,8 +185,8 @@ function Order({navigation}) {
                       {item.orderedProducts?.map(
                         (item, index) => (
                           console.log(
-                            'item====>ofproductName ',
-                            item.productId.productName,
+                            'item====>ofproductName in order  ',
+                            item,
                           ),
                           (
                             <Text
@@ -236,10 +236,11 @@ function Order({navigation}) {
                           {item.delieveryAddress?.city}
                         </Text>
                       </View>
-
                       <View>
                         <TouchableOpacity
-                          onPress={() => navigation.navigate('ViewDetails')}
+                          onPress={() =>
+                            navigation.navigate('ViewDetails', {data: item})
+                          }
                           style={{
                             backgroundColor: Color.Green_Top,
                             width: responsiveWidth(28),

@@ -36,6 +36,7 @@ import {el} from 'date-fns/locale';
 import {
   setAdminIsAccepted,
   setUserData,
+  setVendorId,
 } from '../features/requireDataReducer/requiredata.reducer';
 import AllOutofStockProductScreen from './AllOutofStockProductScreen';
 function Otp({navigation}) {
@@ -85,10 +86,12 @@ function Otp({navigation}) {
       otp: otp,
       deviceToken: fcmToken,
     };
+
     console.log('====obj====', obj);
     const res = await OtpVerification(obj);
+    console.log('res of HandleOtpVerification===>', res.data);
     if (res?.data) {
-      setButtonLoading(false);
+      dispatch(setVendorId(res.data.vendor_id));
       console.log(
         'response of HandleOtpVerification ======>:',
         res.data.message,
@@ -102,6 +105,7 @@ function Otp({navigation}) {
           res.data.message == 'Already Registered..'
         ) {
           navigation.replace('Registration');
+          setButtonLoading(false);
         } else if (res.data.message == 'Welcome back') {
           const res = await handleUserGetData();
           dispatch(setUserData(res.data.result));
@@ -111,23 +115,33 @@ function Otp({navigation}) {
           );
           if (res.data.result.status == 'accepted') {
             dispatch(setLoggedIn(true));
+            setButtonLoading(false);
           } else if (res.data.result.status == 'underReview') {
             dispatch(setLoggedIn(true));
             dispatch(setAdminIsAccepted(true));
+            setButtonLoading(false);
           } else if (res.data.result.status == 'complete') {
             dispatch(setLoggedIn(false));
+            setButtonLoading(false);
+
             navigation.replace('AllProductCategory');
           } else if (res.data.result.status == 'pending') {
+            navigation.replace('Registration');
             dispatch(setLoggedIn(false));
+            setButtonLoading(false);
+
             navigation.replace('AllOutofStockProductScreen');
           } else if (res.data.result.status == 'rejected') {
             dispatch(setLoggedIn(false));
+            setButtonLoading(false);
+
             navigation.navigate('AdminRejectedScreen');
           } else {
             dispatch(setLoggedIn(false));
+            setButtonLoading(false);
           }
         }
-        setButtonLoading(false);
+        // setButtonLoading(false);
       }
     } else {
       setButtonLoading(false);

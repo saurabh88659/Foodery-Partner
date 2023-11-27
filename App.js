@@ -15,6 +15,9 @@ import LoginPhone from './src/Screens/LoginPhone';
 import Otp from './src/Screens/Otp';
 import messaging from '@react-native-firebase/messaging';
 import AllProductCategory from './src/Screens/AllProductCategory';
+import TransactionDetailsScreen from './src/Screens/TransactionDetailsAccountReceiveScreen';
+import TransactionDetailsAccountReceiveScreen from './src/Screens/TransactionDetailsAccountReceiveScreen';
+import TransactionDetailsWalletReceiveScreen from './src/Screens/TransactionDetailsWalletReceiveScreen';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -34,11 +37,9 @@ const App = () => {
   return (
     <NavigationContainer>
       {loggedIn ? <MainStack /> : <AuthStack />}
-      {/* <AllProductCategory /> */}
     </NavigationContainer>
   );
 };
-
 const AppWarpper = () => {
   return (
     <Provider store={store}>

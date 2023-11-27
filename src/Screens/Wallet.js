@@ -246,12 +246,11 @@ export default function Wallet({navigation}) {
         }}>
         Order History
       </Text>
-
-      <FlatList
+      {/* <FlatList
         data={walletData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-      />
+      /> */}
     </SafeAreaView>
   );
 }

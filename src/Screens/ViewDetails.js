@@ -15,6 +15,7 @@ import {
 import React, {useState} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
+import moment from 'moment';
 
 //import ImagePicker from 'react-native-image-crop-picker';
 import {
@@ -22,11 +23,17 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
+import {useSelector} from 'react-redux';
 
 const {height, width} = Dimensions.get('window');
 
-function ViewDetails({navigation}) {
-  const data = [
+function ViewDetails({navigation, route}) {
+  const userData = useSelector(state => state.requiredata.userData);
+  console.log('useerdata -->', userData);
+  const data = route.params.data;
+  console.log('data===???', JSON.stringify(data));
+
+  const data1 = [
     {
       productname: 'Bread',
       NoOfitem: '2',
@@ -163,7 +170,7 @@ function ViewDetails({navigation}) {
                 padding: 2,
                 color: Color.WHITE,
               }}>
-              Prakash Singh
+              {userData.firstName} {userData.lastName}
             </Text>
             <Text
               style={{
@@ -216,7 +223,8 @@ function ViewDetails({navigation}) {
                   color: Color.BLACK,
                   textAlignVertical: 'center',
                 }}>
-                123457689879655
+                {/* 123457689879655 */}
+                {data.orderId}
               </Text>
             </View>
 
@@ -229,12 +237,16 @@ function ViewDetails({navigation}) {
               }}>
               <View style={{marginTop: 3}}>
                 <Text
+                  numberOfLines={1}
                   style={{
                     fontSize: responsiveFontSize(1.5),
                     color: Color.BLACK,
                     fontWeight: 'normal',
+                    width: '120%',
+                    textAlign: 'left',
+                    // backgroundColor: 'red',
                   }}>
-                  Priya Singh
+                  {data.delieveryAddress.nearby_landmark}
                 </Text>
                 <Text
                   style={{
@@ -242,7 +254,8 @@ function ViewDetails({navigation}) {
                     color: Color.BLACK,
                     fontWeight: 'normal',
                   }}>
-                  334-C, Pralrati Apartments,
+                  {data.delieveryAddress.floor}
+                  {/* 334-C, Pralrati Apartments, */}
                 </Text>
                 <Text
                   style={{
@@ -250,33 +263,38 @@ function ViewDetails({navigation}) {
                     color: Color.BLACK,
                     fontWeight: 'normal',
                   }}>
-                  Sector-43, Noida-201307
+                  {data.delieveryAddress.city}-{data.delieveryAddress.pinCode}{' '}
+                  {data.delieveryAddress.state}
+                  {/* Sector-43, Noida-201307 */}
                 </Text>
 
-                <Text
+                {/* <Text
                   style={{
                     fontSize: responsiveFontSize(1.5),
                     color: Color.BLACK,
                     fontWeight: 'normal',
                   }}>
                   8907654321
-                </Text>
+                </Text> */}
               </View>
-              <View
+            </View>
+            <View
+              style={
+                {
+                  // backgroundColor: 'green',
+                  // alignItems: 'flex-end',
+                  // justifyContent: 'flex-start',
+                }
+              }>
+              <Text
                 style={{
-                  //backgroundColor: 'green',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
+                  fontSize: responsiveFontSize(1.5),
+                  color: Color.DARK_GRAY,
+                  fontWeight: 'normal',
                 }}>
-                <Text
-                  style={{
-                    fontSize: responsiveFontSize(1.5),
-                    color: Color.BLACK,
-                    fontWeight: 'normal',
-                  }}>
-                  June 28 2023 12:35 PM
-                </Text>
-              </View>
+                {moment(data.createdAt).format('DDMMM, YYYY [at] hh:mm A')}
+                {/* June 28 2023 12:35 PM */}
+              </Text>
             </View>
           </View>
 
@@ -291,14 +309,12 @@ function ViewDetails({navigation}) {
                 alignItems: 'flex-start',
                 borderBottomWidth: 0.8,
                 paddingHorizontal: 5,
-
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}>
               <Text style={styles.TextDetails}>Order Details</Text>
               <Text style={styles.TextDetails1}>Active</Text>
             </View>
-
             <View
               style={{
                 paddingVertical: 8,
@@ -308,58 +324,42 @@ function ViewDetails({navigation}) {
                 marginHorizontal: 10,
               }}>
               <Text style={styles.ItemText1}>Products Purchased</Text>
-
               <Text style={styles.ItemText1}>Price</Text>
             </View>
-            <View
-              style={{
-                paddingVertical: 8,
-                //backgroundColor: 'teal',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={styles.ItemText}>Bread*1</Text>
 
-              <Text style={styles.ItemText}>Rs. 40</Text>
-            </View>
-            <View
-              style={{
-                paddingVertical: 8,
-                //backgroundColor: 'teal',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={styles.ItemText}>Bread*1</Text>
-
-              <Text style={styles.ItemText}>Rs. 40</Text>
-            </View>
-            <View
-              style={{
-                paddingVertical: 8,
-                //backgroundColor: 'teal',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={styles.ItemText}>Bread*1</Text>
-
-              <Text style={styles.ItemText}>Rs. 40</Text>
-            </View>
-
-            <View
-              style={{
-                paddingVertical: 8,
-                //backgroundColor: 'teal',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={styles.ItemText}>Bread*1</Text>
-
-              <Text style={styles.ItemText}>Rs. 40</Text>
-            </View>
+            {data.orderedProducts.map((item, index) => {
+              console.log('item of purchased ==', item);
+              return (
+                <View>
+                  <View
+                    key={index} // Make sure to include a unique key for each item in a list
+                    style={{
+                      paddingVertical: 8,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginHorizontal: 10,
+                    }}>
+                    <Text style={styles.ItemText}>
+                      {item.productId.productName}*{item.productId.quantity}
+                    </Text>
+                    <Text style={styles.ItemText}>
+                      Rs. {item.productId.productPrice}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginHorizontal: 10,
+                    }}>
+                    <Text style={{color: 'black', fontSize: 15}}>
+                      Item Total
+                    </Text>
+                    <Text>{item.quantity}</Text>
+                  </View>
+                </View>
+              );
+            })}
           </View>
 
           <View
@@ -369,15 +369,15 @@ function ViewDetails({navigation}) {
               borderBottomLeftRadius: 20,
               borderBottomRightRadius: 20,
             }}>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginHorizontal: 10,
               }}>
               <Text style={{color: 'black', fontSize: 15}}>Item Total</Text>
-              <Text>Rs162</Text>
-            </View>
+              <Text>{data.totalAmount}</Text>
+            </View> */}
 
             <View
               style={{
@@ -387,11 +387,11 @@ function ViewDetails({navigation}) {
                 marginTop: 10,
               }}>
               <View style={{flexDirection: 'row'}}>
-                <Text style={{fontSize: 10}}>Delivery Fee</Text>
+                <Text style={{fontSize: 12}}>Delivery Fee</Text>
               </View>
 
-              <Text style={{fontSize: 10, color: Color.LIGHT_GREEN}}>
-                RS 5{' '}
+              <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
+                Rs {data.deliveryFee}
               </Text>
             </View>
 
@@ -404,10 +404,12 @@ function ViewDetails({navigation}) {
                 borderStyle: 'dashed',
               }}>
               <View style={{flexDirection: 'row'}}>
-                <Text style={{fontSize: 10}}>GST</Text>
+                <Text style={{fontSize: 12}}>GST</Text>
               </View>
 
-              <Text style={{fontSize: 10, color: Color.LIGHT_GREEN}}>Rs 0</Text>
+              <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
+                Rs {data.gst}
+              </Text>
             </View>
 
             <View
@@ -415,10 +417,12 @@ function ViewDetails({navigation}) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 marginHorizontal: 10,
-                marginTop: 2,
+                // marginTop: 2,
               }}>
               <Text style={{fontSize: 12, color: 'black'}}>To Pay</Text>
-              <Text style={{fontSize: 12, color: 'black'}}>Rs. 162</Text>
+              <Text style={{fontSize: 12, color: 'black'}}>
+                Rs. {data.totalAmount}
+              </Text>
             </View>
           </View>
         </View>
@@ -450,9 +454,7 @@ const styles = StyleSheet.create({
   ItemText: {
     fontSize: responsiveFontSize(1.5),
     alignSelf: 'center',
-
     textAlign: 'center',
-
     color: 'black',
   },
   ItemText1: {

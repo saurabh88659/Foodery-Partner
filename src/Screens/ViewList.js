@@ -12,6 +12,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   responsiveHeight,
@@ -35,6 +36,7 @@ function Store({navigation, route}) {
   const [allCategoryProducts, setAllCategoryProducts] = useState();
   const [refreshKey, setRefreshKey] = useState(0);
   const userData = useSelector(state => state.requiredata.userData);
+  const [loading, setLoading] = useState(false);
 
   console.log('userData====>', JSON.stringify(userData._id));
 
@@ -44,13 +46,15 @@ function Store({navigation, route}) {
 
   const requireData = route.params.data;
   console.log('itemId====>', requireData);
-
   const GetSelectedproducts = async () => {
+    setLoading(true);
     const res = await handleGetSelectedproducts(requireData.itemId);
     console.log('GetSelectedproducts res ==========>', res.data);
     if (res.data.result) {
       setAllCategoryProducts(res.data.result);
+      setLoading(false);
     } else {
+      setLoading(false);
       console.log('GetAllproductCategory error===', res);
     }
   };
@@ -294,7 +298,6 @@ function Store({navigation, route}) {
       <StatusBar />
       {/* <HeaderHome navigation={navigation} />
        */}
-
       <Header Title={'Products'} onPress={() => navigation.goBack()} />
       {/* <View style={styles.loginbox}>
         <View style={{flexDirection: 'row'}}>
@@ -335,12 +338,40 @@ function Store({navigation, route}) {
 
       <Text style={styles.texting1}>{requireData.categoryName}</Text>
       <View style={{paddingBottom: responsiveHeight(22)}}>
-        <FlatList
-          numColumns={2}
-          data={allCategoryProducts}
-          renderItem={renderItem}
-        />
-        {/* <FlatList numColumns={2} data={items} renderItem={renderItem} /> */}
+        {loading ? (
+          <View
+            style={{
+              height: '95%',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+          </View>
+        ) : allCategoryProducts && allCategoryProducts.length > 0 ? (
+          <FlatList
+            numColumns={2}
+            data={allCategoryProducts}
+            renderItem={renderItem}
+          />
+        ) : (
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '95%',
+            }}>
+            <Text style={{color: '#000', fontSize: 20}}>
+              No Product Selected
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

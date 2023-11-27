@@ -325,7 +325,6 @@ export const handleRejectNotification = async orderId => {
 
 export const handleGetVendorOrderNotification = async () => {
   const authHeaders = await getAuthHeaders();
-
   try {
     const result = await Instance(
       'GET',
@@ -385,6 +384,39 @@ export const handleGetTransactionHiostory = async data => {
       'GET',
       BASE_URL + `vendor/getTransaction`,
       authHeaders,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleGetTransaction = async data => {
+  const authHeaders = await getAuthHeaders();
+  console.log('token===', authHeaders);
+  try {
+    const result = await Instance(
+      'GET',
+      BASE_URL + 'vendor/getTransaction',
+      authHeaders,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleTransactionAccountDeails = async data => {
+  console.log(' handleTransactionAccountDeails data====>>===', data);
+  const authHeaders = await getAuthHeaders();
+  const object = {_id: data};
+  console.log('token===', authHeaders);
+  try {
+    const result = await Instance(
+      'POST',
+      BASE_URL + `vendor/getTransactionAmountDetails`,
+      authHeaders,
+      object,
     );
     return result;
   } catch (error) {

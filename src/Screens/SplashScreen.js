@@ -51,11 +51,14 @@ const SplashScreen = () => {
   const checkLogin = async () => {
     const token = await getOfflineData(CONSTANTS.TOKEN);
     const res = await handleUserGetData();
-    console.log(
-      '++++status in spalsh screen ====>',
-      JSON.stringify(res?.data?.result?.status),
-    );
+    console.log('splash token====>', token);
+    // console.log(
+    //   '++++status in spalsh screen ====>',
+    //   JSON.stringify(res?.data?.result?.status),
+    // );
     if (token) {
+      console.log('splash token====>', token);
+      console.log('res.data splash-====>', res.data);
       if (res.data) {
         dispatch(setUserData(res?.data?.result));
         if (res.data.result.status == 'accepted') {
@@ -79,14 +82,19 @@ const SplashScreen = () => {
       } else {
         if (res.response.status == 454) {
           console.log('bye');
-          dispatch(setLoggedIn(false));
           navigation.navigate('LoginPhone');
+          dispatch(setLoggedIn(false));
+        }
+        if (res.response) {
+          navigation.navigate('LoginPhone');
+          dispatch(setLoggedIn(false));
+          console.log('@@@resonse==>', res.response);
         }
       }
     } else {
       // dispatch(setLoggedIn(true));
       dispatch(setLoggedIn(false));
-      console.log('go to login page==>');
+      console.log('go to login page=====>>');
       navigation.navigate('LoginPhone');
     }
   };

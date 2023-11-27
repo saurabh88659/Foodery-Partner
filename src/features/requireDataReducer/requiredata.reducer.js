@@ -6,6 +6,7 @@ const initialState = {
   userData: null,
   selectedItem: [],
   desireFunctionKey: false,
+  vendorId: null,
 };
 
 const requireDataSlice = createSlice({
@@ -26,6 +27,9 @@ const requireDataSlice = createSlice({
     },
     setDesireFunctionKey: (state, action) => {
       state.desireFunctionKey = action.payload;
+    },
+    setVendorId: (state, action) => {
+      state.vendorId = action.payload;
     },
 
     toggleSelection: (state, action) => {
@@ -57,4 +61,5 @@ export const {
   toggleSelection,
   setDesireFunctionKey,
   setSelectedItemnull,
+  setVendorId,
 } = requireDataSlice.actions;

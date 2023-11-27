@@ -37,6 +37,8 @@ import OrderAndTransactionHistoryScreen from '../Screens/OrderAndTransactionHist
 import ViewTransactionDetailsScreen from '../Screens/ViewTransactionDetailsScreen';
 import SelectedTempProductsScreen from '../Screens/SelectedTempProductsScreen';
 import MyOrderHistory from '../Screens/MyOrderHistory';
+import TransactionDetailsAccountReceiveScreen from '../Screens/TransactionDetailsAccountReceiveScreen';
+import TransactionDetailsWalletReceiveScreen from '../Screens/TransactionDetailsWalletReceiveScreen';
 
 const MainStack = () => {
   useEffect(() => {
@@ -107,6 +109,16 @@ const MainStack = () => {
         <Stack.Screen name="Terms" component={Terms} options={headerNone} />
         <Stack.Screen name="Privacy" component={Privacy} options={headerNone} />
         <Stack.Screen name="Wallet" component={Wallet} options={headerNone} />
+        <Stack.Screen
+          name="TransactionDetailsAccountReceiveScreen"
+          component={TransactionDetailsAccountReceiveScreen}
+          options={headerNone}
+        />
+        <Stack.Screen
+          name="TransactionDetailsWalletReceiveScreen"
+          component={TransactionDetailsWalletReceiveScreen}
+          options={headerNone}
+        />
 
         <Stack.Screen
           name="AllOutofStockProductScreen"

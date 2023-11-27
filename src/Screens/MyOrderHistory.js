@@ -8,6 +8,8 @@ import {
   FlatList,
   Image,
   ImageBackground,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import Color from '../Utils/Color';
 import {
@@ -20,19 +22,42 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Header from '../component/Header';
 import {
+  handleGetAllCategoryList,
   handleGetOrder,
+  handleGetTransaction,
   handleVEndorCurrentBalance,
 } from '../features/APIs/apiRequest';
+import moment from 'moment';
+import TransactionDetailsAccountReceiveScreen from './TransactionDetailsAccountReceiveScreen';
+import TransactionDetailsWalletReceiveScreen from './TransactionDetailsWalletReceiveScreen';
 
 export default function MyOrderHistory({navigation}) {
   const [loading, setLoading] = useState(false);
   const [vendorCurrentBalance, setVendorCurrentBalance] = useState('');
   const [walletData, setWalletData] = useState([]);
+  const [orderdata, setOrderdata] = useState([]);
+  const [transaction, setTransaction] = useState([]);
 
   useEffect(() => {
     GetVendorCurrentBalance();
-    getWalletDetails();
+    // getWalletDetails();
+    GetTransaction();
   }, []);
+
+  const GetTransaction = async () => {
+    setLoading(true);
+    const res = await handleGetTransaction();
+    console.log('res of GetTransaction===> ', JSON.stringify(res.data));
+    if (res.data.status) {
+      setTransaction(res.data.result);
+      // setLoading(false);
+      // console.log('res of GetAllCategoryList', res.data.result);
+      // setAllCategory(res.data.result);
+    } else {
+      // setLoading(false);
+      console.log('error==', res);
+    }
+  };
 
   const GetVendorCurrentBalance = async () => {
     setLoading(true);
@@ -173,6 +198,116 @@ export default function MyOrderHistory({navigation}) {
     );
   };
 
+  const renderTransactionItem = (item, index) => {
+    console.log('item ofrenderTransactionItem>>>>  >', JSON.stringify(item));
+    if (item.type === 'deducted') {
+      return (
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: Color.DARK_GRAY,
+            // paddingVertical: 10,
+            // paddingHorizontal: 15,
+            marginHorizontal: 10,
+            paddingTop: 25,
+            paddingBottom: 10,
+          }}
+          key={index}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('TransactionDetailsAccountReceiveScreen', {
+                data: item._id,
+              })
+            }>
+            <Text style={{color: '#000', marginBottom: 4, fontSize: 15}}>
+              Account Number: XXXXXXXXXXXX
+              {item.vendorId.bankDetails.accountNumber.toString().slice(-4)}
+            </Text>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{color: '#000', marginBottom: 4, fontSize: 15}}>
+                Bank Name: {item.vendorId.bankDetails.bankName}
+              </Text>
+              <Text style={{fontSize: 16, color: 'red'}}>-{item.amount}</Text>
+            </View>
+
+            <Text style={{color: Color.DARK_GRAY, fontSize: 13}}>
+              {moment(item.createdAt).format('DD MMM, YYYY [at] hh:mm A')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (item.type === 'receive') {
+      return (
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: Color.DARK_GRAY,
+            // paddingVertical: 10,
+            // paddingHorizontal: 15,
+            marginHorizontal: 10,
+            paddingTop: 20,
+            paddingBottom: 7,
+          }}
+          key={index}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('TransactionDetailsWalletReceiveScreen', {
+                data: item,
+              })
+            }>
+            <Text
+              style={{
+                color: '#000',
+                marginBottom: 4,
+                fontSize: 15,
+                // backgroundColor: 'red',
+              }}>
+              Order ID : {item._id}
+            </Text>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text
+                  style={{
+                    color: '#000',
+                    marginBottom: 4,
+                    fontSize: 15,
+                    // backgroundColor: 'red',
+                  }}>
+                  Items :{/* {item.productName} */}
+                </Text>
+                {item.orderedProducts.map((item, index) => {
+                  return (
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        color: '#000',
+                        marginBottom: 4,
+                        fontSize: 15,
+                        left: 3,
+                        width: '78%',
+                      }}>
+                      {item.productId.productName}
+                    </Text>
+                  );
+                })}
+              </View>
+
+              <Text style={{color: 'green', marginBottom: 4, fontSize: 16}}>
+                +{item.vendorAmount}
+              </Text>
+            </View>
+
+            <Text style={{color: Color.DARK_GRAY, fontSize: 13}}>
+              {moment(item.createdAt).format('DD MMM, YYYY [at] hh:mm A')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor={'#29C17E'} />
@@ -236,22 +371,27 @@ export default function MyOrderHistory({navigation}) {
         </View>
       </View>
 
-      <Text
+      {/* <Text
         style={{
           fontWeight: 'bold',
           fontSize: responsiveFontSize(2.4),
-          padding: 15,
-          marginLeft: responsiveWidth(7),
+          // padding: 5,
+          marginLeft: responsiveWidth(10),
           color: Color.BLACK,
+          paddingTop: 5,
         }}>
         Order History
-      </Text>
-
-      <FlatList
+      </Text> */}
+      {/* <FlatList
         data={walletData}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-      />
+      /> */}
+      <ScrollView>
+        <View>
+          {transaction.map((item, index) => renderTransactionItem(item, index))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

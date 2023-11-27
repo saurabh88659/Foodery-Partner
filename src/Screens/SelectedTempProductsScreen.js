@@ -49,6 +49,8 @@ function SelectedTempProductsScreen({navigation, route}) {
   // console.log('++++d++++++ifferkey===>', differKey);
 
   const userData = useSelector(state => state.requiredata.userData);
+  const vendorId = useSelector(state => state.requiredata.vendorId);
+  console.log('+++vendor id on seleted item temp list', vendorId);
   console.log('userData at SelectedTempProductsScreen=====>>', userData);
   const selectedItems = useSelector(state => state.requiredata.selectedItem);
   console.log('####selected items=============>', selectedItems);
@@ -61,8 +63,9 @@ function SelectedTempProductsScreen({navigation, route}) {
     setButtonLoading(true);
     const res = await SelectedItemSubmit({
       selectedItems: selectedItems,
-      userId: userData._id,
+      userId: vendorId,
     });
+
     console.log('res of handleSelectedItemSubmit ===>', res.data);
     if (res.data.status) {
       Toast.show('Products added successfully', Toast.SHORT);

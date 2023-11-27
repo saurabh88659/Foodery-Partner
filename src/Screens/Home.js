@@ -126,6 +126,7 @@ function Home({navigation}) {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: 10,
+
           // paddingBottom: 30,
         }}>
         <View

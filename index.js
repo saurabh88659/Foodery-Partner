@@ -9,16 +9,13 @@ import {Alert} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  
   console.log(
-    '--------------------Message Handle in the background !',
+    '--------------------Message Handle in the background (running in back)!',
     remoteMessage,
   );
 });
 
-
 messaging().onMessage(async remoteMessage => {
-
   console.log('---------------On Message Forground.....', remoteMessage);
 });
 
