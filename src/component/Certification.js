@@ -17,11 +17,11 @@ import {useDispatch} from 'react-redux';
 export default function Certification() {
   const dispatch = useDispatch();
   // const [selectedFile, setSelectedFile] = React.useState(null);
-  const [selectedFssai, setSelectedFssai] = React.useState(null);
-  const [selectedIso, setSelectedIso] = React.useState(null);
-  const [selectedFPO, setSelectedFPO] = React.useState(null);
-  const [selectedFssc, setSelectedFssc] = React.useState(null);
-  const [selectedAgmark, setSelectedAgmark] = React.useState(null);
+  const [selectedFssai, setSelectedFssai] = React.useState('');
+  const [selectedIso, setSelectedIso] = React.useState('');
+  const [selectedFPO, setSelectedFPO] = React.useState('');
+  const [selectedFssc, setSelectedFssc] = React.useState('');
+  const [selectedAgmark, setSelectedAgmark] = React.useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
 
   // const pickDocument = async () => {
@@ -152,22 +152,39 @@ export default function Certification() {
     return formData;
   };
 
+  const validateFields = () => {
+    return (
+      selectedFssai &&
+      selectedIso &&
+      selectedFPO &&
+      selectedFssc &&
+      selectedAgmark
+    );
+  };
+
   const submitCertification = async () => {
-    Toast.show('Please wait...', Toast.LONG);
-    setButtonLoading(true);
-    const formData = await HandleuploadAllCertificate();
-    console.log('formData===>', formData);
-    const res = await handleCertification(formData);
-    if (res?.data) {
+    if (validateFields()) {
+      console.log('if==');
+      Toast.show('Please wait...', Toast.LONG);
+      setButtonLoading(true);
+      const formData = await HandleuploadAllCertificate();
+      console.log('formData===>', formData);
+      const res = await handleCertification(formData);
       setButtonLoading(false);
-      console.log('response data:===', res?.data);
-      if (res.data.status) {
-        Toast.show(res.data.message, Toast.SHORT);
-        dispatch(setCurrentStep(3));
+      console.log('res.data===off submitCertification', res.data);
+      if (res?.data.status) {
+        console.log('response data:===', res?.data);
+        if (res.data.status) {
+          Toast.show(res.data.message, Toast.SHORT);
+          dispatch(setCurrentStep(3));
+        }
+      } else {
+        setButtonLoading(false);
+        console.log('catch error:==', res);
       }
     } else {
-      setButtonLoading(false);
-      console.log('catch error:==', result);
+      Toast.show('All fields are required', Toast.SHORT);
+      console.log('else--');
     }
   };
 

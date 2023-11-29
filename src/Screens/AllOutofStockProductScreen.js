@@ -35,6 +35,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 function AllOutofStockProductScreen({navigation, route}) {
   const userData = useSelector(state => state.requiredata.userData);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [getAllOutOfStockPrduct, setGetAllOutOfStockPrduct] = useState([]);
   useEffect(() => {
@@ -42,10 +43,16 @@ function AllOutofStockProductScreen({navigation, route}) {
   }, [refreshKey]);
 
   const getAllOutOfStock = async () => {
+    setLoading(true);
     const res = await handleGetAllOutOfStock();
+
     console.log('res of get all out of stock=====>', res.data);
     if (res.data.status) {
+      setLoading(false);
       setGetAllOutOfStockPrduct(res.data.result);
+    } else {
+      setLoading(false);
+      console.log('errrpr in getAllOutOfStock==>', res);
     }
   };
 
@@ -155,34 +162,68 @@ function AllOutofStockProductScreen({navigation, route}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      <Header Title={'Out of Stock'} />
-      <View
-        style={{
-          paddingBottom: responsiveHeight(1),
-          paddingTop: 20,
-          // backgroundColor: 'red',
-          flex: 1,
-        }}>
-        {getAllOutOfStockPrduct.length < 0 ? (
-          <View
-            style={{
-              // backgroundColor: 'red',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={{fontSize: 18, color: Color.DARK_GRAY}}>
-              No Data Found
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            numColumns={2}
-            data={getAllOutOfStockPrduct}
-            renderItem={renderItem}
-          />
-        )}
-      </View>
+      <Header Title={'Out of Stock'} onPress={() => navigation.goBack('')} />
+
+      {loading ? (
+        <View
+          style={{
+            height: '80%',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : (
+        <View
+          style={{
+            paddingBottom: responsiveHeight(1),
+            paddingTop: 20,
+            // backgroundColor: 'red',
+            flex: 1,
+          }}>
+          {getAllOutOfStockPrduct.length > 0 ? (
+            <FlatList
+              numColumns={2}
+              data={getAllOutOfStockPrduct}
+              renderItem={renderItem}
+            />
+          ) : (
+            <View
+              style={{
+                // backgroundColor: 'red',
+                // flex: 1,
+                height: '80%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: Color.DARK_GRAY,
+                  fontWeight: '500',
+                }}>
+                Stocked up!
+              </Text>
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: Color.DARK_GRAY,
+                  fontWeight: '300',
+                  marginTop: 10,
+                }}>
+                No items are out of stock
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 }

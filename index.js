@@ -10,7 +10,7 @@ import messaging from '@react-native-firebase/messaging';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log(
-    '--------------------Message Handle in the background (running in back)!',
+    '--------------------Message Handle in the background (running in back inde.js)!',
     remoteMessage,
   );
 });

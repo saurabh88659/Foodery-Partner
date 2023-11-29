@@ -1,8 +1,8 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const AdminRejectedScreen = () => {
+const AdminSusPendScreen = () => {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View
@@ -12,7 +12,7 @@ const AdminRejectedScreen = () => {
           alignItems: 'center',
           marginBottom: 100,
         }}>
-        <AntDesign name={'exclamationcircleo'} size={45} color={'red'} />
+        <FontAwesome name={'user-times'} size={45} color={'red'} />
         <Text
           style={{
             color: '#000',
@@ -20,7 +20,7 @@ const AdminRejectedScreen = () => {
             marginTop: 25,
             fontWeight: '700',
           }}>
-          Account Rejected
+          Account Suspended
         </Text>
         <Text
           style={{
@@ -30,12 +30,11 @@ const AdminRejectedScreen = () => {
             // fontWeight: '700',
             textAlign: 'center',
           }}>
-          Sorry, your account has been rejected because you submmited wrong
-          documents.
+          This Account has been suspended.
         </Text>
       </View>
     </View>
   );
 };
-export default AdminRejectedScreen;
+export default AdminSusPendScreen;
 const styles = StyleSheet.create({});

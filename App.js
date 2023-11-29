@@ -18,6 +18,7 @@ import AllProductCategory from './src/Screens/AllProductCategory';
 import TransactionDetailsScreen from './src/Screens/TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsAccountReceiveScreen from './src/Screens/TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsWalletReceiveScreen from './src/Screens/TransactionDetailsWalletReceiveScreen';
+import AdminRejectedScreen from './src/Screens/AdminRejectedScreen';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,10 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      {loggedIn ? <MainStack /> : <AuthStack />}
+      {/* {loggedIn ? <MainStack /> : <AuthStack />} */}
+      <Registration />
+
+      {/* <AdminRejectedScreen /> */}
     </NavigationContainer>
   );
 };

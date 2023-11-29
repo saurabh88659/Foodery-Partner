@@ -41,6 +41,7 @@ function AllPoductCategoryComponent({navigation, onPress}) {
   console.log('home.js userData===>', userData);
   const [allCategory, setAllCategory] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const GetAllCategoryList = async () => {
     setLoading(true);
     const res = await handleGetAllCategoryList();
@@ -58,6 +59,7 @@ function AllPoductCategoryComponent({navigation, onPress}) {
   }, []);
 
   const renderItem = ({item}) => {
+    console.log('itmm of get all product==>', item);
     return (
       <View
         style={{

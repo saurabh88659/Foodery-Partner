@@ -89,7 +89,6 @@ export default function Profile({}) {
         <Icon name="edit" color={Color.DARK_PURPLE} size={18} />
         <Text style={styles.texting}>Wallet</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         style={styles.card1}
         // onPress={() => navigation.navigate('Order')}>
@@ -162,6 +161,7 @@ export default function Profile({}) {
         <Text style={styles.texting}>Logout</Text>
       </TouchableOpacity>
       {/* /--------------------------------------Modal------------------------------/ */}
+
       <Modal
         isVisible={isModalVisible}
         swipeDirection="left"

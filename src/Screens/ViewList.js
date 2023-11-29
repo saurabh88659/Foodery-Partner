@@ -43,9 +43,9 @@ function Store({navigation, route}) {
   // useEffect(() => {
   //   // GetAllproductCategory();
   // }, [refreshKey]);
-
   const requireData = route.params.data;
   console.log('itemId====>', requireData);
+
   const GetSelectedproducts = async () => {
     setLoading(true);
     const res = await handleGetSelectedproducts(requireData.itemId);
@@ -365,9 +365,14 @@ function Store({navigation, route}) {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              height: '95%',
+              height: '90%',
             }}>
-            <Text style={{color: '#000', fontSize: 20}}>
+            <Text
+              style={{
+                color: Color.DARK_GRAY,
+                fontSize: 21,
+                fontWeight: '600',
+              }}>
               No Product Selected
             </Text>
           </View>

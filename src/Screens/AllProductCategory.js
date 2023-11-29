@@ -162,7 +162,7 @@ function AllProductCategory({navigation, route}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'#29C17E'} barStyle={Color.WHITE} />
-      <Header Title={'Select Products'} />
+      <Header Title={'Select Products'} onPress={() => navigation.goBack('')} />
       <View style={{flex: 1}}>
         <View style={{paddingBottom: '0%'}}>
           {/* <FlatList data={allCategory} renderItem={renderItem} /> */}
@@ -179,7 +179,7 @@ function AllProductCategory({navigation, route}) {
             }}
             style={{
               width: '100%',
-              height: 55,
+              height: responsiveHeight('6'),
               backgroundColor: Color.DARK_GREEN,
               justifyContent: 'center',
               alignItems: 'center',

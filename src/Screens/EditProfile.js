@@ -35,15 +35,13 @@ import {
   handleUserGetData,
 } from '../features/APIs/apiRequest';
 import Toast from 'react-native-simple-toast';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 export default function EditProfile({navigation}) {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const userData = useSelector(state => state.requiredata.userData);
-  console.log(
-    'userData on edit profile=====>>',
-    JSON.stringify(userData.profileImageUrl),
-  );
+  console.log('userData on edit profile=====>>', JSON.stringify(userData));
   const [text, onChangeText] = React.useState('Amit kumar');
   const [text1, onChangeText1] = React.useState('10/08/1989');
   const [text2, onChangeText2] = React.useState('Vmart');
@@ -125,6 +123,7 @@ export default function EditProfile({navigation}) {
       type: imageData.mime,
       uri: imageData.path,
     });
+
     console.log('profile pic====>', JSON.stringify(profilePic));
     const res = await handleUpdateProfilePic(profilePic);
     if (res.data.status) {
@@ -214,7 +213,7 @@ export default function EditProfile({navigation}) {
             color: Color.BLACK,
           }}
           onChangeText={onChangeText1}
-          value={text1}
+          value={new Date(userData.DOB).toDateString()}
         />
       </TouchableOpacity>
       <TouchableOpacity activeOpacity={1} style={styles.card1}>
@@ -230,11 +229,13 @@ export default function EditProfile({navigation}) {
             color: Color.BLACK,
           }}
           onChangeText={onChangeText2}
-          value={new Date(userData.DOB).toDateString()}
+          value={userData.shopsDetails.state}
         />
       </TouchableOpacity>
+
       <TouchableOpacity activeOpacity={1} style={styles.card1}>
         <Icon name="map-marked-alt" color={Color.DARK_PURPLE} size={19} />
+
         <TextInput
           editable={false}
           style={{
@@ -267,7 +268,24 @@ export default function EditProfile({navigation}) {
             color: Color.BLACK,
           }}
           onChangeText={onChangeText4}
-          value={userData.shopsDetails.state}
+          value={userData.shopsDetails.city}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity activeOpacity={1} style={styles.card1}>
+        <FontAwesome6 name="location-dot" color={Color.DARK_PURPLE} size={19} />
+        <TextInput
+          editable={false}
+          style={{
+            //backgroundColor: 'skyblue',
+            width: responsiveWidth(72),
+            height: responsiveHeight(5),
+            marginLeft: 2,
+            padding: 5,
+            color: Color.BLACK,
+          }}
+          onChangeText={onChangeText4}
+          value={userData.shopsDetails.pin.toString()}
         />
       </TouchableOpacity>
 
@@ -343,7 +361,7 @@ export default function EditProfile({navigation}) {
             }}>
             <Text
               style={{color: Color.WHITE, fontSize: 17, fontWeight: 'bold'}}>
-              Take Photo
+              Take Photos
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

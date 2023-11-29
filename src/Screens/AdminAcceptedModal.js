@@ -10,15 +10,33 @@ import {
 import React, {useState} from 'react';
 import Modal from 'react-native-modal';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {setAdminIsAccepted} from '../features/requireDataReducer/requiredata.reducer';
+import {setLoggedIn} from '../features/auth/auth.reducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const AdminAcceptedModal = ({onCancel}) => {
+  const navigation = useNavigation();
   const adminIsAccepted = useSelector(
     state => state.requiredata.adminIsAccepted,
   );
+  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const exitAndRefreshApp = async () => {
+    BackHandler.exitApp();
+    // navigation.navigate('SplashScreen');
+    dispatch(setAdminIsAccepted(false));
+    dispatch(setLoggedIn(false));
+    await AsyncStorage.clear();
+  };
+
   return (
-    <Modal animationIn={'shake'} isVisible={adminIsAccepted}>
+    <Modal
+      transparent={false}
+      animationIn={'shake'}
+      isVisible={adminIsAccepted}>
       <View
         style={{
           backgroundColor: '#fff',
@@ -45,7 +63,7 @@ const AdminAcceptedModal = ({onCancel}) => {
           }}>
           <TouchableOpacity
             // onPress={onCancel}
-            onPress={() => BackHandler.exitApp()}
+            onPress={exitAndRefreshApp}
             style={{
               // elevation:10,
               height: 40,
@@ -78,6 +96,7 @@ const styles = StyleSheet.create({
     // marginTop: 22,
     // backgroundColor: 'rgba(1, 1, 1, 0.1)',
     height: '100%',
+    // backgroundColor: 'red',
   },
   modalView: {
     // margin: 20,

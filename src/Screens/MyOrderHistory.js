@@ -10,6 +10,7 @@ import {
   ImageBackground,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import Color from '../Utils/Color';
 import {
@@ -30,48 +31,54 @@ import {
 import moment from 'moment';
 import TransactionDetailsAccountReceiveScreen from './TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsWalletReceiveScreen from './TransactionDetailsWalletReceiveScreen';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 export default function MyOrderHistory({navigation}) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [vendorCurrentBalance, setVendorCurrentBalance] = useState('');
   const [walletData, setWalletData] = useState([]);
   const [orderdata, setOrderdata] = useState([]);
   const [transaction, setTransaction] = useState([]);
+  const isFocused = useIsFocused();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    GetVendorCurrentBalance();
-    // getWalletDetails();
-    GetTransaction();
-  }, []);
+    if (isFocused) {
+      GetVendorCurrentBalance();
+      GetTransaction();
+    }
+  }, [isFocused]);
 
   const GetTransaction = async () => {
-    setLoading(true);
+    // setLoading(true);
     const res = await handleGetTransaction();
     console.log('res of GetTransaction===> ', JSON.stringify(res.data));
     if (res.data.status) {
+      setLoading(false);
       setTransaction(res.data.result);
       // setLoading(false);
       // console.log('res of GetAllCategoryList', res.data.result);
       // setAllCategory(res.data.result);
     } else {
       // setLoading(false);
+      setLoading(false);
       console.log('error==', res);
     }
   };
 
   const GetVendorCurrentBalance = async () => {
-    setLoading(true);
+    // setLoading(true);
     const res = await handleVEndorCurrentBalance();
     if (res.data) {
-      setLoading(false);
+      // setLoading(false);
       setVendorCurrentBalance(res.data.vendorBalance);
       console.log(
         'res of GetVendorCurrentBalance===>at wallet',
         res.data.vendorBalance,
       );
     } else {
-      setLoading(false);
-      console.log(' GetVendorCurrentBalance error==', res.data);
+      // setLoading(false);
+      console.log(' GetVendorCurrentBalance error==', res);
     }
   };
 
@@ -83,6 +90,10 @@ export default function MyOrderHistory({navigation}) {
     } else {
       console.log('error of getWalletDetails===>', res);
     }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
   };
 
   const renderItem = ({item, index}) => {
@@ -313,85 +324,112 @@ export default function MyOrderHistory({navigation}) {
       <StatusBar backgroundColor={'#29C17E'} />
       {/* Header */}
       <Header Title={'My Wallet'} onPress={() => navigation.goBack('')} />
-
-      <View style={{width: responsiveWidth(100), backgroundColor: Color.WHITE}}>
+      {loading ? (
         <View
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: responsiveWidth(10),
-            height: responsiveHeight(7.5),
+            height: '75%',
+            width: '100%',
+            justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <View>
-            <Text
-              style={{
-                fontWeight: '800',
-                fontSize: responsiveFontSize(2.2),
-                color: Color.BLACK,
-              }}>
-              Current Balance
-            </Text>
-          </View>
+          {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : (
+        <View>
           <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+            style={{width: responsiveWidth(100), backgroundColor: Color.WHITE}}>
             <View
               style={{
-                height: 35,
-                width: 35,
-                borderRadius: 20,
-                backgroundColor: Color.WHITE,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginHorizontal: responsiveWidth(10),
+                height: responsiveHeight(7.5),
+                alignItems: 'center',
+              }}>
+              <View>
+                <Text
+                  style={{
+                    fontWeight: '800',
+                    fontSize: responsiveFontSize(2.2),
+                    color: Color.BLACK,
+                  }}>
+                  Current Balance
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    height: 35,
+                    width: 35,
+                    borderRadius: 20,
+                    backgroundColor: Color.WHITE,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderWidth: 1,
+                    borderColor: Color.LIGHT_Gray,
+                    marginHorizontal: 6,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: responsiveFontSize(2.5),
+                      color: Color.Green_Top,
+                      fontWeight: '700',
+                    }}>
+                    ₹
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontSize: responsiveFontSize(3.5),
+                    color: Color.BLACK,
+                  }}>
+                  {vendorCurrentBalance}
+                </Text>
+              </View>
+            </View>
+          </View>
+          {transaction.length > 0 ? (
+            <ScrollView
+            // refreshControl={
+            //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            // }
+            >
+              <View>
+                {transaction.map((item, index) =>
+                  renderTransactionItem(item, index),
+                )}
+              </View>
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                height: '75%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderWidth: 1,
-                borderColor: Color.LIGHT_Gray,
-                marginHorizontal: 6,
               }}>
               <Text
                 style={{
-                  fontSize: responsiveFontSize(2.5),
-                  color: Color.Green_Top,
-                  fontWeight: '700',
+                  color: Color.DARK_GRAY,
+                  fontSize: 21,
+                  fontWeight: '600',
                 }}>
-                ₹
+                No transactions available
               </Text>
             </View>
-            <Text
-              style={{
-                fontSize: responsiveFontSize(3.5),
-                color: Color.BLACK,
-              }}>
-              {vendorCurrentBalance}
-            </Text>
-          </View>
+          )}
         </View>
-      </View>
-
-      {/* <Text
-        style={{
-          fontWeight: 'bold',
-          fontSize: responsiveFontSize(2.4),
-          // padding: 5,
-          marginLeft: responsiveWidth(10),
-          color: Color.BLACK,
-          paddingTop: 5,
-        }}>
-        Order History
-      </Text> */}
-      {/* <FlatList
-        data={walletData}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      /> */}
-      <ScrollView>
-        <View>
-          {transaction.map((item, index) => renderTransactionItem(item, index))}
-        </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

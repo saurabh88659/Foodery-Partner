@@ -10,6 +10,7 @@ import {
   ImageBackground,
   FlatList,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Color from '../Utils/Color';
@@ -30,12 +31,12 @@ import {
 } from '../features/APIs/apiRequest';
 import Toast from 'react-native-simple-toast';
 import moment from 'moment-timezone';
-import {ActivityIndicator} from 'react-native-paper';
 
 export default function Notification({navigation}) {
   const [allNotifications, setAllNotifications] = useState([]);
   const [refresh, setRfresh] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  // const [refresh]
 
   useEffect(() => {
     GetVendorOrderNotification();
@@ -43,23 +44,34 @@ export default function Notification({navigation}) {
 
   const GetVendorOrderNotification = async () => {
     setLoading(true);
-    setRfresh(true);
     const res = await handleGetVendorOrderNotification();
     console.log(
       '####res of GetVendorOrderNotification======>>',
       JSON.stringify(res.data),
     );
     if (res.data?.result) {
-      setRfresh(false);
       setAllNotifications(res.data.result);
       setLoading(false);
-
-      // if(res.data.message=="Data Not Founded"){
-      // }
     } else {
-      setRfresh(false);
       setLoading(false);
       console.log('error of GetVendorOrderNotification==', res);
+    }
+  };
+
+  const refreshCom = async () => {
+    setRfresh(true);
+    const res = await handleGetVendorOrderNotification();
+    console.log(
+      '####res of refrsh GetVendorOrderNotification======>>',
+      JSON.stringify(res.data),
+    );
+    if (res.data?.result) {
+      setRfresh(false);
+      setAllNotifications(res.data.result);
+    } else {
+      setRfresh(false);
+
+      console.log('error of refrsh GetVendorOrderNotification==', res);
     }
   };
 
@@ -149,7 +161,7 @@ export default function Notification({navigation}) {
                     Product Name
                   </Text>
                   <Text style={{color: '#000', fontSize: 16}}>
-                    {product.productId.productName}
+                    {product.productId?.productName}
                   </Text>
                 </View>
 
@@ -173,7 +185,7 @@ export default function Notification({navigation}) {
                       // textDecorationLine: 'line-through',
                     }}>
                     {'\u20B9'}
-                    {product.productId.productPrice}
+                    {product?.productId?.productPrice}
                   </Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
@@ -187,7 +199,7 @@ export default function Notification({navigation}) {
                       // textDecorationLine: 'line-through',
                     }}>
                     {'\u20B9'}
-                    {product.productId.discountPrice}
+                    {product?.productId?.discountPrice}
                   </Text>
                 </View>
               </View>
@@ -284,7 +296,8 @@ export default function Notification({navigation}) {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              // justifyContent: 'space-between',
+              justifyContent: 'center',
               margin: 4,
               // width: 180,
               // backgroundColor: '#000',
@@ -294,7 +307,7 @@ export default function Notification({navigation}) {
               onPress={() => AcceptNotification(item.orderId)}
               style={{
                 height: 35,
-                width: '45%',
+                width: '100%',
                 backgroundColor: '#fff',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -305,7 +318,7 @@ export default function Notification({navigation}) {
               <Text style={{color: 'green', fontSize: 15}}>Accept</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => RejectNotification(item.orderId)}
               style={{
                 height: 35,
@@ -318,7 +331,7 @@ export default function Notification({navigation}) {
                 borderWidth: 1,
               }}>
               <Text style={{color: 'red', fontSize: 15}}>Reject</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         ) : (
           <View>
@@ -348,38 +361,47 @@ export default function Notification({navigation}) {
     <SafeAreaView style={styles.Container}>
       <StatusBar backgroundColor={Color.Green_Top} />
       <Header Title={'Notification'} onPress={() => navigation.goBack('')} />
-
-      {/* {loading?(<ActivityIndicator/>):(
-
-
-
-
-      )} */}
-
-      {allNotifications.length > 0 ? (
-        <FlatList
-          data={allNotifications}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refresh}
-              onRefresh={GetVendorOrderNotification}
-            />
-          }
-        />
-      ) : (
+      {loading ? (
         <View
           style={{
-            // backgroundColor: 'red',
-            height: '75%',
+            height: '80%',
+            width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text style={{color: 'grey', fontSize: 20, fontWeight: '700'}}>
-            NO DATA FOUND
-          </Text>
+          {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : (
+        <View style={{paddingBottom: 70}}>
+          {allNotifications.length > 0 ? (
+            <FlatList
+              data={allNotifications}
+              keyExtractor={item => item.id}
+              renderItem={renderItem}
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refresh} onRefresh={refreshCom} />
+              }
+            />
+          ) : (
+            <View
+              style={{
+                // backgroundColor: 'red',
+                height: '75%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{color: 'grey', fontSize: 20, fontWeight: '700'}}>
+                NO DATA FOUND
+              </Text>
+            </View>
+          )}
         </View>
       )}
     </SafeAreaView>

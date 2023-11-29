@@ -47,7 +47,6 @@ function SelectedTempProductsScreen({navigation, route}) {
   );
   // const differKey = route.params;
   // console.log('++++d++++++ifferkey===>', differKey);
-
   const userData = useSelector(state => state.requiredata.userData);
   const vendorId = useSelector(state => state.requiredata.vendorId);
   console.log('+++vendor id on seleted item temp list', vendorId);
@@ -65,7 +64,6 @@ function SelectedTempProductsScreen({navigation, route}) {
       selectedItems: selectedItems,
       userId: vendorId,
     });
-
     console.log('res of handleSelectedItemSubmit ===>', res.data);
     if (res.data.status) {
       Toast.show('Products added successfully', Toast.SHORT);
@@ -80,6 +78,7 @@ function SelectedTempProductsScreen({navigation, route}) {
 
   const DesireFunction = async () => {
     if (desireFunctionKey) {
+      console.log('desireFunctionKey=====>>>>', desireFunctionKey);
       setButtonLoading(true);
       const res = await SelectedItemSubmit({
         selectedItems: selectedItems,
@@ -212,7 +211,10 @@ function SelectedTempProductsScreen({navigation, route}) {
       {/* <View style={{paddingBottom: responsiveHeight(22)}}>
         <FlatList numColumns={2} data={selectedItems} renderItem={renderItem} />
       </View> */}
-      <SelectedTempProductsScreenComponent onPress={DesireFunction} />
+      <SelectedTempProductsScreenComponent
+        onPress={DesireFunction}
+        buttonLoading={buttonLoading}
+      />
     </SafeAreaView>
   );
 }

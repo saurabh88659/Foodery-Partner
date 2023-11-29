@@ -84,6 +84,7 @@ function LoginPhone() {
     const obj = {
       mobileNumber: phoneNo,
     };
+
     const res = await LoginWithPhone(obj);
     if (res?.data) {
       setButtonLoading(false);

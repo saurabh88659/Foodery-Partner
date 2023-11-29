@@ -11,8 +11,10 @@ import {
   Pressable,
   Dimensions,
   ImageBackground,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
 import moment from 'moment';
@@ -24,120 +26,49 @@ import {
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import {useSelector} from 'react-redux';
+import {
+  handleGetAllCategoryList,
+  handleGetOrderDetailsById,
+} from '../features/APIs/apiRequest';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const {height, width} = Dimensions.get('window');
 
 function ViewDetails({navigation, route}) {
+  const isFocused = useIsFocused();
   const userData = useSelector(state => state.requiredata.userData);
   console.log('useerdata -->', userData);
   const data = route.params.data;
   console.log('data===???', JSON.stringify(data));
+  const [refreshing, setRefreshing] = useState(false);
+  const [orderDetailsById, setOrderDetailsById] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const data1 = [
-    {
-      productname: 'Bread',
-      NoOfitem: '2',
-      ProductImage: 'Image',
-      ProductId: '1234455',
-      Price: '34',
-    },
-    {
-      productname: 'Buttor',
-      NoOfitem: '3',
-      ProductImage: 'Image',
-      ProductId: '1234455',
-      Price: '34',
-    },
-    {
-      productname: 'Jam',
-      NoOfitem: '1',
-      ProductImage: 'Image',
-      ProductId: '1234455',
-      Price: '34',
-    },
-    {
-      productname: 'Milk',
-      NoOfitem: '5',
-      ProductImage: 'Image',
-      ProductId: '1234455',
-      Price: '34',
-    },
-  ];
+  useEffect(() => {
+    if (isFocused) {
+      GetOrderDetailsById();
+    }
+  }, [isFocused]);
 
-  // let splitNumberToArray = preData?.phone?.split("", 2);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    GetOrderDetailsById();
+    setRefreshing(false);
+  }, []);
 
-  let header1 = 'Enter OTP';
-  // let f_number = parseFloat(splitNumberToArray?.toString().replace(/,/g, ""));
-  // let header2 = `We've sent a 6-digit verification code to your \nmobile number +91 ${f_number}********`;
-  const [state, setState] = useState({
-    otp: '',
-    isLoading: false,
-  });
+  const GetOrderDetailsById = async () => {
+    setLoading(true);
+    const res = await handleGetOrderDetailsById(data);
+    console.log('+++Res of GetOrderDetailsById===>>', JSON.stringify(res.data));
+    if (res.data.status) {
+      setLoading(false);
+      setOrderDetailsById(res.data.result);
+    } else {
+      setLoading(false);
+      console.log('error==', res);
+    }
+  };
 
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [modalVisible2, setModalVisible2] = React.useState(false);
-  const [colorChng, setcolorChng] = useState(false);
-  const [colorChng2, setcolorChng2] = useState(false);
-
-  // const [imageUrlPath, setImageUrlPath] = useState(null);
-
-  // async function SendOtpVerify() {
-  //   console.log('Press');
-
-  //   setModalVisible2(true);
-  // }
-
-  // async function VerificationOtp() {
-  //   if (state.otp == null) {
-  //     console.log('otp null');
-  //   } else {
-  //     console.log('OTP iisss', state.otp);
-  //     setModalVisible2(!modalVisible2);
-  //     setcolorChng(true);
-  //   }
-  // }
-
-  // async function VerifySelfi() {
-
-  //   ImagePicker.openCamera({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //   })
-  //     .then(image => {
-  //       console.log('Image Data......', image);
-  //       setImageUrlPath(image.path);
-  //       setcolorChng2(true);
-  //     })
-  //     .catch(err => {
-  //       console.log('Camera error--->', err);
-  //     });
-  // }
-
-  // async function SelFiapp() {
-
-  //   ImagePicker.openCamera({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //   })
-  //     .then(image => {
-  //       console.log('Image Data......', image);
-  //       setImageUrlPath(image.path);
-  //     })
-  //     .catch(err => {
-  //       console.log('Camera error--->', err);
-  //     });
-  // }
-
-  // async function SubmitSelf() {
-  //   if (imageUrlPath == null) {
-  //     console.log('path is nulll');
-  //   } else {
-  //     setModalVisible(!modalVisible);
-  //     setcolorChng2(true);
-  //   }
-  // }
   return (
     <SafeAreaView
       style={{
@@ -145,288 +76,321 @@ function ViewDetails({navigation, route}) {
         height: responsiveHeight(100),
       }}>
       <StatusBar backgroundColor={Color.Green_Top} barStyle={Color.WHITE} />
-      <View
-        style={{
-          // height: responsiveHeight(30),
-          width: responsiveWidth(100),
-          // backgroundColor: '#ffff',
-        }}>
-        <ImageBackground
-          source={require('../Assests/Images/Mask.png')}
-          style={{
-            height: responsiveWidth(50),
-            width: responsiveWidth(100),
-          }}>
-          <View
-            style={{
-              //backgroundColor: 'pink',
-              alignSelf: 'center',
-              marginTop: responsiveHeight(10),
-            }}>
-            <Text
-              style={{
-                fontSize: responsiveFontSize(2.5),
-                fontWeight: 'bold',
-                padding: 2,
-                color: Color.WHITE,
-              }}>
-              {userData.firstName} {userData.lastName}
-            </Text>
-            <Text
-              style={{
-                fontSize: responsiveFontSize(2.2),
-                fontWeight: 'bold',
-
-                color: Color.WHITE,
-                alignSelf: 'center',
-              }}>
-              My Order
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
+      <Header
+        Title={'Order Details'}
+        onPress={() => {
+          navigation.goBack();
+        }}
+      />
       {/* ...........................Time Of Order............................... */}
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}>
+      {loading ? (
         <View
           style={{
-            borderBottomLeftRadius: 20,
-            borderBottomRightRadius: 20,
-            elevation: 5,
+            height: '80%',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          <View
-            style={{
-              backgroundColor: Color.WHITE,
-              paddingHorizontal: 9,
-              //paddingVertical: 5,
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-
-                justifyContent: 'space-between',
-                //backgroundColor: 'yellow',
-              }}>
+          {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <View style={{marginTop: 30, paddingHorizontal: 10}}>
+            <View style={{marginBottom: 20}}>
               <Text
                 style={{
-                  fontSize: responsiveFontSize(1.8),
-                  fontWeight: 'bold',
-                  color: Color.Green_Top,
+                  fontSize: 20,
+                  textAlign: 'center',
+                  color: '#000',
+                  fontWeight: '500',
                 }}>
-                Customer Details
+                {orderDetailsById.deliveryBoyStatus === 'pending' &&
+                  'Looking for a delivery partner. Please wait...'}
+                {orderDetailsById.deliveryBoyStatus === 'accepted' &&
+                  'Delivery partner is on its way to pick an order from you.'}
+                {orderDetailsById.deliveryBoyStatus === 'pickedup' &&
+                  'Order has been picked up and is on its way.'}
+                {orderDetailsById.deliveryBoyStatus === 'delivered' &&
+                  'Success! order has been delivered.'}
               </Text>
-              <Text
+            </View>
+            {orderDetailsById.deliveryBoyStatus == 'accpet' && (
+              <View
                 style={{
-                  fontSize: responsiveFontSize(1.5),
-                  fontWeight: 'normal',
-                  color: Color.BLACK,
-                  textAlignVertical: 'center',
+                  backgroundColor: '#66cdaa',
+                  // paddingVertical: 15,
+                  borderRadius: 5,
+                  paddingHorizontal: 5,
+                  paddingTop: 6,
+                  paddingBottom: 15,
                 }}>
-                {/* 123457689879655 */}
-                {data.orderId}
-              </Text>
-            </View>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                //backgroundColor: 'purple',
-              }}>
-              <View style={{marginTop: 3}}>
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    fontSize: responsiveFontSize(1.5),
-                    color: Color.BLACK,
-                    fontWeight: 'normal',
-                    width: '120%',
-                    textAlign: 'left',
-                    // backgroundColor: 'red',
-                  }}>
-                  {data.delieveryAddress.nearby_landmark}
-                </Text>
                 <Text
                   style={{
-                    fontSize: responsiveFontSize(1.5),
-                    color: Color.BLACK,
-                    fontWeight: 'normal',
+                    fontSize: 17,
+                    fontWeight: '500',
+                    color: '#000',
+                    marginBottom: 8,
                   }}>
-                  {data.delieveryAddress.floor}
-                  {/* 334-C, Pralrati Apartments, */}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: responsiveFontSize(1.5),
-                    color: Color.BLACK,
-                    fontWeight: 'normal',
-                  }}>
-                  {data.delieveryAddress.city}-{data.delieveryAddress.pinCode}{' '}
-                  {data.delieveryAddress.state}
-                  {/* Sector-43, Noida-201307 */}
+                  Delivery Partner Details:
                 </Text>
 
-                {/* <Text
-                  style={{
-                    fontSize: responsiveFontSize(1.5),
-                    color: Color.BLACK,
-                    fontWeight: 'normal',
-                  }}>
-                  8907654321
-                </Text> */}
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  // backgroundColor: 'green',
-                  // alignItems: 'flex-end',
-                  // justifyContent: 'flex-start',
-                }
-              }>
-              <Text
-                style={{
-                  fontSize: responsiveFontSize(1.5),
-                  color: Color.DARK_GRAY,
-                  fontWeight: 'normal',
-                }}>
-                {moment(data.createdAt).format('DDMMM, YYYY [at] hh:mm A')}
-                {/* June 28 2023 12:35 PM */}
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              backgroundColor: Color.WHITE,
-              paddingVertical: responsiveHeight(2),
-              //backgroundColor: 'purple',
-            }}>
-            <View
-              style={{
-                alignItems: 'flex-start',
-                borderBottomWidth: 0.8,
-                paddingHorizontal: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text style={styles.TextDetails}>Order Details</Text>
-              <Text style={styles.TextDetails1}>Active</Text>
-            </View>
-            <View
-              style={{
-                paddingVertical: 8,
-                //backgroundColor: 'teal',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={styles.ItemText1}>Products Purchased</Text>
-              <Text style={styles.ItemText1}>Price</Text>
-            </View>
-
-            {data.orderedProducts.map((item, index) => {
-              console.log('item of purchased ==', item);
-              return (
-                <View>
-                  <View
-                    key={index} // Make sure to include a unique key for each item in a list
-                    style={{
-                      paddingVertical: 8,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginHorizontal: 10,
-                    }}>
-                    <Text style={styles.ItemText}>
-                      {item.productId.productName}*{item.productId.quantity}
-                    </Text>
-                    <Text style={styles.ItemText}>
-                      Rs. {item.productId.productPrice}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginHorizontal: 10,
-                    }}>
-                    <Text style={{color: 'black', fontSize: 15}}>
-                      Item Total
-                    </Text>
-                    <Text>{item.quantity}</Text>
-                  </View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{fontSize: 17, color: '#000', width: 80}}>
+                    Name
+                  </Text>
+                  <Text style={{fontSize: 17, color: '#000'}}>
+                    : Jogesh Patel
+                  </Text>
                 </View>
-              );
-            })}
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{fontSize: 17, color: '#000', width: 80}}>
+                    Contact{' '}
+                  </Text>
+                  <Text style={{fontSize: 17, color: '#000'}}>
+                    : 9786565674
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{fontSize: 17, color: '#000', width: 80}}>
+                    Order Id
+                  </Text>
+                  <Text style={{fontSize: 17, color: '#000'}}>
+                    : {orderDetailsById.orderId}
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
-
           <View
             style={{
-              backgroundColor: Color.WHITE,
-              paddingVertical: responsiveHeight(1),
               borderBottomLeftRadius: 20,
               borderBottomRightRadius: 20,
+              elevation: 5,
             }}>
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-              }}>
-              <Text style={{color: 'black', fontSize: 15}}>Item Total</Text>
-              <Text>{data.totalAmount}</Text>
-            </View> */}
-
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                marginTop: 10,
+                backgroundColor: Color.WHITE,
+                paddingHorizontal: 9,
+                //paddingVertical: 5,
               }}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={{fontSize: 12}}>Delivery Fee</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+
+                  justifyContent: 'space-between',
+                  //backgroundColor: 'yellow',
+                }}>
+                <Text
+                  style={{
+                    fontSize: responsiveFontSize(1.8),
+                    fontWeight: 'bold',
+                    color: Color.Green_Top,
+                  }}>
+                  Customer Details
+                </Text>
+                <Text
+                  style={{
+                    fontSize: responsiveFontSize(1.5),
+                    fontWeight: 'normal',
+                    color: Color.BLACK,
+                    textAlignVertical: 'center',
+                  }}>
+                  {/* 123457689879655 */}
+                  {data.orderId}
+                </Text>
               </View>
 
-              <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
-                Rs {data.deliveryFee}
-              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  justifyContent: 'space-between',
+                  //backgroundColor: 'purple',
+                }}>
+                <View style={{marginTop: 3}}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontSize: responsiveFontSize(1.5),
+                      color: Color.BLACK,
+                      fontWeight: 'normal',
+                      width: '120%',
+                      textAlign: 'left',
+                      // backgroundColor: 'red',
+                    }}>
+                    {orderDetailsById?.delieveryAddress?.nearby_landmark}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: responsiveFontSize(1.5),
+                      color: Color.BLACK,
+                      fontWeight: 'normal',
+                    }}>
+                    {orderDetailsById?.delieveryAddress?.floor}
+                    {/* 334-C, Pralrati Apartments, */}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: responsiveFontSize(1.5),
+                      color: Color.BLACK,
+                      fontWeight: 'normal',
+                    }}>
+                    {orderDetailsById?.delieveryAddress?.city}-
+                    {orderDetailsById?.delieveryAddress?.pinCode}{' '}
+                    {orderDetailsById?.delieveryAddress?.state}
+                    {/* Sector-43, Noida-201307 */}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={
+                  {
+                    // backgroundColor: 'green',
+                    // alignItems: 'flex-end',
+                    // justifyContent: 'flex-start',
+                  }
+                }>
+                <Text
+                  style={{
+                    fontSize: responsiveFontSize(1.5),
+                    color: Color.DARK_GRAY,
+                    fontWeight: 'normal',
+                  }}>
+                  {moment(data.createdAt).format('DDMMM, YYYY [at] hh:mm A')}
+                </Text>
+              </View>
             </View>
 
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                borderBottomWidth: 0.5,
-                borderStyle: 'dashed',
+                backgroundColor: Color.WHITE,
+                paddingVertical: responsiveHeight(2),
               }}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={{fontSize: 12}}>GST</Text>
+              <View
+                style={{
+                  alignItems: 'flex-start',
+                  borderBottomWidth: 0.8,
+                  paddingHorizontal: 5,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={styles.TextDetails}>Order Details</Text>
+                <Text style={styles.TextDetails1}>Active</Text>
+              </View>
+              <View
+                style={{
+                  paddingVertical: 8,
+                  //backgroundColor: 'teal',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 10,
+                }}>
+                <Text style={styles.ItemText1}>Products Purchased</Text>
+                <Text style={styles.ItemText1}>Price</Text>
               </View>
 
-              <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
-                Rs {data.gst}
-              </Text>
+              {orderDetailsById?.orderedProducts?.map((item, index) => {
+                console.log('item of purchased ==', item);
+                return (
+                  <View key={index}>
+                    <View
+                      key={index} // Make sure to include a unique key for each item in a list
+                      style={{
+                        paddingVertical: 8,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginHorizontal: 10,
+                      }}>
+                      <Text style={styles.ItemText}>
+                        {item.productId.productName}*{item.productId.quantity}
+                      </Text>
+                      <Text style={styles.ItemText}>
+                        Rs. {item.productId.productPrice}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginHorizontal: 10,
+                      }}>
+                      <Text style={{color: 'black', fontSize: 15}}>
+                        Item Total
+                      </Text>
+                      <Text>{item.quantity}</Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
 
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginHorizontal: 10,
-                // marginTop: 2,
+                backgroundColor: Color.WHITE,
+                paddingVertical: responsiveHeight(1),
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
               }}>
-              <Text style={{fontSize: 12, color: 'black'}}>To Pay</Text>
-              <Text style={{fontSize: 12, color: 'black'}}>
-                Rs. {data.totalAmount}
-              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 10,
+                  marginTop: 10,
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{fontSize: 12}}>Delivery Fee</Text>
+                </View>
+
+                <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
+                  Rs {data.deliveryFee}
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 10,
+                  borderBottomWidth: 0.5,
+                  borderStyle: 'dashed',
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{fontSize: 12}}>GST</Text>
+                </View>
+
+                <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
+                  Rs {data.gst}
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginHorizontal: 10,
+                  // marginTop: 2,
+                }}>
+                <Text style={{fontSize: 12, color: 'black'}}>To Pay</Text>
+                <Text style={{fontSize: 12, color: 'black'}}>
+                  Rs. {data.totalAmount}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

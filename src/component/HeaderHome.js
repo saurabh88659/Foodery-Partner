@@ -45,6 +45,7 @@ export default function HeaderHome({navigation}) {
   };
   // const navigation=useNavigation();
   const userData = useSelector(state => state.requiredata.userData);
+
   return (
     <View style={styles.loginbox}>
       <View style={{flexDirection: 'row'}}>
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   img: {
     width: responsiveWidth(15),
     height: responsiveWidth(15),
-    //backgroundColor: 'pink',
+    // backgroundColor: 'pink',
     borderRadius: responsiveWidth(15),
     marginLeft: responsiveWidth(1.5),
     borderWidth: 3,
@@ -205,6 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     // borderColor: 'grey',
     justifyContent: 'center',
+    alignItems: 'center',
     // backgroundColor: 'red',
   },
 

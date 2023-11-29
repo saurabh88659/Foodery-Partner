@@ -28,6 +28,7 @@ import Toast from 'react-native-simple-toast';
 import Header from '../component/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {toggleSelection} from '../features/requireDataReducer/requiredata.reducer';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 function AllProductsItem({navigation, route}) {
   const selectedItems = useSelector(state => state.requiredata.selectedItem);
   console.log('####selected items======>', selectedItems);
@@ -99,7 +100,7 @@ function AllProductsItem({navigation, route}) {
   };
 
   const renderItem = ({item}) => {
-    console.log('item of getproductof Catagory', item);
+    console.log('####item of all product ', item);
     return (
       <View
         style={{
@@ -113,6 +114,7 @@ function AllProductsItem({navigation, route}) {
           // backgroundColor: 'red',
         }}>
         <TouchableOpacity
+          disabled={item.isSelected}
           onPress={() => handlePress(item)}
           style={{
             // height: 170,
@@ -125,18 +127,34 @@ function AllProductsItem({navigation, route}) {
             elevation: 4,
             paddingHorizontal: 10,
             // backgroundColor: 'red',
-            borderColor: selectedItems.some(
-              selectedItem => selectedItem._id === item._id,
-            )
+
+            borderColor: item.isSelected
+              ? 'green'
+              : selectedItems.some(
+                  selectedItem => selectedItem._id === item._id,
+                )
               ? 'green'
               : 'red',
-
             // selectedItems.includes(item._id) ? 'green' : 'red',
             borderWidth: 1,
-
             //backgroundColor: 'pin',
             //paddingHorizontal: responsiveWidth(6),
           }}>
+          {item.isSelected && (
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                // backgroundColor: 'red',
+                position: 'absolute',
+                right: 0,
+                top: 6,
+                marginRight: 6,
+              }}>
+              <FontAwesome name={'check-square-o'} size={20} color={'green'} />
+            </View>
+          )}
+
           <Image
             // source={require('../Assests/Images/fruits.png')}
             source={{uri: item.productImage}}

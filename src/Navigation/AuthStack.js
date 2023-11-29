@@ -11,6 +11,7 @@ import AdminRejectedScreen from '../Screens/AdminRejectedScreen';
 import AllProductSubCategory from '../Screens/AllProductSubCategory';
 import AllProductsItem from '../Screens/AllProductsItem';
 import SelectedTempProductsScreen from '../Screens/SelectedTempProductsScreen';
+import AdminSusPendScreen from '../Screens/AdminSusPendScreen';
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
@@ -45,6 +46,11 @@ const AuthStack = () => {
       <Stack.Screen
         name="AdminRejectedScreen"
         component={AdminRejectedScreen}
+        options={headerNone}
+      />
+      <Stack.Screen
+        name="AdminSusPendScreen"
+        component={AdminSusPendScreen}
         options={headerNone}
       />
       <Stack.Screen

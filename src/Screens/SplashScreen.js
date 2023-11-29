@@ -14,6 +14,7 @@ import {handleUserGetData} from '../features/APIs/apiRequest';
 import {
   setAdminIsAccepted,
   setUserData,
+  setVendorId,
 } from '../features/requireDataReducer/requiredata.reducer';
 import {CONSTANTS} from '../Utils/constants';
 import LoginPhone from './LoginPhone';
@@ -24,6 +25,7 @@ const SplashScreen = () => {
   const loggedIn = useSelector(state => state.auth.loggedIn);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
   // useEffect(() => {
   //   dispatch(authcheckLogin()).then(res => {
   //     console.log('res.payload.loggedIn 1=====>>', res.payload?.loggedIn);
@@ -61,6 +63,7 @@ const SplashScreen = () => {
       console.log('res.data splash-====>', res.data);
       if (res.data) {
         dispatch(setUserData(res?.data?.result));
+        dispatch(setVendorId(res?.data?.result._id));
         if (res.data.result.status == 'accepted') {
           dispatch(setLoggedIn(true));
         } else if (res.data.result.status == 'underReview') {
@@ -68,16 +71,16 @@ const SplashScreen = () => {
           dispatch(setAdminIsAccepted(true));
         } else if (res.data.result.status == 'complete') {
           dispatch(setLoggedIn(false));
-          navigation.navigate('AllProductCategory');
+          navigation.replace('AllProductCategory');
         } else if (res.data.result.status == 'pending') {
           dispatch(setLoggedIn(false));
-          navigation.navigate('LoginPhone');
+          navigation.replace('LoginPhone');
         } else if (res.data.result.status == 'rejected') {
           dispatch(setLoggedIn(false));
           navigation.replace('AdminRejectedScreen');
         } else {
           dispatch(setLoggedIn(false));
-          navigation.navigate('LoginPhone');
+          navigation.replace('LoginPhone');
         }
       } else {
         if (res.response.status == 454) {
@@ -88,7 +91,10 @@ const SplashScreen = () => {
         if (res.response) {
           navigation.navigate('LoginPhone');
           dispatch(setLoggedIn(false));
-          console.log('@@@resonse==>', res.response);
+          if (res.response.data.message == 'Your account is suspended') {
+            navigation.replace('AdminSusPendScreen');
+          }
+          console.log('@@@resonse==>', res?.response.data);
         }
       }
     } else {

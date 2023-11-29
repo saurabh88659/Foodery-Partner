@@ -39,39 +39,61 @@ import SelectedTempProductsScreen from '../Screens/SelectedTempProductsScreen';
 import MyOrderHistory from '../Screens/MyOrderHistory';
 import TransactionDetailsAccountReceiveScreen from '../Screens/TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsWalletReceiveScreen from '../Screens/TransactionDetailsWalletReceiveScreen';
+import {PermissionsAndroid, Platform} from 'react-native'; // Add this line
+import SplashScreen from '../Screens/SplashScreen';
 
 const MainStack = () => {
   useEffect(() => {
     notificationListeners();
+    requestUserPermission();
   }, []);
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    // AdminisAccepted();
-    // getUserData();
-  }, []);
+  const requestUserPermission = async () => {
+    if (Platform.OS === 'ios') {
+      //Request iOS permission
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  const getUserData = async () => {
-    const res = await handleUserGetData();
-    console.log(
-      'res.data of getUserData at Mainstack ====>',
-      JSON.stringify(res.data.result),
-    );
-    if (res.data.success) {
-      if (res.data.result.status == 'pending') {
-        console.log(
-          'res.data.result.status at minstack====>',
-          res.data.result.status,
-        );
-        dispatch(setAdminIsAccepted(true));
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
       }
-      if (res.data.result) {
-        dispatch(setUserData(res.data.result));
-      }
-    } else {
-      console.log('getUserData error ==>', res);
+    } else if (Platform.OS === 'android') {
+      //Request Android permission (For API level 33+, for 32 or below is not required)
+      const res = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+      console.log('@@@@@res of notification prermissons====>>', res);
     }
   };
+
+  // const requestUserPermission = async () => {
+  //   console.log(
+  //     '++++++++++++test000 denied the notification permission and selected "Never ask again"',
+  //   );
+  //   if (Platform.OS === 'android') {
+  //     console.log(
+  //       '++++++++++++test11111111 denied the notification permission and selected "Never ask again"',
+  //     );
+  //     const res = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.RECEIVE_BOOT_COMPLETED,
+  //     );
+  //     console.log('Notification permission result:', res);
+  //     if (res === PermissionsAndroid.RESULTS.DENIED) {
+  //       console.log(
+  //         '++++++++++++test22222222 denied the notification permission and selected "Never ask again"',
+  //       );
+  //       console.log('User denied the notification permission');
+  //     } else if (res === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+  //       console.log(
+  //         '++++++++++++User denied the notification permission and selected "Never ask again"',
+  //       );
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {}, []);
 
   const Stack = createNativeStackNavigator();
   return (
@@ -82,9 +104,7 @@ const MainStack = () => {
           component={BottomNavigation}
           options={headerNone}
         />
-
         {/* <Stack.Screen name="Home" component={Home} options={headerNone} /> */}
-
         <Stack.Screen
           name="ViewList"
           component={ViewList}
@@ -174,6 +194,11 @@ const MainStack = () => {
           component={MyOrderHistory}
           options={headerNone}
         />
+        {/* <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={headerNone}
+        /> */}
       </Stack.Navigator>
 
       <AdminAcceptedModal />

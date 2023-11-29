@@ -208,7 +208,7 @@ export const handleGetAllproductCategory = async data => {
   }
 };
 
-export const handleGetSelectedproducts = async data => {
+export const shandleGetSelectedproducts = async data => {
   console.log(' handleGetSelectedproducts data====>>===', data);
   const authHeaders = await getAuthHeaders();
   console.log('token===', authHeaders);
@@ -417,6 +417,53 @@ export const handleTransactionAccountDeails = async data => {
       BASE_URL + `vendor/getTransactionAmountDetails`,
       authHeaders,
       object,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleGetCurrentLocation = async data => {
+  const authHeaders = await getAuthHeaders();
+  console.log('token===', authHeaders);
+  try {
+    const result = await Instance(
+      'POST',
+      BASE_URL + 'vendor/getCurrentLocation',
+      authHeaders,
+      data,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleGetOrderDetailsById = async data => {
+  const authHeaders = await getAuthHeaders();
+  console.log('token===???', authHeaders);
+  console.log('data of handleGetOrderDetailsById==>', data);
+  try {
+    const result = await Instance(
+      'GET',
+      BASE_URL + `vendor/getOrderByIdForVendor/${data}`,
+      authHeaders,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+export const handleOnSearchQuery = async queryWords => {
+  const authHeaders = await getAuthHeaders();
+  console.log('data===>', queryWords);
+  console.log('token===', authHeaders);
+  try {
+    const result = await Instance(
+      'GET',
+      BASE_URL + `vendor/searchVendorProduct/${queryWords}`,
+      authHeaders,
     );
     return result;
   } catch (error) {

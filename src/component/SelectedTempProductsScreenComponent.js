@@ -12,6 +12,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   responsiveHeight,
@@ -36,18 +37,19 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {setLoggedIn} from '../features/auth/auth.reducer';
 
-function SelectedTempProductsScreenComponent({onPress}) {
+function SelectedTempProductsScreenComponent({onPress, buttonLoading}) {
   const userData = useSelector(state => state.requiredata.userData);
   console.log('userData at SelectedTempProductsScreen=====>>', userData);
   const selectedItems = useSelector(state => state.requiredata.selectedItem);
   console.log('####selected items on =============>', selectedItems);
+
   const dispatch = useDispatch();
   const [allCategoryProducts, setAllCategoryProducts] = useState();
   const [refreshKey, setRefreshKey] = useState(0);
-  const [buttonLoading, setButtonLoading] = useState(false);
+  // const [buttonLoading, setButtonLoading] = useState(false);
 
   const handleSelectedItemSubmit = async () => {
-    setButtonLoading(true);
+    // setButtonLoading(true);
     const res = await SelectedItemSubmit({
       selectedItems: selectedItems,
       userId: userData._id,
@@ -56,9 +58,9 @@ function SelectedTempProductsScreenComponent({onPress}) {
     if (res.data.status) {
       dispatch(setLoggedIn(true));
       dispatch(setAdminIsAccepted(true));
-      setButtonLoading(false);
+      // setButtonLoading(false);
     } else {
-      setButtonLoading(false);
+      // setButtonLoading(false);
       console.log('error==', res);
     }
   };
@@ -169,21 +171,25 @@ function SelectedTempProductsScreenComponent({onPress}) {
       <View style={{paddingBottom: responsiveHeight(22)}}>
         <FlatList numColumns={2} data={selectedItems} renderItem={renderItem} />
       </View>
-
       <TouchableOpacity
         onPress={onPress}
         style={{
           width: '100%',
-          height: 45,
+          height: responsiveHeight('6'),
+
           backgroundColor: Color.DARK_GREEN,
           position: 'absolute',
           bottom: 0,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text style={{color: Color.WHITE, fontSize: 18, fontWeight: '500'}}>
-          Done
-        </Text>
+        {buttonLoading ? (
+          <ActivityIndicator color={'#fff'} size={23} />
+        ) : (
+          <Text style={{color: Color.WHITE, fontSize: 18, fontWeight: '500'}}>
+            Done
+          </Text>
+        )}
       </TouchableOpacity>
     </SafeAreaView>
   );

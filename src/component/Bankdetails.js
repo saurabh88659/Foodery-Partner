@@ -50,6 +50,58 @@ export default function Bankdetails() {
   const [bankAccountNumber, setbankAccountNumber] = useState('');
   const [upiNumber, setUpiNumber] = useState('');
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [validUpi, setValidUpi] = useState(false);
+
+  const ValidAccountHolder = text => {
+    if (!/^[a-zA-Z\s]+$/.test(text)) {
+      // Display a toast message for invalid input
+      Toast.show('Please enter a valid name', Toast.SHORT);
+      // If it contains invalid characters, do not update the state
+      return;
+    }
+    // Update the state if the input is valid (no numbers)
+    onAccountHolder(text);
+  };
+
+  const ValidIfscCode = text => {
+    console.log('text,,', text);
+    // Check if the input contains only letters and numbers
+    if (!/^[a-zA-Z0-9]+$/.test(text)) {
+      Toast.show('Please enter valid IFSC code', Toast.SHORT);
+      // If it contains invalid characters, do not update the state
+      return;
+    }
+    // Update the state if the input is valid (only letters and numbers)
+    onIfscCode(text);
+  };
+
+  const ValidBankName = text => {
+    console.log('tetx', text);
+
+    if (!/^[a-zA-Z\s]+$/.test(text)) {
+      // Display a toast message for invalid input
+      Toast.show(
+        'Please enter a valid name without special characters',
+        Toast.SHORT,
+      );
+      // If it contains invalid characters, do not update the state
+      return;
+    }
+    // Update the state if the input is valid (no numbers)
+    onBankName(text);
+  };
+
+  const ValidAccount = text => {
+    console.log('tetx', text);
+    if (!/^\d+$/.test(text)) {
+      Toast.show('Please enter valid Account number', Toast.SHORT);
+
+      // If it contains invalid characters, do not update the state
+      return;
+    }
+    // Update the state if the input is valid (no numbers)
+    setbankAccountNumber(text);
+  };
 
   const submitBankDetails = async () => {
     setButtonLoading(true);
@@ -76,6 +128,19 @@ export default function Bankdetails() {
     }
   };
 
+  const checkValidUPI = () => {
+    if (!/^[a-zA-Z\s]+$/.test(text)) {
+      // Display a toast message for invalid input
+      Toast.show(
+        'Please enter a valid name without special characters',
+        Toast.SHORT,
+      );
+      // If it contains invalid characters, do not update the state
+      return;
+    }
+    setValidUpi(true);
+  };
+
   return (
     <View style={{paddingBottom: 170}}>
       <Text
@@ -89,6 +154,7 @@ export default function Bankdetails() {
         Bank Account Number
       </Text>
       <TextInput
+        maxLength={16}
         style={{
           backgroundColor: Colors.WHITE,
           marginHorizontal: 10,
@@ -99,7 +165,9 @@ export default function Bankdetails() {
           elevation: 2,
         }}
         keyboardType="number-pad"
-        onChangeText={setbankAccountNumber}
+        onChangeText={text => {
+          ValidAccount(text);
+        }}
         value={bankAccountNumber}
       />
 
@@ -123,7 +191,9 @@ export default function Bankdetails() {
           color: '#000',
           elevation: 2,
         }}
-        onChangeText={onAccountHolder}
+        onChangeText={text => {
+          ValidAccountHolder(text);
+        }}
         value={accountHolder}
       />
 
@@ -147,7 +217,9 @@ export default function Bankdetails() {
           color: '#000',
           elevation: 2,
         }}
-        onChangeText={onIfscCode}
+        onChangeText={text => {
+          ValidIfscCode(text);
+        }}
         value={ifscCode}
       />
 
@@ -171,11 +243,13 @@ export default function Bankdetails() {
           color: '#000',
           elevation: 2,
         }}
-        onChangeText={onBankName}
+        onChangeText={text => {
+          ValidBankName(text);
+        }}
         value={bankName}
       />
 
-      <Text
+      {/* <Text
         style={{
           color: Colors.BLACK,
           fontWeight: '500',
@@ -184,7 +258,7 @@ export default function Bankdetails() {
           paddingVertical: 15,
         }}>
         OR
-      </Text>
+      </Text> */}
 
       <View
         style={{
@@ -200,6 +274,7 @@ export default function Bankdetails() {
           elevation: 2,
           borderColor: Color.LIGHT_Gray,
           borderWidth: 1,
+          marginTop: 40,
         }}>
         <Text
           style={{
@@ -246,7 +321,7 @@ export default function Bankdetails() {
             height: responsiveHeight(6),
             alignSelf: 'center',
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            // justifyContent: 'space-between',
             alignItems: 'center',
             paddingHorizontal: 10,
           }}>
@@ -265,31 +340,46 @@ export default function Bankdetails() {
               borderColor: 'gray',
               alignItems: 'center',
               fontSize: responsiveFontSize(1.5),
+              marginRight: 13,
             }}
             onChangeText={setUpiNumber}
             value={upiNumber}
           />
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: Colors.DARK_GREEN,
-              width: responsiveWidth(23),
-              height: responsiveHeight(4.1),
-              borderRadius: 5,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
+          {validUpi ? (
+            <TouchableOpacity
+              onPress={checkValidUPI}
               style={{
-                color: Colors.BLACK,
-                fontWeight: 'bold',
-                fontSize: 12,
-                // textAlign: 'center',
-                color: '#fff',
+                backgroundColor: Colors.DARK_GREEN,
+                width: responsiveWidth(23),
+                height: responsiveHeight(4.1),
+                borderRadius: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}>
-              Verify
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: Colors.BLACK,
+                  fontWeight: 'bold',
+                  fontSize: 12,
+                  // textAlign: 'center',
+                  color: '#fff',
+                }}>
+                Verify
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View
+              style={{
+                // backgroundColor: 'red',
+                width: responsiveWidth(23),
+                height: responsiveHeight(4.1),
+                borderRadius: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text>OK</Text>
+            </View>
+          )}
         </View>
       </View>
       <View style={{paddingHorizontal: 20, marginTop: 20}}>

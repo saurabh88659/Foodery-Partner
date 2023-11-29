@@ -11,10 +11,13 @@ import {
   Pressable,
   Dimensions,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+
 //import ImagePicker from 'react-native-image-crop-picker';
 
 import {
@@ -30,19 +33,24 @@ const {height, width} = Dimensions.get('window');
 function Order({navigation}) {
   const userData = useSelector(state => state.requiredata.userData);
   console.log('userdata===>', JSON.stringify(userData));
-
   const [orderdata, setOrderData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getOrder();
-  }, []);
+    if (isFocused) {
+      getOrder();
+    }
+  }, [isFocused]);
 
   const getOrder = async () => {
     const res = await handleGetOrder();
     if (res.data.status) {
-      console.log('res of getOrder', res.data);
-      setOrderData(res.data.result);
+      setLoading(false);
+      console.log('+++++++++res of getOrder=======================>', res.data);
+      setOrderData(res.data?.result);
     } else {
+      setLoading(false);
       console.log('error ===>', res);
     }
   };
@@ -54,7 +62,6 @@ function Order({navigation}) {
         height: responsiveHeight(100),
       }}>
       <StatusBar backgroundColor={Color.Green_Top} barStyle={Color.WHITE} />
-
       <View
         style={{
           height: responsiveHeight(30),
@@ -89,185 +96,230 @@ function Order({navigation}) {
                 color: Color.WHITE,
                 alignSelf: 'center',
               }}>
-              My Order
+              My order
             </Text>
           </View>
         </ImageBackground>
       </View>
-      {/* ...........................My Order............................... */}
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}>
-        {orderdata.map(
-          (item, index) => (
-            console.log('item=======>>>>', JSON.stringify(item)),
-            (
-              <View
-                key={index}
-                style={{
-                  backgroundColor: Color.WHITE,
-                  // backgroundColor: 'red',
-                  marginHorizontal: responsiveWidth(2),
-                  borderRadius: 10,
-                  elevation: 2,
-                  marginTop: 10,
-                  marginBottom: 10,
-                  paddingVertical: 15,
-                }}>
-                <View
-                  style={{
-                    paddingVertical: responsiveHeight(0.5),
-                    marginLeft: responsiveWidth(3),
-                  }}>
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      fontSize: responsiveFontSize(2),
-                      color: Color.Green_Top,
-                      textTransform: 'uppercase',
-                    }}>
-                    {item.delieveryAddress.receiverName}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    //backgroundColor: 'skyblue',
-                    paddingVertical: responsiveHeight(1),
-                    borderRadius: 10,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <View
-                      style={{
-                        //backgroundColor: 'pink',
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        paddingHorizontal: responsiveWidth(3),
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: 'bold',
-                          color: Color.BLACK,
-                          fontSize: responsiveFontSize(2),
-                        }}>
-                        Order ID :
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: responsiveFontSize(2),
-                          color: '#000',
-                        }}>
-                        {' '}
-                        {item.orderId}
-                      </Text>
-                    </View>
 
+      {/* ...........................My Order............................... */}
+
+      {loading ? (
+        <View
+          style={{
+            height: '50%',
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {/* <Lottie
+            source={require('../Assests/Lottie/greenLoadingLine.json')}
+            autoPlay
+            loop={true}
+            style={{height: 100, width: 100}}
+          /> */}
+          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+        </View>
+      ) : (
+        <View>
+          {orderdata.length > 0 ? (
+            <ScrollView
+              contentContainerStyle={styles.contentContainer}
+              showsVerticalScrollIndicator={false}>
+              {orderdata.map(
+                (item, index) => (
+                  console.log(
+                    '#######item orderdata======>>>>',
+                    JSON.stringify(item.orderId),
+                  ),
+                  (
                     <View
                       key={index}
                       style={{
-                        //backgroundColor: 'pink',
-                        flexDirection: 'row',
-                        // justifyContent: 'space-between',
-                        paddingHorizontal: responsiveWidth(3),
-                        // marginBottom: 4,
-                        // width: 120,
-                        marginTop: 10,
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: 'bold',
-                          color: Color.BLACK,
-                          fontSize: responsiveFontSize(2),
-                        }}>
-                        Products :
-                      </Text>
-                      {item.orderedProducts?.map(
-                        (item, index) => (
-                          console.log(
-                            'item====>ofproductName in order  ',
-                            item,
-                          ),
-                          (
-                            <Text
-                              key={index}
-                              numberOfLines={1}
-                              style={{
-                                fontSize: responsiveFontSize(2),
-                                color: '#000',
-                                width: '35%',
-                                // backgroundColor: 'red',
-                              }}>
-                              {' '}
-                              {item.productId.productName} |
-                            </Text>
-                          )
-                        ),
-                      )}
-                    </View>
-
-                    <View
-                      style={{
-                        // backgroundColor: 'pink',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: responsiveWidth(3),
-                        alignItems: 'flex-end',
+                        backgroundColor: Color.WHITE,
                         // backgroundColor: 'red',
-                        width: '91%',
+                        marginHorizontal: responsiveWidth(2),
+                        borderRadius: 10,
+                        elevation: 2,
+                        marginTop: 10,
+                        marginBottom: 10,
+                        paddingVertical: 15,
                       }}>
-                      <View style={{flexDirection: 'row'}}>
+                      <View
+                        style={{
+                          paddingVertical: responsiveHeight(0.5),
+                          marginLeft: responsiveWidth(3),
+                        }}>
                         <Text
                           style={{
                             fontWeight: 'bold',
-                            color: Color.BLACK,
                             fontSize: responsiveFontSize(2),
+                            color: Color.Green_Top,
+                            textTransform: 'uppercase',
                           }}>
-                          Address :
-                        </Text>
-                        <Text
-                          numberOfLines={1}
-                          style={{
-                            fontSize: responsiveFontSize(2),
-                            // width: 160,
-                            color: '#000',
-                          }}>
-                          {' '}
-                          {item.delieveryAddress?.city}
+                          {item.delieveryAddress.receiverName}
                         </Text>
                       </View>
-                      <View>
-                        <TouchableOpacity
-                          onPress={() =>
-                            navigation.navigate('ViewDetails', {data: item})
-                          }
-                          style={{
-                            backgroundColor: Color.Green_Top,
-                            width: responsiveWidth(28),
-                            height: responsiveHeight(4),
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 4,
-                            marginRight: 5,
-                          }}>
-                          <Text
+                      <View
+                        style={{
+                          //backgroundColor: 'skyblue',
+                          paddingVertical: responsiveHeight(1),
+                          borderRadius: 10,
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View>
+                          <View
                             style={{
-                              fontWeight: 'bold',
-                              color: Color.WHITE,
-                              fontSize: responsiveFontSize(1.8),
+                              //backgroundColor: 'pink',
+                              flexDirection: 'row',
+                              // justifyContent: 'space-between',
+                              paddingHorizontal: responsiveWidth(3),
                             }}>
-                            View Details
-                          </Text>
-                        </TouchableOpacity>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                color: Color.BLACK,
+                                fontSize: responsiveFontSize(2),
+                              }}>
+                              Order ID :
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: responsiveFontSize(2),
+                                color: '#000',
+                              }}>
+                              {' '}
+                              {item.orderId}
+                            </Text>
+                          </View>
+
+                          <View
+                            key={index}
+                            style={{
+                              //backgroundColor: 'pink',
+                              flexDirection: 'row',
+                              // justifyContent: 'space-between',
+                              paddingHorizontal: responsiveWidth(3),
+                              // marginBottom: 4,
+                              // width: 120,
+                              marginTop: 10,
+                            }}>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                color: Color.BLACK,
+                                fontSize: responsiveFontSize(2),
+                              }}>
+                              Products :
+                            </Text>
+                            {item.orderedProducts?.map(
+                              (item, index) => (
+                                console.log(
+                                  'item====>ofproductName in order  ',
+                                  item,
+                                ),
+                                (
+                                  <Text
+                                    key={index}
+                                    numberOfLines={1}
+                                    style={{
+                                      fontSize: responsiveFontSize(2),
+                                      color: '#000',
+                                      width: '35%',
+                                      // backgroundColor: 'red',
+                                    }}>
+                                    {' '}
+                                    {item.productId.productName} |
+                                  </Text>
+                                )
+                              ),
+                            )}
+                          </View>
+
+                          <View
+                            style={{
+                              // backgroundColor: 'pink',
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              paddingHorizontal: responsiveWidth(3),
+                              alignItems: 'flex-end',
+                              // backgroundColor: 'red',
+                              width: '91%',
+                            }}>
+                            <View style={{flexDirection: 'row'}}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  color: Color.BLACK,
+                                  fontSize: responsiveFontSize(2),
+                                }}>
+                                Address :
+                              </Text>
+                              <Text
+                                numberOfLines={1}
+                                style={{
+                                  fontSize: responsiveFontSize(2),
+                                  // width: 160,
+                                  color: '#000',
+                                }}>
+                                {' '}
+                                {item.delieveryAddress?.city}
+                              </Text>
+                            </View>
+                            <View>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  navigation.navigate('ViewDetails', {
+                                    data: item.orderId,
+                                  })
+                                }
+                                style={{
+                                  backgroundColor: Color.Green_Top,
+                                  width: responsiveWidth(28),
+                                  height: responsiveHeight(4),
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  borderRadius: 4,
+                                  marginRight: 5,
+                                }}>
+                                <Text
+                                  style={{
+                                    fontWeight: 'bold',
+                                    color: Color.WHITE,
+                                    fontSize: responsiveFontSize(1.8),
+                                  }}>
+                                  View Detail
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </View>
-              </View>
-            )
-          ),
-        )}
-      </ScrollView>
+                  )
+                ),
+              )}
+            </ScrollView>
+          ) : (
+            <View
+              style={{
+                height: '60%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: Color.DARK_GRAY,
+                  fontSize: 21,
+                  fontWeight: '600',
+                }}>
+                No order history available
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 }

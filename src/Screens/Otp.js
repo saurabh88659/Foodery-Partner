@@ -86,62 +86,68 @@ function Otp({navigation}) {
       otp: otp,
       deviceToken: fcmToken,
     };
-
     console.log('====obj====', obj);
     const res = await OtpVerification(obj);
-    console.log('res of HandleOtpVerification===>', res.data);
+    console.log('res of HandleOtpVerification===>', res);
+    console.log('res.data.message =====>on otp', res.data.message);
     if (res?.data) {
       dispatch(setVendorId(res.data.vendor_id));
+      // console.log(
+      //   'response of HandleOtpVerification ======>:',
+      //   res.data.message,
+      // );
+      console.log('res.data of HandleOtpVerification', res.data);
+      await setOfflineData(CONSTANTS.TOKEN, res.data.token);
+      await setOfflineData(CONSTANTS.REFRESH_TOKEN, res.data.refreshToken);
+      if (
+        res.data.message == 'Otp Verify Successfully..' ||
+        res.data.message == 'Already Registered..'
+      ) {
+        console.log(
+          '+++++++++++++++OTP VERIFY SUCCESSFULY CONDITION++++++++++',
+        );
+        navigation.replace('Registration');
+        setButtonLoading(false);
+      }
       console.log(
-        'response of HandleOtpVerification ======>:',
-        res.data.message,
+        '++++status in OTP screen ====>',
+        JSON.stringify(res?.data?.result?.status),
       );
-      if (res.data.status) {
-        console.log('res.data of HandleOtpVerification', res.data);
-        await setOfflineData(CONSTANTS.TOKEN, res.data.token);
-        await setOfflineData(CONSTANTS.REFRESH_TOKEN, res.data.refreshToken);
-        if (
-          res.data.message == 'Otp Verify Successfully..' ||
-          res.data.message == 'Already Registered..'
-        ) {
-          navigation.replace('Registration');
+
+      if (res.data.message == 'Welcome back') {
+        console.log('++++++++++++++++WELCOME WELCOME CONDITION++++++++++');
+        const res = await handleUserGetData();
+        dispatch(setUserData(res.data.result));
+        if (res.data.result.status == 'accepted') {
+          console.log('++++++++++++++++accepted CONDITION++++++++++');
+          dispatch(setLoggedIn(true));
           setButtonLoading(false);
-        } else if (res.data.message == 'Welcome back') {
-          const res = await handleUserGetData();
-          dispatch(setUserData(res.data.result));
-          console.log(
-            '++++status in OTP screen ====>',
-            JSON.stringify(res?.data?.result?.status),
-          );
-          if (res.data.result.status == 'accepted') {
-            dispatch(setLoggedIn(true));
-            setButtonLoading(false);
-          } else if (res.data.result.status == 'underReview') {
-            dispatch(setLoggedIn(true));
-            dispatch(setAdminIsAccepted(true));
-            setButtonLoading(false);
-          } else if (res.data.result.status == 'complete') {
-            dispatch(setLoggedIn(false));
-            setButtonLoading(false);
-
-            navigation.replace('AllProductCategory');
-          } else if (res.data.result.status == 'pending') {
-            navigation.replace('Registration');
-            dispatch(setLoggedIn(false));
-            setButtonLoading(false);
-
-            navigation.replace('AllOutofStockProductScreen');
-          } else if (res.data.result.status == 'rejected') {
-            dispatch(setLoggedIn(false));
-            setButtonLoading(false);
-
-            navigation.navigate('AdminRejectedScreen');
-          } else {
-            dispatch(setLoggedIn(false));
-            setButtonLoading(false);
-          }
+        } else if (res.data.result.status == 'underReview') {
+          console.log('++++++++++++++++underReview CONDITION++++++++++');
+          dispatch(setLoggedIn(true));
+          dispatch(setAdminIsAccepted(true));
+          setButtonLoading(false);
+        } else if (res.data.result.status == 'complete') {
+          console.log('++++++++++++++++complete CONDITION++++++++++');
+          dispatch(setLoggedIn(false));
+          setButtonLoading(false);
+          navigation.replace('AllProductCategory');
+        } else if (res.data.result.status == 'pending') {
+          console.log('++++++++++++++++pending CONDITION++++++++++');
+          navigation.replace('Registration');
+          dispatch(setLoggedIn(false));
+          setButtonLoading(false);
+          // navigation.replace('AllOutofStockProductScreen');
+        } else if (res.data.result.status == 'rejected') {
+          console.log('++++++++++++++++rejected CONDITION++++++++++');
+          dispatch(setLoggedIn(false));
+          setButtonLoading(false);
+          navigation.navigate('AdminRejectedScreen');
+        } else {
+          dispatch(setLoggedIn(false));
+          setButtonLoading(false);
+          navigation.replace('Registration');
         }
-        // setButtonLoading(false);
       }
     } else {
       setButtonLoading(false);
@@ -186,6 +192,25 @@ function Otp({navigation}) {
       });
   };
 
+  const ResendOtp = async () => {
+    setButtonLoading(true);
+    const obj = {
+      mobileNumber: phoneNumber,
+    };
+
+    const res = await LoginWithPhone(obj);
+    if (res?.data) {
+      setButtonLoading(false);
+      if (res.data.message == 'OTP Sent Successfully') {
+        Toast.show('Otp sent successfully', Toast.SHORT);
+      }
+      console.log('response:', res.data);
+    } else {
+      console.log('catch error of :', res);
+      console.log('catch error:', res.response.data.message);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior="padding">
@@ -219,6 +244,7 @@ function Otp({navigation}) {
                 }}
               />
             </View>
+
             <View
               style={{
                 //backgroundColor: 'teal',
@@ -230,7 +256,11 @@ function Otp({navigation}) {
                 //alignItems: 'center',
               }}>
               <Text style={styles.texting4}>Time remainig:-00:{counter}</Text>
-              <TouchableOpacity onPress={counter == 0 ? resend : () => {}}>
+              <TouchableOpacity
+                disabled={counter == 0 ? false : true}
+                onPress={ResendOtp}
+                // onPress={counter == 0 ? resend : () => {}}
+              >
                 <Text
                   style={[
                     styles.texting4,
@@ -242,7 +272,6 @@ function Otp({navigation}) {
                 </Text>
               </TouchableOpacity>
             </View>
-
             <CustomButton
               Title={'LOGIN'}
               onPress={() => HandleOtpVerification()}

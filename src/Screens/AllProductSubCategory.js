@@ -157,7 +157,7 @@ function AllProductSubCategory({navigation, route}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'#29C17E'} barStyle={Color.WHITE} />
-      <Header Title={categoryName} />
+      <Header Title={categoryName} onPress={() => navigation.goBack('')} />
       <View style={{paddingBottom: '17%'}}>
         <AllPoductSubCategoryComponent
           data={{ProductId, categoryName}}

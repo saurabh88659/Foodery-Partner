@@ -43,21 +43,20 @@ export default function Verification() {
   const [shouldShowNo, setShouldShowNo] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [frontAdhar, setFrontAdhar] = useState(null);
+  const [frontAdhar, setFrontAdhar] = useState('');
 
   const [selectedImage1, setSelectedImage1] = useState(null);
-  const [backAdhar, setBackAdhar] = useState(null);
+  const [backAdhar, setBackAdhar] = useState('');
 
   const [selectedImage2, setSelectedImage2] = useState(null);
-  const [pancard, setPan] = useState(null);
+  const [pancard, setPan] = useState('');
   const [selectedImage3, setSelectedImage3] = useState(null);
-  const [selfie, setSelfie] = useState(null);
+  const [selfie, setSelfie] = useState('');
   const [selectedImage4, setSelectedImage4] = useState(null);
-  const [rentBill, setRentBill] = useState(null);
-  const [uploadRent, setUploadRent] = useState(false);
-
-  const [electricityBill, setElectricityBill] = useState(null);
-  const [UploadElectricity, setUploadElectricity] = useState(false);
+  const [rentBill, setRentBill] = useState('');
+  const [uploadRent, setUploadRent] = useState('');
+  const [electricityBill, setElectricityBill] = useState('');
+  const [UploadElectricity, setUploadElectricity] = useState('');
 
   const [selectedImage5, setSelectedImage5] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -381,24 +380,48 @@ export default function Verification() {
     }
   };
 
+  const validateFields = () => {
+    return (
+      frontAdhar &&
+      backAdhar &&
+      selfie &&
+      rentBill &&
+      (electricityBill || uploadRent)
+    );
+  };
+
+  // const test = () => {
+  //   if (validateFields()) {
+  //     console.log('if==');
+  //   } else {
+  //     console.log('else===');
+  //   }
+  // };
+
   const HandleDocsVerification = async () => {
-    setButtonLoading(true);
-    const formData = await HandleuploadAlldocs();
-    console.log(formData, 'formData=========>');
-    const res = await docsVerification(formData);
-    if (res.data) {
-      setButtonLoading(false);
-      console.log('response of HandleDocsVerification :', res.data);
-      if (res.data.status) {
-        dispatch(setCurrentStep(2));
-        Toast.show(res.data.message, Toast.SHORT);
+    if (validateFields()) {
+      console.log('if==');
+      setButtonLoading(true);
+      const formData = await HandleuploadAlldocs();
+      console.log(formData, 'formData=========>');
+      const res = await docsVerification(formData);
+      if (res.data) {
+        setButtonLoading(false);
+        console.log('response of HandleDocsVerification :', res.data);
+        if (res.data.status) {
+          dispatch(setCurrentStep(2));
+          Toast.show(res.data.message, Toast.SHORT);
+        }
+      } else {
+        setButtonLoading(false);
+        console.log(
+          'catch error(response.message) of  HandleDocsVerification:',
+          res,
+        );
       }
     } else {
-      setButtonLoading(false);
-      console.log(
-        'catch error(response.message) of  HandleDocsVerification:',
-        res,
-      );
+      Toast.show('All fields are required', Toast.SHORT);
+      console.log('else===');
     }
   };
 
