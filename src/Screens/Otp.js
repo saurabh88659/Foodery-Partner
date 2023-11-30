@@ -26,7 +26,11 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 const Baseurl = 'http://192.168.68.123:8000/api/vendor/verifyOTPVendorApp';
 const Baseurl1 = 'http://192.168.68.123:8000/api/vendor/loginVendorApp';
 import {requestUserPermission} from '../Utils/Firebasemessage';
-import {handleUserGetData, OtpVerification} from '../features/APIs/apiRequest';
+import {
+  handleUserGetData,
+  LoginWithPhone,
+  OtpVerification,
+} from '../features/APIs/apiRequest';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import {CONSTANTS} from '../Utils/constants';
@@ -88,20 +92,20 @@ function Otp({navigation}) {
     };
     console.log('====obj====', obj);
     const res = await OtpVerification(obj);
-    console.log('res of HandleOtpVerification===>', res);
-    console.log('res.data.message =====>on otp', res.data.message);
+    // console.log('res of HandleOtpVerification===>', res.response.data);
+    // console.log('res.data.message =====>on otp', res.data?.message);
     if (res?.data) {
       dispatch(setVendorId(res.data.vendor_id));
       // console.log(
       //   'response of HandleOtpVerification ======>:',
       //   res.data.message,
       // );
-      console.log('res.data of HandleOtpVerification', res.data);
+      console.log('res.data of HandleOtpVerification', res?.data);
       await setOfflineData(CONSTANTS.TOKEN, res.data.token);
       await setOfflineData(CONSTANTS.REFRESH_TOKEN, res.data.refreshToken);
       if (
-        res.data.message == 'Otp Verify Successfully..' ||
-        res.data.message == 'Already Registered..'
+        res.data?.message == 'Otp Verify Successfully..' ||
+        res.data?.message == 'Already Registered..'
       ) {
         console.log(
           '+++++++++++++++OTP VERIFY SUCCESSFULY CONDITION++++++++++',
@@ -109,16 +113,12 @@ function Otp({navigation}) {
         navigation.replace('Registration');
         setButtonLoading(false);
       }
-      console.log(
-        '++++status in OTP screen ====>',
-        JSON.stringify(res?.data?.result?.status),
-      );
-
+      console.log('++++status in OTP screen ====>', JSON.stringify(res));
       if (res.data.message == 'Welcome back') {
         console.log('++++++++++++++++WELCOME WELCOME CONDITION++++++++++');
         const res = await handleUserGetData();
-        dispatch(setUserData(res.data.result));
-        if (res.data.result.status == 'accepted') {
+        dispatch(setUserData(res.data?.result));
+        if (res.data.result?.status == 'accepted') {
           console.log('++++++++++++++++accepted CONDITION++++++++++');
           dispatch(setLoggedIn(true));
           setButtonLoading(false);
@@ -127,18 +127,18 @@ function Otp({navigation}) {
           dispatch(setLoggedIn(true));
           dispatch(setAdminIsAccepted(true));
           setButtonLoading(false);
-        } else if (res.data.result.status == 'complete') {
+        } else if (res.data.result?.status == 'complete') {
           console.log('++++++++++++++++complete CONDITION++++++++++');
           dispatch(setLoggedIn(false));
           setButtonLoading(false);
           navigation.replace('AllProductCategory');
-        } else if (res.data.result.status == 'pending') {
+        } else if (res.data.result?.status == 'pending') {
           console.log('++++++++++++++++pending CONDITION++++++++++');
           navigation.replace('Registration');
           dispatch(setLoggedIn(false));
           setButtonLoading(false);
           // navigation.replace('AllOutofStockProductScreen');
-        } else if (res.data.result.status == 'rejected') {
+        } else if (res.data.result?.status == 'rejected') {
           console.log('++++++++++++++++rejected CONDITION++++++++++');
           dispatch(setLoggedIn(false));
           setButtonLoading(false);
@@ -150,6 +150,15 @@ function Otp({navigation}) {
         }
       }
     } else {
+      if (res.response) {
+        // navigation.navigate('LoginPhone');
+        // dispatch(setLoggedIn(false));
+        // console.log('@@@res?.response.data==>', res?.response.data);
+        // if (res.response.data.message == 'Your account is suspended') {
+        //   console.log('res.response .data', res.response.data);
+        //   navigation.replace('AdminSusPendScreen');
+        // }
+      }
       setButtonLoading(false);
       Toast.show(res.response?.data?.message, Toast.SHORT);
       console.log('catch error of HandleOtpVerification :', res);

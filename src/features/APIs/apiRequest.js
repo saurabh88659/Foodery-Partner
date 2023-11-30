@@ -55,11 +55,8 @@ export const PersonlDetialVerification = async data => {
 export const docsVerification = async data => {
   const authHeaders = await getAuthHeaders();
   authHeaders['Content-type'] = 'multipart/form-data';
-
   console.log('authHeaders=====>at docsVerification', authHeaders);
-
   console.log('=docsVerification data=====', data);
-
   try {
     const result = Instance(
       'PUT',
@@ -467,6 +464,54 @@ export const handleOnSearchQuery = async queryWords => {
     );
     return result;
   } catch (error) {
+    return error;
+  }
+};
+
+export const handleisReadNotification = async () => {
+  const object = {};
+  const authHeaders = await getAuthHeaders();
+  try {
+    const result = await Instance(
+      'PUT',
+      BASE_URL + 'vendor/updateNotification',
+      authHeaders,
+      object,
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleRejectReason = async () => {
+  const authHeaders = await getAuthHeaders();
+  console.log(authHeaders, 'llllllllllllllllllllllllllllllllllllllllllllll');
+  try {
+    const result = await Instance(
+      'GET',
+      BASE_URL + 'vendor/rejectedReason',
+      authHeaders,
+    );
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const handleSuspendReason = async () => {
+  const authHeaders = await getAuthHeaders();
+  console.log(authHeaders, 'llllllllllllllllllllllllllllllllllllllllllllll');
+  try {
+    const result = await Instance(
+      'GET',
+      BASE_URL + 'vendor/suspendedReason',
+      authHeaders,
+    );
+    return result;
+  } catch (error) {
+    console.log(error);
     return error;
   }
 };

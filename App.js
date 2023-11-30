@@ -19,29 +19,41 @@ import TransactionDetailsScreen from './src/Screens/TransactionDetailsAccountRec
 import TransactionDetailsAccountReceiveScreen from './src/Screens/TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsWalletReceiveScreen from './src/Screens/TransactionDetailsWalletReceiveScreen';
 import AdminRejectedScreen from './src/Screens/AdminRejectedScreen';
+import {checkInternetConnection} from './src/features/commonservice';
+import {setInterInfoState} from './src/features/requireDataReducer/requiredata.reducer';
+import InternetConnectivityWrapper from './src/Screens/InternetConnectivityWrapper';
 
 const App = () => {
   const dispatch = useDispatch();
   const loggedIn = useSelector(state => state.auth.loggedIn);
   console.log('loggedIn:====>app.js', loggedIn);
+  const [netInfo, setNetInfo] = useState(true);
 
   useEffect(() => {
     getDeviceToken();
+    // checkNetInfo();
   }, []);
-
   const getDeviceToken = async () => {
     const token = await messaging().getToken();
     console.log('========Device FCM -----Token=======', token);
     return token;
   };
 
-  return (
-    <NavigationContainer>
-      {/* {loggedIn ? <MainStack /> : <AuthStack />} */}
-      <Registration />
+  const checkNetInfo = async () => {
+    const res = await checkInternetConnection();
+    dispatch(setInterInfoState(res));
+    console.log('res of internetinfoo===', res);
+  };
 
-      {/* <AdminRejectedScreen /> */}
-    </NavigationContainer>
+  return (
+    <InternetConnectivityWrapper>
+      <NavigationContainer>
+        {loggedIn ? <MainStack /> : <AuthStack />}
+        {/* <Registration /> */}
+        {/* <SplashScreen /> */}
+        {/* <AdminRejectedScreen /> */}
+      </NavigationContainer>
+    </InternetConnectivityWrapper>
   );
 };
 const AppWarpper = () => {

@@ -2,10 +2,10 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import Header from '../component/Header';
 
-export default function Privacy() {
+export default function Privacy({navigation}) {
   return (
     <View>
-      <Header Title={'Privacy Policy'} />
+      <Header Title={'Privacy Policy'} onPress={() => navigation.goBack()} />
       <View>
         <Text>
           Lorem Ipsum is simply dummy text of the printing and typesetting

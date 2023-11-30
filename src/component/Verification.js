@@ -385,7 +385,7 @@ export default function Verification() {
       frontAdhar &&
       backAdhar &&
       selfie &&
-      rentBill &&
+      pancard &&
       (electricityBill || uploadRent)
     );
   };

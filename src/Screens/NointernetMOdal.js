@@ -16,29 +16,29 @@ import {setAdminIsAccepted} from '../features/requireDataReducer/requiredata.red
 import {setLoggedIn} from '../features/auth/auth.reducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from './Login';
-import SplashScreen from './SplashScreen';
 
-const AdminAcceptedModal = ({onCancel}) => {
+const NointernetMOdal = ({onCancel}) => {
   const navigation = useNavigation();
   const adminIsAccepted = useSelector(
     state => state.requiredata.adminIsAccepted,
   );
+  const interInfoState = useSelector(state => state.requiredata.interInfoState);
+  console.log('inter-----', interInfoState);
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
 
   const exitAndRefreshApp = async () => {
-    await AsyncStorage.clear();
-    BackHandler.exitApp();
+    // BackHandler.exitApp();
     dispatch(setLoggedIn(false));
     dispatch(setAdminIsAccepted(false));
-    // navigation.navigate('SplashScreen');
+    await AsyncStorage.clear();
   };
 
   return (
     <Modal
       transparent={false}
       animationIn={'shake'}
-      isVisible={adminIsAccepted}>
+      isVisible={!interInfoState}>
       <View
         style={{
           backgroundColor: '#fff',
@@ -88,7 +88,7 @@ const AdminAcceptedModal = ({onCancel}) => {
   );
 };
 
-export default AdminAcceptedModal;
+export default NointernetMOdal;
 
 const styles = StyleSheet.create({
   centeredView: {

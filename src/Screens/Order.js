@@ -130,7 +130,7 @@ function Order({navigation}) {
                 (item, index) => (
                   console.log(
                     '#######item orderdata======>>>>',
-                    JSON.stringify(item.orderId),
+                    JSON.stringify(item?.orderId),
                   ),
                   (
                     <View
@@ -144,6 +144,7 @@ function Order({navigation}) {
                         marginTop: 10,
                         marginBottom: 10,
                         paddingVertical: 15,
+                        // paddingBottom: 40,
                       }}>
                       <View
                         style={{
@@ -157,7 +158,7 @@ function Order({navigation}) {
                             color: Color.Green_Top,
                             textTransform: 'uppercase',
                           }}>
-                          {item.delieveryAddress.receiverName}
+                          {item?.delieveryAddress?.receiverName}
                         </Text>
                       </View>
                       <View
@@ -213,7 +214,7 @@ function Order({navigation}) {
                               }}>
                               Products :
                             </Text>
-                            {item.orderedProducts?.map(
+                            {item?.orderedProducts?.map(
                               (item, index) => (
                                 console.log(
                                   'item====>ofproductName in order  ',
@@ -230,7 +231,7 @@ function Order({navigation}) {
                                       // backgroundColor: 'red',
                                     }}>
                                     {' '}
-                                    {item.productId.productName} |
+                                    {item?.productId?.productName} |
                                   </Text>
                                 )
                               ),
@@ -264,7 +265,7 @@ function Order({navigation}) {
                                   color: '#000',
                                 }}>
                                 {' '}
-                                {item.delieveryAddress?.city}
+                                {item?.delieveryAddress?.city}
                               </Text>
                             </View>
                             <View>

@@ -1,13 +1,14 @@
 import {createSlice} from '@reduxjs/toolkit';
 const initialState = {
   userPhoneNUmber: null,
-  currentStep: 2,
+  currentStep: 0,
   adminIsAccepted: false,
   userData: null,
   selectedItem: [],
   desireFunctionKey: false,
   vendorId: null,
   searchQuerySave: '',
+  interInfoState: true,
 };
 
 const requireDataSlice = createSlice({
@@ -34,6 +35,9 @@ const requireDataSlice = createSlice({
     },
     setSearchQuerySave: (state, action) => {
       state.searchQuerySave = action.payload;
+    },
+    setInterInfoState: (state, action) => {
+      state.interInfoState = action.payload;
     },
 
     toggleSelection: (state, action) => {
@@ -67,4 +71,5 @@ export const {
   setSelectedItemnull,
   setVendorId,
   setSearchQuerySave,
+  setInterInfoState,
 } = requireDataSlice.actions;

@@ -1,8 +1,28 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {
+  handleRejectReason,
+  handleSuspendReason,
+  suspendAndRejectReason,
+} from '../features/APIs/apiRequest';
 
 const AdminSusPendScreen = () => {
+  const [reason, setReason] = useState([]);
+
+  const fetchData = async () => {
+    console.log('jskskskks');
+    const data = await handleSuspendReason();
+    // if (data.data.status) {
+    //   setReason(data?.data?.result);
+    // } else {
+    //   console.log('errror of fetchData reson suspend');
+    // }
+    console.log('dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', data);
+  };
+  useEffect(() => {
+    // fetchData();
+  }, []);
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View

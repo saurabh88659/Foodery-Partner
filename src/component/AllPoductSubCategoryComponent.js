@@ -168,30 +168,31 @@ function AllPoductSubCategoryComponent({data, onPress}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'#29C17E'} barStyle={Color.WHITE} />
-      {loading ? (
-        <View
-          style={{
-            height: '75%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {/* <Lottie
+      {
+        loading ? (
+          <View
+            style={{
+              height: '75%',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {/* <Lottie
             source={require('../Assests/Lottie/Waiting.json')}
             autoPlay
             loop={true}
             style={{height: 100, width: 100}}
           /> */}
 
-          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
-        </View>
-      ) : allSubCategory && allSubCategory.length > 0 ? (
-        <View style={{paddingBottom: '17%'}}>
-          <FlatList data={allSubCategory} renderItem={renderItem} />
-        </View>
-      ) : (
-        <Text style={{color: '#000'}}>No data found</Text>
-      )}
+            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+          </View>
+        ) : allSubCategory && allSubCategory.length > 0 ? (
+          <View style={{paddingBottom: '17%'}}>
+            <FlatList data={allSubCategory} renderItem={renderItem} />
+          </View>
+        ) : null
+        // <Text style={{color: '#000'}}>No data found</Text>
+      }
     </SafeAreaView>
   );
 }

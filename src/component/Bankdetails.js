@@ -38,7 +38,7 @@ import {setLoggedIn} from '../features/auth/auth.reducer';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import AllProductCategory from '../Screens/AllProductCategory';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // {onPress, selected, children}
 
 export default function Bankdetails() {
@@ -79,15 +79,12 @@ export default function Bankdetails() {
     console.log('tetx', text);
 
     if (!/^[a-zA-Z\s]+$/.test(text)) {
-      // Display a toast message for invalid input
       Toast.show(
         'Please enter a valid name without special characters',
         Toast.SHORT,
       );
-      // If it contains invalid characters, do not update the state
       return;
     }
-    // Update the state if the input is valid (no numbers)
     onBankName(text);
   };
 
@@ -95,11 +92,8 @@ export default function Bankdetails() {
     console.log('tetx', text);
     if (!/^\d+$/.test(text)) {
       Toast.show('Please enter valid Account number', Toast.SHORT);
-
-      // If it contains invalid characters, do not update the state
       return;
     }
-    // Update the state if the input is valid (no numbers)
     setbankAccountNumber(text);
   };
 
@@ -117,9 +111,13 @@ export default function Bankdetails() {
       setButtonLoading(false);
       console.log('res of submitBankDetails', res.data);
       if (res.data.success) {
-        Toast.show(res.data.message, Toast.SHORT);
-        navigation.replace('AllProductCategory');
-        dispatch(setLoggedIn(true));
+        if (validUpi) {
+          Toast.show(res.data.message, Toast.SHORT);
+          navigation.replace('AllProductCategory');
+          dispatch(setLoggedIn(true));
+        } else {
+          Toast.show('Please Verify Upi', Toast.SHORT);
+        }
       }
     } else {
       setButtonLoading(false);
@@ -129,16 +127,22 @@ export default function Bankdetails() {
   };
 
   const checkValidUPI = () => {
-    if (!/^[a-zA-Z\s]+$/.test(text)) {
-      // Display a toast message for invalid input
-      Toast.show(
-        'Please enter a valid name without special characters',
-        Toast.SHORT,
-      );
-      // If it contains invalid characters, do not update the state
-      return;
+    console.log('upiNumber', upiNumber);
+    const upiIdRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+$/;
+    if (upiIdRegex.test(upiNumber)) {
+      console.log('valid');
+      Toast.show('Valid UPI', Toast.SHORT);
+
+      setValidUpi(true);
+    } else {
+      console.log('invalid');
+      Toast.show('Please enter valid UPI', Toast.SHORT);
     }
-    setValidUpi(true);
+  };
+
+  const setFalseOnchange = text => {
+    console.log('text', text);
+    setUpiNumber(text), setValidUpi(false);
   };
 
   return (
@@ -342,10 +346,12 @@ export default function Bankdetails() {
               fontSize: responsiveFontSize(1.5),
               marginRight: 13,
             }}
-            onChangeText={setUpiNumber}
+            onChangeText={text => {
+              setFalseOnchange(text);
+            }}
             value={upiNumber}
           />
-          {validUpi ? (
+          {!validUpi ? (
             <TouchableOpacity
               onPress={checkValidUPI}
               style={{
@@ -377,7 +383,8 @@ export default function Bankdetails() {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text>OK</Text>
+              <MaterialIcons name={'verified'} size={30} color={'green'} />
+              {/* <Text>OK</Text> */}
             </View>
           )}
         </View>

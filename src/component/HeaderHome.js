@@ -21,15 +21,22 @@ import {
 import Color from '../Utils/Color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
-import {handleGetNotificationCount} from '../features/APIs/apiRequest';
+import {
+  handleGetNotificationCount,
+  handleisReadNotification,
+} from '../features/APIs/apiRequest';
 import {useState, useEffect} from 'react';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 export default function HeaderHome({navigation}) {
   const [notificationCounts, setNotificationCount] = useState(0);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    GetNotificationCount();
-  }, []);
+    if (isFocused) {
+      GetNotificationCount();
+    }
+  }, [isFocused]);
 
   const GetNotificationCount = async () => {
     const res = await handleGetNotificationCount();
@@ -45,6 +52,17 @@ export default function HeaderHome({navigation}) {
   };
   // const navigation=useNavigation();
   const userData = useSelector(state => state.requiredata.userData);
+
+  const isReadNotification = async () => {
+    const res = await handleisReadNotification();
+    console.log('++++++++++++++++++++++++++++==read ture====>', res.data);
+    console.log('notification readed');
+  };
+
+  const GotoNotificationPage = () => {
+    navigation.navigate('Notification');
+    isReadNotification();
+  };
 
   return (
     <View style={styles.loginbox}>
@@ -95,7 +113,8 @@ export default function HeaderHome({navigation}) {
             style={{margin: responsiveWidth(2)}}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
+
+        <TouchableOpacity onPress={GotoNotificationPage}>
           {notificationCounts > 0 && (
             <View
               style={{

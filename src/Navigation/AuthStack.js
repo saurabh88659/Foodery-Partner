@@ -12,6 +12,7 @@ import AllProductSubCategory from '../Screens/AllProductSubCategory';
 import AllProductsItem from '../Screens/AllProductsItem';
 import SelectedTempProductsScreen from '../Screens/SelectedTempProductsScreen';
 import AdminSusPendScreen from '../Screens/AdminSusPendScreen';
+import NointernetMOdal from '../Screens/NointernetMOdal';
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
@@ -63,7 +64,6 @@ const AuthStack = () => {
         component={AllProductsItem}
         options={headerNone}
       />
-
       <Stack.Screen name="Otp" component={Otp} options={headerNone} />
     </Stack.Navigator>
   );

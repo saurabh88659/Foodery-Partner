@@ -20,6 +20,7 @@ import {CONSTANTS} from '../Utils/constants';
 import LoginPhone from './LoginPhone';
 import {TimeUnit} from '@notifee/react-native';
 import AdminRejectedScreen from './AdminRejectedScreen';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const SplashScreen = () => {
   const loggedIn = useSelector(state => state.auth.loggedIn);
@@ -92,6 +93,7 @@ const SplashScreen = () => {
           navigation.navigate('LoginPhone');
           dispatch(setLoggedIn(false));
           if (res.response.data.message == 'Your account is suspended') {
+            console.log('res.response .data', res.response.data);
             navigation.replace('AdminSusPendScreen');
           }
           console.log('@@@resonse==>', res?.response.data);
@@ -119,7 +121,20 @@ const SplashScreen = () => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <ActivityIndicator color={Color.DARK_ORANGE} size={31} />
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <FontAwesome name={'opencart'} size={80} color={Color.Green_Top} />
+        <Text
+          style={{
+            color: Color.Green_Top,
+            fontSize: 14,
+            // fontWeight: '500',
+            marginTop: 30,
+          }}>
+          Grocery Vendor
+        </Text>
+      </View>
+
+      {/* <ActivityIndicator color={Color.DARK_ORANGE} size={31} /> */}
     </View>
   );
 };

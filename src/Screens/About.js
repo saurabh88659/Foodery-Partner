@@ -2,10 +2,10 @@ import {View, Text, ScrollView} from 'react-native';
 import React from 'react';
 import Header from '../component/Header';
 
-export default function About() {
+export default function About({navigation}) {
   return (
     <View>
-      <Header Title={'Aboust Us'} />
+      <Header Title={'Aboust Us'} onPress={() => navigation.goBack()} />
 
       <ScrollView contentInsetAdjustmentBehavior="automatic"></ScrollView>
       <Text>

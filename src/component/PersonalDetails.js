@@ -82,15 +82,27 @@ export default function PersonalDetails({navigation}) {
   }, []);
 
   useEffect(() => {
+    getCurrloc();
+  }, [currentLocationLoadingButton]);
+
+  const getCurrloc = () => {
+    SetCurrentLocationLoadingButton(false);
+    console.log('running on every hit');
     Geolocation.getCurrentPosition(data => {
+      SetCurrentLocationLoadingButton(false);
       SetLatitude(data.coords.latitude), SetLongitude(data.coords.longitude);
       console.log(
         'latitue and longiture at useEfcct========>>>>',
         data.coords.longitude,
         data.coords.latitude,
       );
+      Toast.showWithGravity(
+        'Coordinates update successfully',
+        Toast.SHORT,
+        Toast.BOTTOM,
+      );
     });
-  }, [currentLocationLoadingButton]);
+  };
 
   useEffect(() => {
     setMobileNumber(userPhoneNUmber);
@@ -98,24 +110,34 @@ export default function PersonalDetails({navigation}) {
 
   const getCurrentLocation = async () => {
     SetCurrentLocationLoadingButton(true);
-    const dataObj = {
-      lat: latitude,
-      long: longitude,
-    };
-    const res = await handleGetCurrentLocation(dataObj);
-    console.log('res of getCurrentLocation====>>', res.data.address.address);
-    if (res.data) {
-      SetCurrentLocationLoadingButton(false);
-
-      setCity(res.data.address.address.city);
-      setState(res.data.address.address.state);
-      setpincode(res.data.address.address.postcode);
-      if (res.data.success) {
+    if (latitude && longitude) {
+      const dataObj = {
+        lat: latitude,
+        long: longitude,
+      };
+      const res = await handleGetCurrentLocation(dataObj);
+      console.log(
+        'res of getCurrentLocation====>>',
+        res?.data?.address?.address,
+      );
+      if (res.data) {
+        SetCurrentLocationLoadingButton(false);
+        setCity(res?.data?.address?.address?.city);
+        setState(res?.data?.address?.address?.state);
+        setpincode(res?.data?.address?.address?.postcode);
+        if (res.data.success) {
+        }
+      } else {
+        SetCurrentLocationLoadingButton(false);
+        console.log('error in getCurrentLocation====>', res);
       }
     } else {
-      SetCurrentLocationLoadingButton(false);
-
-      console.log('error in getCurrentLocation====>', res);
+      // SetCurrentLocationLoadingButton(false);
+      Toast.showWithGravity(
+        'Your location will help us serve you better – mind turning it on?',
+        Toast.SHORT,
+        Toast.BOTTOM,
+      );
     }
   };
 
@@ -277,7 +299,7 @@ export default function PersonalDetails({navigation}) {
       }
     } else {
       setButtonLoading(false);
-      Toast.show(res.response.data.message, Toast.SHORT, {
+      Toast.show(res?.response?.data?.message, Toast.SHORT, {
         backgroundColor: 'blue',
       });
       console.log('catch error of PersonalDetailVerification ===>:', res);

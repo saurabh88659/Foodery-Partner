@@ -33,21 +33,22 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
 import Header from '../component/Header';
 // import Lottie from 'lottie-react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 function AllPoductCategoryComponent({navigation, onPress}) {
+  const isFocused = useIsFocused();
   const userData = useSelector(state => state.requiredata.userData);
   const selectedItems = useSelector(state => state.requiredata.selectedItem);
-
-  console.log('home.js userData===>', userData);
+  // console.log('home.js userData===>', userData);
   const [allCategory, setAllCategory] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const GetAllCategoryList = async () => {
     setLoading(true);
     const res = await handleGetAllCategoryList();
-    if (res.data.result) {
+    console.log('##########res747785478', res);
+    if (res?.data?.result) {
       setLoading(false);
-      setAllCategory(res.data.result);
+      setAllCategory(res?.data?.result);
     } else {
       setLoading(false);
       console.log('error==', res);
@@ -56,7 +57,7 @@ function AllPoductCategoryComponent({navigation, onPress}) {
 
   useEffect(() => {
     GetAllCategoryList();
-  }, []);
+  }, [isFocused]);
 
   const renderItem = ({item}) => {
     console.log('itmm of get all product==>', item);
@@ -138,26 +139,27 @@ function AllPoductCategoryComponent({navigation, onPress}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {loading ? (
-        <View
-          style={{
-            height: '75%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {/* <Lottie
+      {
+        loading ? (
+          <View
+            style={{
+              height: '75%',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {/* <Lottie
             source={require('../Assests/Lottie/greenLoadingLine.json')}
             autoPlay
             loop={true}
             style={{height: 100, width: 100}}
           /> */}
-          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
-        </View>
-      ) : allCategory && allCategory.length > 0 ? (
-        <View style={{paddingBottom: '28%'}}>
-          <FlatList data={allCategory} renderItem={renderItem} />
-          {/* {selectedItems.length > 0 ? (
+            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+          </View>
+        ) : allCategory && allCategory.length > 0 ? (
+          <View style={{paddingBottom: '28%'}}>
+            <FlatList data={allCategory} renderItem={renderItem} />
+            {/* {selectedItems.length > 0 ? (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('SelectedTempProductsScreen');
@@ -172,10 +174,10 @@ function AllPoductCategoryComponent({navigation, onPress}) {
               <Text style={{color: Color.WHITE, fontSize: 19}}>Continue</Text>
             </TouchableOpacity>
           ) : null} */}
-        </View>
-      ) : (
-        <Text style={{color: '#000'}}>No data found</Text>
-      )}
+          </View>
+        ) : null
+        // <Text style={{color: '#000'}}>No data found</Text>
+      }
     </SafeAreaView>
   );
 }

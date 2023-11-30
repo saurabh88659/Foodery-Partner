@@ -393,7 +393,7 @@ export default function Notification({navigation}) {
             <View
               style={{
                 // backgroundColor: 'red',
-                height: '75%',
+                height: '90%',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
