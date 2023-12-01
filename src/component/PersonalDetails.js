@@ -96,11 +96,6 @@ export default function PersonalDetails({navigation}) {
         data.coords.longitude,
         data.coords.latitude,
       );
-      Toast.showWithGravity(
-        'Coordinates update successfully',
-        Toast.SHORT,
-        Toast.BOTTOM,
-      );
     });
   };
 
@@ -121,18 +116,23 @@ export default function PersonalDetails({navigation}) {
         res?.data?.address?.address,
       );
       if (res.data) {
-        SetCurrentLocationLoadingButton(false);
+        Toast.showWithGravity(
+          'Coordinates update successfully',
+          Toast.SHORT,
+          Toast.BOTTOM,
+        );
         setCity(res?.data?.address?.address?.city);
         setState(res?.data?.address?.address?.state);
         setpincode(res?.data?.address?.address?.postcode);
-        if (res.data.success) {
-        }
+        setShopLocation(res?.data?.address?.address?.building);
+        setShopAddress(res?.data?.address?.address?.road);
+        SetCurrentLocationLoadingButton(false);
       } else {
         SetCurrentLocationLoadingButton(false);
         console.log('error in getCurrentLocation====>', res);
       }
     } else {
-      // SetCurrentLocationLoadingButton(false);
+      SetCurrentLocationLoadingButton(false);
       Toast.showWithGravity(
         'Your location will help us serve you better – mind turning it on?',
         Toast.SHORT,
@@ -166,12 +166,6 @@ export default function PersonalDetails({navigation}) {
     setCurrentStep(prevStep => Math.max(prevStep - 1, 0));
   };
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    // For example, you can call an API or save the form data
-    alert('Form submitted successfully!');
-  };
-
   const handleDateChange = (event, selectedDate) => {
     console.log('selectedDate and event', event, selectedDate);
     const currentDate = selectedDate;
@@ -182,86 +176,6 @@ export default function PersonalDetails({navigation}) {
   const handlePress = () => {
     setShowPicker(true);
   };
-
-  //.................................state...................................
-
-  const statedata = [
-    {label: 'Andhra Pradesh', value: '1'},
-    {label: 'Arunachal Pradesh', value: '2'},
-    {label: 'Assam', value: '3'},
-    {label: 'Bihar', value: '4'},
-    {label: 'Chhattisgarh', value: '5'},
-    {label: 'Goa', value: '6'},
-    {label: 'Gujarat', value: '7'},
-    {label: 'Haryana', value: '8'},
-    {label: 'Himachal Pradesh', value: '9'},
-    {label: 'Jharkhand', value: '10'},
-    {label: 'Karnataka', value: '11'},
-    {label: 'Kerala', value: '12'},
-    {label: 'Madhya Pradesh', value: '13'},
-    {label: 'Maharashtra', value: '14'},
-    {label: 'Manipur', value: '15'},
-    {label: 'Meghalaya', value: '16'},
-    {label: 'Mizoram', value: '17'},
-    {label: 'Nagaland', value: '18'},
-    {label: 'Odisha', value: '19'},
-    {label: 'Punjab', value: '20'},
-    {label: 'Rajasthan', value: '21'},
-    {label: 'Sikkim', value: '22'},
-    {label: 'Tamil Nadu', value: '23'},
-    {label: 'Telangana', value: '24'},
-    {label: 'Tripura', value: '25'},
-    {label: 'Uttar Pradesh', value: '26'},
-    {label: 'Uttarakhand', value: '27'},
-    {label: 'West Bengal', value: '28'},
-  ];
-
-  // const fetchLocationInfo = () => {
-  //   const CollectData = query.search(`${pincode}`);
-
-  //   if (CollectData[0] == null) {
-  //     ToastAndroid.show('Please Enter Correct Pincode', ToastAndroid.LONG);
-  //   } else {
-  //     setCityValue(CollectData[0].city);
-  //     console.log('data', CollectData);
-  //   }
-  // };
-
-  // const personalDetail = async () => {
-  //   // if (!accountHolder || !bankAccount || !ifscCode || !bankName) {
-  //   //   Alert.alert('Please fill all the fields!');
-  //   //   return console.log('No field is filled up'); // do whatever you want to display
-  //   // }
-  //   const token = await AsyncStorage.getItem('token');
-  //   console.log(
-  //     token,
-  //     '---------->i am token mai hu tokennnnnnnnnnnnnnnnnnnnnnnnnnn',
-  //   );
-  //   const mobnumber = await AsyncStorage.getItem('phone');
-  //   console.log(
-  //     mobnumber,
-  //     '---------->i ammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm mobNuberqqq',
-  //   );
-
-  //   const axiosConfig = {
-  //     Authorization: `Bearer ${token}`,
-  //   };
-
-  //   console.log('personal-------->', Personal);
-
-  //   try {
-  //     const resp = await axios({
-  //       url: 'http://192.168.68.123:8000/api/vendor/signUpVendorApp',
-  //       headers: axiosConfig,
-  //       data: Personal,
-  //       method: 'PUT',
-  //     });
-  //     console.log('resp--->>>', resp.data);
-  //   } catch (error) {
-  //     console.log('errrr----->>>', error.response?.data);
-  //     //Toast.show(error.response?.data);
-  //   }
-  // };
 
   const PersonalDetailVerification = async () => {
     setButtonLoading(true);
@@ -289,7 +203,7 @@ export default function PersonalDetails({navigation}) {
     const res = await PersonlDetialVerification(PersonalDetailObj);
     if (res?.data) {
       setButtonLoading(false);
-      console.log('response of PersonalDetailVerification===> :', res.data);
+      console.log('response of PersonalDetailVerification===> :', res?.data);
       if (res.data.status) {
         if (res.data.message == 'Profile Updated successfully') {
           Toast.show('Profile Updated successfully', Toast.LONG);

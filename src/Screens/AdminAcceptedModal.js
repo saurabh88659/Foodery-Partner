@@ -17,6 +17,9 @@ import {setLoggedIn} from '../features/auth/auth.reducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Login from './Login';
 import SplashScreen from './SplashScreen';
+import {LoginWithPhone} from '../features/APIs/apiRequest';
+import {CommonActions} from '@react-navigation/native';
+import LoginPhone from './LoginPhone';
 
 const AdminAcceptedModal = ({onCancel}) => {
   const navigation = useNavigation();
@@ -28,9 +31,15 @@ const AdminAcceptedModal = ({onCancel}) => {
 
   const exitAndRefreshApp = async () => {
     await AsyncStorage.clear();
-    BackHandler.exitApp();
     dispatch(setLoggedIn(false));
     dispatch(setAdminIsAccepted(false));
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'SplashScreen'}], // Replace 'Login' with the actual name of your login screen
+      }),
+    );
+    // BackHandler.exitApp();
     // navigation.navigate('SplashScreen');
   };
 

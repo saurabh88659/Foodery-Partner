@@ -109,7 +109,7 @@ const TransactionDetailsWalletReceiveScreen = ({navigation, route}) => {
                     </Text>
                     <Text
                       style={{color: 'green', fontSize: 16, fontWeight: '400'}}>
-                      +20
+                      +{data.vendorAmount}
                     </Text>
                   </View>
                 </View>

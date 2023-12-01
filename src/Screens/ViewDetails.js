@@ -13,6 +13,7 @@ import {
   ImageBackground,
   RefreshControl,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import Header from '../component/Header';
@@ -31,7 +32,8 @@ import {
   handleGetOrderDetailsById,
 } from '../features/APIs/apiRequest';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-
+import StepIndicator from 'react-native-step-indicator';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const {height, width} = Dimensions.get('window');
 
 function ViewDetails({navigation, route}) {
@@ -43,6 +45,13 @@ function ViewDetails({navigation, route}) {
   const [refreshing, setRefreshing] = useState(false);
   const [orderDetailsById, setOrderDetailsById] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  // const stepCount = data.length;
+
+  // const labels = orderDetailsById.allBookingStatuses.map(step => ({
+  //   label: step.status,
+  //   time: step.time,
+  // }));
 
   useEffect(() => {
     if (isFocused) {
@@ -52,14 +61,18 @@ function ViewDetails({navigation, route}) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    GetOrderDetailsById();
+    refresh();
+    // GetOrderDetailsById();
     setRefreshing(false);
   }, []);
 
   const GetOrderDetailsById = async () => {
     setLoading(true);
     const res = await handleGetOrderDetailsById(data);
-    console.log('+++Res of GetOrderDetailsById===>>', JSON.stringify(res.data));
+    console.log(
+      '----99999999###+++Res of GetOrderDetailsById===>>',
+      JSON.stringify(res.data.result),
+    );
     if (res.data.status) {
       setLoading(false);
       setOrderDetailsById(res.data.result);
@@ -68,6 +81,51 @@ function ViewDetails({navigation, route}) {
       console.log('error==', res);
     }
   };
+
+  const refresh = async () => {
+    const res = await handleGetOrderDetailsById(data);
+    console.log(
+      '+++Res of GetOrderDetailsById===>>',
+      JSON.stringify(res?.data),
+    );
+    if (res.data.status) {
+      setOrderDetailsById(res.data.result);
+    } else {
+      console.log('error==', res);
+    }
+  };
+
+  const labels = orderDetailsById?.allBookingStatuses?.slice(2).map(status => {
+    console.log('(((())))====all levels=====>>>', status);
+    return (
+      <View style={{justifyContent: 'flex-end'}}>
+        <Text></Text>
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 18,
+              alignSelf: 'flex-start',
+            }}>
+            {status?.status == 'deliveryBoyAccepted'
+              ? 'Delivery boy accepted'
+              : status?.status == 'pickedup'
+              ? 'picked up'
+              : status?.status == 'Delivered'
+              ? 'order delivered'
+              : null}
+          </Text>
+          <Text style={{color: 'grey', fontSize: 12}}>
+            {moment(status?.time).format('ddd MMM D , hh:mm A')}
+          </Text>
+        </View>
+      </View>
+    );
+  });
+  console.log(
+    '$$$$$$$$$$$$$$$$$$$$$$$$$$orderDetailsById.allBookingStatuses=================>>',
+    JSON.stringify(orderDetailsById),
+  );
 
   return (
     <SafeAreaView
@@ -82,6 +140,7 @@ function ViewDetails({navigation, route}) {
           navigation.goBack();
         }}
       />
+
       {/* ...........................Time Of Order............................... */}
       {loading ? (
         <View
@@ -107,6 +166,16 @@ function ViewDetails({navigation, route}) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <View style={{marginTop: 30, paddingHorizontal: 10}}>
+            {/* <View style={{}}>            </View> */}
+
+            {/* <StepIndicator
+              // direction={'vertical'}
+              customStyles={stepIndicatorStyles}
+              currentPosition={currentStep}
+              labels={labels}
+              stepCount={stepCount}
+            /> */}
+
             <View style={{marginBottom: 20}}>
               <Text
                 style={{
@@ -115,23 +184,26 @@ function ViewDetails({navigation, route}) {
                   color: '#000',
                   fontWeight: '500',
                 }}>
-                {orderDetailsById.deliveryBoyStatus === 'pending' &&
+                {orderDetailsById?.deliveryBoyStatus === 'pending' &&
                   'Looking for a delivery partner. Please wait...'}
-                {orderDetailsById.deliveryBoyStatus === 'accepted' &&
+                {orderDetailsById?.deliveryBoyStatus === 'accepted' &&
                   'Delivery partner is on its way to pick an order from you.'}
-                {orderDetailsById.deliveryBoyStatus === 'pickedup' &&
+                {orderDetailsById?.deliveryBoyStatus === 'pickedup' &&
                   'Order has been picked up and is on its way.'}
-                {orderDetailsById.deliveryBoyStatus === 'delivered' &&
+                {orderDetailsById?.deliveryBoyStatus === 'delivered' &&
                   'Success! order has been delivered.'}
               </Text>
             </View>
-            {orderDetailsById.deliveryBoyStatus == 'accpet' && (
+
+            {(orderDetailsById.deliveryBoyStatus == 'accepted' ||
+              orderDetailsById?.deliveryBoyStatus === 'pickedup' ||
+              orderDetailsById?.deliveryBoyStatus === 'delivered') && (
               <View
                 style={{
                   backgroundColor: '#66cdaa',
                   // paddingVertical: 15,
                   borderRadius: 5,
-                  paddingHorizontal: 5,
+                  paddingHorizontal: 10,
                   paddingTop: 6,
                   paddingBottom: 15,
                 }}>
@@ -150,16 +222,40 @@ function ViewDetails({navigation, route}) {
                     Name
                   </Text>
                   <Text style={{fontSize: 17, color: '#000'}}>
-                    : Jogesh Patel
+                    {orderDetailsById?.deliveryBoyId?.firstName +
+                      ' ' +
+                      orderDetailsById?.deliveryBoyId?.lastName}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row'}}>
-                  <Text style={{fontSize: 17, color: '#000', width: 80}}>
-                    Contact{' '}
-                  </Text>
-                  <Text style={{fontSize: 17, color: '#000'}}>
-                    : 9786565674
-                  </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    <Text style={{fontSize: 17, color: '#000', width: 80}}>
+                      Contact{' '}
+                    </Text>
+                    <Text style={{fontSize: 17, color: '#000', marginRight: 0}}>
+                      {orderDetailsById?.deliveryBoyId?.mobileNumber}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginRight: 6,
+                      // backgroundColor: 'red',
+                    }}
+                    onPress={() =>
+                      Linking.openURL(
+                        `tel:${orderDetailsById?.deliveryBoyId?.mobileNumber}`,
+                      )
+                    }>
+                    <Ionicons name={'call'} color={'green'} size={22} />
+                  </TouchableOpacity>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                   <Text style={{fontSize: 17, color: '#000', width: 80}}>
@@ -172,11 +268,13 @@ function ViewDetails({navigation, route}) {
               </View>
             )}
           </View>
+
           <View
             style={{
               borderBottomLeftRadius: 20,
               borderBottomRightRadius: 20,
               elevation: 5,
+              marginTop: 10,
             }}>
             <View
               style={{
@@ -199,6 +297,7 @@ function ViewDetails({navigation, route}) {
                   }}>
                   Customer Details
                 </Text>
+
                 <Text
                   style={{
                     fontSize: responsiveFontSize(1.5),
@@ -206,8 +305,7 @@ function ViewDetails({navigation, route}) {
                     color: Color.BLACK,
                     textAlignVertical: 'center',
                   }}>
-                  {/* 123457689879655 */}
-                  {data.orderId}
+                  {orderDetailsById.orderId}
                 </Text>
               </View>
 
@@ -238,7 +336,6 @@ function ViewDetails({navigation, route}) {
                       fontWeight: 'normal',
                     }}>
                     {orderDetailsById?.delieveryAddress?.floor}
-                    {/* 334-C, Pralrati Apartments, */}
                   </Text>
                   <Text
                     style={{
@@ -325,10 +422,12 @@ function ViewDetails({navigation, route}) {
                         justifyContent: 'space-between',
                         marginHorizontal: 10,
                       }}>
-                      <Text style={{color: 'black', fontSize: 15}}>
+                      <Text style={{color: 'black', fontSize: 13}}>
                         Item Total
                       </Text>
-                      <Text>{item.quantity}</Text>
+                      <Text style={{color: 'black', fontSize: 13}}>
+                        {item.quantity}
+                      </Text>
                     </View>
                   </View>
                 );
@@ -342,7 +441,7 @@ function ViewDetails({navigation, route}) {
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
               }}>
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
@@ -354,11 +453,11 @@ function ViewDetails({navigation, route}) {
                 </View>
 
                 <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
-                  Rs {data.deliveryFee}
+                  Rs {orderDetailsById.deliveryFee}
                 </Text>
-              </View>
+              </View> */}
 
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
@@ -371,9 +470,9 @@ function ViewDetails({navigation, route}) {
                 </View>
 
                 <Text style={{fontSize: 12, color: Color.LIGHT_GREEN}}>
-                  Rs {data.gst}
+                  Rs {orderDetailsById.gst}
                 </Text>
-              </View>
+              </View> */}
 
               <View
                 style={{
@@ -382,18 +481,66 @@ function ViewDetails({navigation, route}) {
                   marginHorizontal: 10,
                   // marginTop: 2,
                 }}>
-                <Text style={{fontSize: 12, color: 'black'}}>To Pay</Text>
+                <Text style={{fontSize: 12, color: 'black'}}>total Amount</Text>
                 <Text style={{fontSize: 12, color: 'black'}}>
-                  Rs. {data.totalAmount}
+                  Rs. {orderDetailsById.totalAmount}
                 </Text>
               </View>
             </View>
+            {/* {===============step indincator===============} */}
           </View>
+          {(orderDetailsById.deliveryBoyStatus == 'accepted' ||
+            orderDetailsById.deliveryBoyStatus == 'pickedup' ||
+            orderDetailsById.deliveryBoyStatus == 'delivered') && (
+            <View
+              style={{
+                paddingHorizontal: 15,
+                // height: labels?.length * 100,
+                // backgroundColor: 'red',
+                marginTop: 20,
+              }}>
+              <Text style={{fontSize: 21, fontWeight: '500', color: '#000'}}>
+                Order Status
+              </Text>
+              <StepIndicator
+                customStyles={stepIndicatorStyles}
+                currentPosition={labels?.length}
+                stepCount={labels?.length}
+                labels={labels}
+                direction={'vertical'}
+              />
+            </View>
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
   );
 }
+
+const stepIndicatorStyles = {
+  stepIndicatorSize: 30,
+  currentStepIndicatorSize: 35,
+  separatorStrokeWidth: 2,
+  currentStepStrokeWidth: 3,
+  stepStrokeCurrentColor: '#29C17E',
+  stepStrokeWidth: 3,
+  stepStrokeFinishedColor: '#29C17E',
+  stepStrokeUnFinishedColor: '#aaaaaa',
+  separatorFinishedColor: '#29C17E',
+  separatorUnFinishedColor: '#aaaaaa',
+  stepIndicatorFinishedColor: '#29C17E',
+  stepIndicatorUnFinishedColor: '#ffffff',
+  stepIndicatorCurrentColor: '#ffffff',
+  stepIndicatorLabelFontSize: 12,
+  currentStepIndicatorLabelFontSize: 12,
+  stepIndicatorLabelCurrentColor: '#29C17E',
+  stepIndicatorLabelFinishedColor: '#ffffff',
+  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+  labelColor: '#29C17E',
+  labelSize: 12,
+  currentStepLabelColor: '#29C17E',
+  // Customize the step indicator styles here (same as the previous example)
+};
 
 const styles = StyleSheet.create({
   TextDetails: {

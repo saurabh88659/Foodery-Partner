@@ -175,7 +175,7 @@ function AllProductCategory({navigation, route}) {
         {selectedItems.length > 0 ? (
           <TouchableOpacity
             onPress={() => {
-              navigation.replace('SelectedTempProductsScreen');
+              navigation.navigate('SelectedTempProductsScreen');
             }}
             style={{
               width: '100%',

@@ -11,6 +11,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import Color from '../Utils/Color';
 import {
@@ -92,8 +93,14 @@ export default function MyOrderHistory({navigation}) {
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
+    const res1 = await handleGetTransaction();
+    const res2 = await handleVEndorCurrentBalance();
+    // console.log('res1 and res2', res1, res2);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 50);
   };
 
   const renderItem = ({item, index}) => {
@@ -210,7 +217,7 @@ export default function MyOrderHistory({navigation}) {
   };
 
   const renderTransactionItem = (item, index) => {
-    console.log('item ofrenderTransactionItem>>>>  >', JSON.stringify(item));
+    console.log('item of render TransactionItem>>>>  >', JSON.stringify(item));
     if (item.type === 'deducted') {
       return (
         <View
@@ -274,7 +281,7 @@ export default function MyOrderHistory({navigation}) {
                 fontSize: 15,
                 // backgroundColor: 'red',
               }}>
-              Order ID : {item._id}
+              Order ID : {item.orderId}
             </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -291,6 +298,7 @@ export default function MyOrderHistory({navigation}) {
                 {item.orderedProducts.map((item, index) => {
                   return (
                     <Text
+                      key={index}
                       numberOfLines={1}
                       style={{
                         color: '#000',
@@ -401,10 +409,9 @@ export default function MyOrderHistory({navigation}) {
           </View>
           {transaction.length > 0 ? (
             <ScrollView
-            // refreshControl={
-            //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            // }
-            >
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }>
               <View>
                 {transaction.map((item, index) =>
                   renderTransactionItem(item, index),

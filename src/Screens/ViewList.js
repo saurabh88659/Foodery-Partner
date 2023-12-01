@@ -43,6 +43,7 @@ function Store({navigation, route}) {
   // useEffect(() => {
   //   // GetAllproductCategory();
   // }, [refreshKey]);
+
   const requireData = route.params.data;
   console.log('itemId====>', requireData);
 
@@ -201,7 +202,7 @@ function Store({navigation, route}) {
               width: responsiveWidth(37),
               paddingVertical: responsiveHeight(1),
             }}>
-            <Text style={styles.texting4}>₹ {item.productPrice}</Text>
+            <Text style={styles.texting4}>₹ {item.purchasePrice}</Text>
             <TouchableOpacity
               // onPress={() => navigation.navigate('ViewDetails')}
               onPress={() =>

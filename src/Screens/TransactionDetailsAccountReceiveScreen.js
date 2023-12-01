@@ -9,11 +9,13 @@ import {
   handleTransactionAccountDeails,
 } from '../features/APIs/apiRequest';
 import moment from 'moment';
-
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const TransactionDetailsAccountReceiveScreen = ({navigation, route}) => {
   const [accountTransactionDetails, setAccountTransactionDetails] =
     useState('');
+
   const TransactionId = route.params.data;
+
   console.log('TransactionId====>>>====>', TransactionId);
   useEffect(() => {
     TransactionAccountDeails();
@@ -38,7 +40,10 @@ const TransactionDetailsAccountReceiveScreen = ({navigation, route}) => {
         height: '100%',
         backgroundColor: '#fff',
       }}>
-      <Header Title={'Transaction Details'} />
+      <Header
+        Title={'Transaction Details'}
+        onPress={() => navigation.goBack('')}
+      />
       <View
         style={{
           paddingHorizontal: 10,
@@ -93,6 +98,7 @@ const TransactionDetailsAccountReceiveScreen = ({navigation, route}) => {
                 Foodery Payment
               </Text>
               <TouchableOpacity
+                activeOpacity={1}
                 style={{
                   height: 50,
                   width: 50,
@@ -103,7 +109,13 @@ const TransactionDetailsAccountReceiveScreen = ({navigation, route}) => {
                   borderWidth: 1,
                   borderColor: Color.DARK_GRAY,
                 }}>
-                <Text style={{color: '#000'}}>Logo</Text>
+                <FontAwesome
+                  name={'opencart'}
+                  size={20}
+                  color={Color.Green_Top}
+                />
+
+                {/* <Text style={{color: '#000'}}>Logo</Text> */}
               </TouchableOpacity>
             </View>
           </View>

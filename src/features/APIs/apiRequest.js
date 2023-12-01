@@ -205,7 +205,7 @@ export const handleGetAllproductCategory = async data => {
   }
 };
 
-export const shandleGetSelectedproducts = async data => {
+export const handleGetSelectedproducts = async data => {
   console.log(' handleGetSelectedproducts data====>>===', data);
   const authHeaders = await getAuthHeaders();
   console.log('token===', authHeaders);

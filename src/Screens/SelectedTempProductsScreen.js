@@ -164,7 +164,7 @@ function SelectedTempProductsScreen({navigation, route}) {
               width: responsiveWidth(37),
               paddingVertical: responsiveHeight(1),
             }}>
-            <Text style={styles.texting4}>₹ {item.productPrice}</Text>
+            <Text style={styles.texting4}>₹ {item.purchasePrice}</Text>
 
             {/* <TouchableOpacity
               onPress={() =>

@@ -40,21 +40,6 @@ function LoginPhone() {
   const [phoneNo, setPhoneNo] = useState('');
   const [ErrorMobNumber, setErrorMobNumber] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false);
-  // const loginUser = async () => {
-  //   const obj = {
-  //     mobileNumber: phoneNo,
-  //   };
-  //   axios
-  //     .post(BASE_URL + 'vendor/loginVendorApp', obj)
-  //     .then(async resp => {
-  //       console.log('---->data', resp.data);
-  //       setPhoneNo(resp.data);
-  //       navigation.navigate('Otp', {phoneDetails: phoneNo});
-  //     })
-  //     .catch(error => {
-  //       console.log(error);
-  //     });
-  // };
 
   useEffect(() => {
     getToken();
@@ -67,18 +52,6 @@ function LoginPhone() {
     console.log('fcmToken-----', fcmToken);
   };
 
-  // const validate_mobNumber = mob_number => {
-  //   console.log('mob_number=====', mob_number);
-  //   var mobileNoRegex = /^[6-9]{1}[0-9]{9}$/;
-  //   if (mob_number == '' || mob_number == 'undefined' || mob_number == null) {
-  //     setErrorMobNumber('Please Enter a vaild Mobile Number');
-  //   } else if (!mobileNoRegex.test(mob_number)) {
-  //     setErrorMobNumber('Please Enter a Valid Mobile Number');
-  //   } else {
-  //     setErrorMobNumber(null);
-  //   }
-  // };
-
   const HandleloginWithPhone = async () => {
     setButtonLoading(true);
     const obj = {
@@ -86,17 +59,17 @@ function LoginPhone() {
     };
 
     const res = await LoginWithPhone(obj);
-    if (res?.data) {
+    if (res.data) {
       setButtonLoading(false);
       if (res.data.message == 'OTP Sent Successfully') {
         dispatch(setUserPhoneNUmber(phoneNo));
         navigation.navigate('Otp');
       }
-      console.log('response:', res.data);
+      console.log('response:', res?.data);
     } else {
       setButtonLoading(false);
       console.log('catch error of :', res);
-      console.log('catch error:', res.response.data.message);
+      console.log('catch error:', res?.response?.data?.message);
       if (
         res.response.data.message ==
         '"mobileNumber" must be greater than or equal to 1000000000'
@@ -122,7 +95,6 @@ function LoginPhone() {
               value={phoneNo}
               onChangeText={text => {
                 setPhoneNo(text.replace(/[- ()+=#*;,.<>\{\}\[\]\\\/]/gi, ''));
-                // validate_mobNumber(text);
               }}
             />
             {ErrorMobNumber != null ? <Text>{ErrorMobNumber}</Text> : null}

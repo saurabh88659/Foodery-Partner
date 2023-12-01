@@ -47,10 +47,8 @@ const requireDataSlice = createSlice({
       const index = state.selectedItem.findIndex(item => item._id === itemId);
       console.log('+++++++++++index==', index);
       if (index !== -1) {
-        // Item is already selected, remove it from the array
         state.selectedItem.splice(index, 1);
       } else {
-        // Item is not selected, add it to the array
         state.selectedItem.push(item);
       }
     },

@@ -44,7 +44,8 @@ const labels = [
   'Verification',
   'certification',
   'Bank Details',
-]; // Array of step labels
+];
+// Array of step labels
 const stepCount = labels.length;
 
 export default function Registration({navigation, route}) {
@@ -66,13 +67,13 @@ export default function Registration({navigation, route}) {
   };
   const formattedDate = format(date, 'dd/MM/yyyy');
 
-  const handleNextStep = () => {
-    setCurrentStep(prevStep => Math.min(prevStep + 1, stepCount - 1));
-  };
+  // const handleNextStep = () => {
+  //   setCurrentStep(prevStep => Math.min(prevStep + 1, stepCount - 1));
+  // };
 
-  const handlePreviousStep = () => {
-    setCurrentStep(prevStep => Math.max(prevStep - 1, 0));
-  };
+  // const handlePreviousStep = () => {
+  //   setCurrentStep(prevStep => Math.max(prevStep - 1, 0));
+  // };
 
   const handleSubmit = () => {
     // Handle form submission here
