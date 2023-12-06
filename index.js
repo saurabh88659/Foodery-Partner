@@ -7,8 +7,10 @@ import App from './App';
 import {name as appName} from './app.json';
 import {Alert} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
+import notificationOndisplay from './src/notification/notificationOndisplay';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
+  notificationOndisplay.NotificationOnScreen(remoteMessage);
   console.log(
     '--------------------Message Handle in the background (running in back inde.js)!',
     remoteMessage,

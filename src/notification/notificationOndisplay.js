@@ -28,7 +28,6 @@ const getDeviceToken = async () => {
 
 export async function notificationListeners() {
   //on display====
-
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!=============>', remoteMessage);
     NotificationOnScreen(remoteMessage);
@@ -38,7 +37,7 @@ export async function notificationListeners() {
   messaging().setBackgroundMessageHandler(async remoteMessage => {
     NotificationOnScreen(remoteMessage);
     console.log(
-      '--------------------Message Handle in the background  on tifications feature===>>!',
+      '--------------------Message Handle in the background  on notifications feature===>>!',
       remoteMessage,
     );
   });
@@ -50,7 +49,6 @@ export async function notificationListeners() {
   //     remoteMessage,
   //   );
   // });
-
   return unsubscribe;
 }
 

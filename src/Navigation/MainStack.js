@@ -104,19 +104,16 @@ const MainStack = () => {
           component={BottomNavigation}
           options={headerNone}
         />
-        {/* <Stack.Screen name="Home" component={Home} options={headerNone} /> */}
         <Stack.Screen
           name="ViewList"
           component={ViewList}
           options={headerNone}
         />
-
         <Stack.Screen
           name="ViewDetails"
           component={ViewDetails}
           options={headerNone}
         />
-
         <Stack.Screen name="Search" component={Search} options={headerNone} />
         <Stack.Screen name="Profile" component={Profile} options={headerNone} />
         <Stack.Screen
@@ -139,7 +136,6 @@ const MainStack = () => {
           component={TransactionDetailsWalletReceiveScreen}
           options={headerNone}
         />
-
         <Stack.Screen
           name="AllOutofStockProductScreen"
           component={AllOutofStockProductScreen}
@@ -155,7 +151,6 @@ const MainStack = () => {
           component={ViewTransactionDetailsScreen}
           options={headerNone}
         />
-
         <Stack.Screen
           name="Notification"
           component={Notification}
@@ -166,7 +161,6 @@ const MainStack = () => {
           component={OrderAndTransactionHistoryScreen}
           options={headerNone}
         />
-
         <Stack.Screen
           name="AllProductSubCategory"
           component={AllProductSubCategory}
@@ -178,7 +172,6 @@ const MainStack = () => {
           component={AllProductCategory}
           options={headerNone}
         />
-
         <Stack.Screen
           name="AllProductsItem"
           component={AllProductsItem}
@@ -194,13 +187,7 @@ const MainStack = () => {
           component={MyOrderHistory}
           options={headerNone}
         />
-        {/* <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          options={headerNone}
-        /> */}
       </Stack.Navigator>
-
       <AdminAcceptedModal />
     </>
   );

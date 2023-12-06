@@ -27,7 +27,7 @@ import {
 export default function OrderHistory({navigation}) {
   const [loading, setLoading] = useState(false);
   const [vendorCurrentBalance, setVendorCurrentBalance] = useState('');
-  const [walletData, setWalletData] = useState([]);
+  const [walletData, setWalletData] = useState([].reverse());
 
   useEffect(() => {
     GetVendorCurrentBalance();
@@ -91,7 +91,6 @@ export default function OrderHistory({navigation}) {
               }}>
               {item.delieveryAddress.receiverName}
             </Text>
-
             <View
               style={{
                 backgroundColor: Color.Green_Top,
@@ -246,7 +245,6 @@ export default function OrderHistory({navigation}) {
         }}>
         Order History
       </Text>
-
       <FlatList
         data={walletData}
         renderItem={renderItem}

@@ -228,7 +228,7 @@ export default function MyOrderHistory({navigation}) {
             // paddingHorizontal: 15,
             marginHorizontal: 10,
             paddingTop: 25,
-            paddingBottom: 10,
+            paddingBottom: '10%',
           }}
           key={index}>
           <TouchableOpacity

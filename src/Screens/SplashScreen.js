@@ -103,7 +103,7 @@ const SplashScreen = () => {
       // dispatch(setLoggedIn(true));
       dispatch(setLoggedIn(false));
       console.log('go to login page=====>>');
-      navigation.navigate('LoginPhone');
+      navigation.replace('LoginPhone');
     }
   };
 

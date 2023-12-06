@@ -106,15 +106,18 @@ function LoginPhone() {
               loadingColor={'#fff'}
               loadingSize={25}
             />
-            <Text style={styles.texting2}>Or Login with</Text>
+            <Text style={[styles.texting2, {marginTop: responsiveHeight(6)}]}>
+              Or Login with
+            </Text>
+
             <View
               style={{
-                //backgroundColor: 'pink',
+                // backgroundColor: 'pink',
                 height: responsiveHeight(8),
                 width: responsiveWidth(60),
                 flexDirection: 'row',
                 alignSelf: 'center',
-                marginTop: responsiveHeight(2),
+                marginTop: responsiveHeight(3),
                 alignSelf: 'center',
                 alignItems: 'center',
                 justifyContent: 'space-evenly',
@@ -158,7 +161,7 @@ function LoginPhone() {
                 />
               </TouchableOpacity>
             </View>
-            <View
+            {/* <View
               style={{
                 //backgroundColor: 'pink',
                 height: responsiveHeight(3),
@@ -173,7 +176,7 @@ function LoginPhone() {
               <TouchableOpacity>
                 <Text style={styles.texting}>Register Now</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
         </View>
         <View

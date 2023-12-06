@@ -41,19 +41,23 @@ export default function Search({navigation}) {
   console.log('##searchQuery===>', searchQuery);
   useEffect(() => {
     const fetchSearchResults = async () => {
+      setNullMessage('');
+
       if (searchQuery.trim() === '') {
         // dispatch(setSearchQuerySave(searchQuery));
         // setLoading(true);
-        setSearchResults(null);
+        setSearchResults([]);
         return;
       }
       const res = await handleOnSearchQuery(searchQuery);
       setLoading(false);
-      console.log('@@@@res of fetchSearchResults', res.data);
-      if (res.data.result) {
-        setSearchResults(res.data.result);
+      console.log('@@@@res of fetchSearchResults', res?.data);
+      if (res.data?.result) {
+        setSearchResults(res?.data?.result);
       } else {
-        console.log('##error of fetchSearchResults>>>>', res);
+        console.log('@@@error of fetchSearchResults>>>>', res);
+        // setNullMessage(res.response.data.message);
+        setNullMessage(res?.response?.data?.message);
       }
     };
     const delayDebounceFn = setTimeout(() => {
@@ -128,6 +132,8 @@ export default function Search({navigation}) {
           justifyContent: 'space-between',
           paddingBottom: 10,
           // height: 200,
+          // backgroundColor: 'red',
+          width: '49%',
         }}>
         <View
           style={{
@@ -288,24 +294,23 @@ export default function Search({navigation}) {
             <Text
               style={{
                 color: Color.DARK_GRAY,
-                fontSize: 20,
+                fontSize: 18,
                 textAlign: 'center',
               }}>
-              {/* {nullMessage} */}
+              {nullMessage}
               {/* No products found for {searchQuery}. */}
             </Text>
           </View>
+        ) : searchResults && searchResults.length > 0 ? (
+          <View style={{paddingTop: 20}}>
+            <FlatList
+              numColumns={2}
+              data={searchResults}
+              renderItem={renderItem}
+            />
+          </View>
         ) : (
-          searchResults &&
-          searchResults.length > 0 && (
-            <View style={{paddingTop: 20}}>
-              <FlatList
-                numColumns={2}
-                data={searchResults}
-                renderItem={renderItem}
-              />
-            </View>
-          )
+          <View style={{backgroundColor: 'red', flex: 1}}></View>
         )}
       </View>
     </View>

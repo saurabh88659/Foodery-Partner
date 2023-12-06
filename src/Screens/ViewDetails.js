@@ -19,7 +19,6 @@ import React, {useEffect, useState, useCallback} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
 import moment from 'moment';
-
 //import ImagePicker from 'react-native-image-crop-picker';
 import {
   responsiveHeight,
@@ -44,10 +43,10 @@ function ViewDetails({navigation, route}) {
   console.log('data===???', JSON.stringify(data));
   const [refreshing, setRefreshing] = useState(false);
   const [orderDetailsById, setOrderDetailsById] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
-  // const stepCount = data.length;
 
+  // const stepCount = data.length;
   // const labels = orderDetailsById.allBookingStatuses.map(step => ({
   //   label: step.status,
   //   time: step.time,
@@ -58,6 +57,11 @@ function ViewDetails({navigation, route}) {
       GetOrderDetailsById();
     }
   }, [isFocused]);
+
+  console.log(
+    'orderDetailsById===================>',
+    JSON.stringify(orderDetailsById),
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -190,14 +194,14 @@ function ViewDetails({navigation, route}) {
                   'Delivery partner is on its way to pick an order from you.'}
                 {orderDetailsById?.deliveryBoyStatus === 'pickedup' &&
                   'Order has been picked up and is on its way.'}
-                {orderDetailsById?.deliveryBoyStatus === 'delivered' &&
+                {orderDetailsById?.deliveryBoyStatus === 'Delivered' &&
                   'Success! order has been delivered.'}
               </Text>
             </View>
 
             {(orderDetailsById.deliveryBoyStatus == 'accepted' ||
               orderDetailsById?.deliveryBoyStatus === 'pickedup' ||
-              orderDetailsById?.deliveryBoyStatus === 'delivered') && (
+              orderDetailsById?.deliveryBoyStatus === 'Delivered') && (
               <View
                 style={{
                   backgroundColor: '#66cdaa',
@@ -262,7 +266,7 @@ function ViewDetails({navigation, route}) {
                     Order Id
                   </Text>
                   <Text style={{fontSize: 17, color: '#000'}}>
-                    : {orderDetailsById.orderId}
+                    {orderDetailsById.orderId}
                   </Text>
                 </View>
               </View>
@@ -480,6 +484,7 @@ function ViewDetails({navigation, route}) {
                   justifyContent: 'space-between',
                   marginHorizontal: 10,
                   // marginTop: 2,
+                  paddingBottom: 10,
                 }}>
                 <Text style={{fontSize: 12, color: 'black'}}>total Amount</Text>
                 <Text style={{fontSize: 12, color: 'black'}}>
@@ -491,7 +496,7 @@ function ViewDetails({navigation, route}) {
           </View>
           {(orderDetailsById.deliveryBoyStatus == 'accepted' ||
             orderDetailsById.deliveryBoyStatus == 'pickedup' ||
-            orderDetailsById.deliveryBoyStatus == 'delivered') && (
+            orderDetailsById.deliveryBoyStatus == 'Delivered') && (
             <View
               style={{
                 paddingHorizontal: 15,

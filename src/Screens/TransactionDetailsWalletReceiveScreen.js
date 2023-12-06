@@ -65,7 +65,7 @@ const TransactionDetailsWalletReceiveScreen = ({navigation, route}) => {
                       fontWeight: '500',
                       marginBottom: 10,
                     }}>
-                    Order Id : {item.productId._id}
+                    Order Id : {data.orderId}
                   </Text>
                   <View style={{flexDirection: 'row'}}>
                     <Text

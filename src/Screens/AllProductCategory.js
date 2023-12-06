@@ -13,6 +13,8 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Linking,
+  BackHandler,
 } from 'react-native';
 
 import {
@@ -37,10 +39,16 @@ import AllProductSubCategory from './AllProductSubCategory';
 // import Lottie from 'lottie-react-native';
 // import {ActivityIndicator} from 'react-native-paper';
 import AllPoductCategoryComponent from '../component/AllPoductCategoryComponent';
+import Toast from 'react-native-simple-toast';
 
 function AllProductCategory({navigation, route}) {
   // const FunctionDependency = route.params;
   const userData = useSelector(state => state.requiredata.userData);
+
+  console.log(
+    '#######################userData.status==========at all product',
+    userData.status,
+  );
 
   const selectedItems = useSelector(state => state.requiredata.selectedItem);
   console.log('home.js userData===>', userData);
@@ -70,6 +78,28 @@ function AllProductCategory({navigation, route}) {
   const checkonpress = id => {
     console.log('id==', id);
     console.log('hello check');
+  };
+
+  const LimitProduct = () => {
+    if (userData.status == 'complete') {
+      if (selectedItems.length > 4) {
+        navigation.navigate('SelectedTempProductsScreen');
+      } else {
+        Toast.show(
+          '"Almost there! Choose a minimum of 5 products.',
+          Toast.SHORT,
+        );
+      }
+    } else {
+      navigation.navigate('SelectedTempProductsScreen');
+      console.log('INSIDE THE APP');
+    }
+  };
+
+  const ExitApp = () => {
+    console.log('hello======');
+    // Linking.e/x
+    BackHandler.exitApp();
   };
 
   const renderItem = ({item}) => {
@@ -162,7 +192,12 @@ function AllProductCategory({navigation, route}) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={'#29C17E'} barStyle={Color.WHITE} />
-      <Header Title={'Select Products'} onPress={() => navigation.goBack('')} />
+      <Header
+        Title={'Select Products'}
+        onPress={() =>
+          userData.status == 'complete' ? ExitApp() : navigation.goBack('')
+        }
+      />
       <View style={{flex: 1}}>
         <View style={{paddingBottom: '0%'}}>
           {/* <FlatList data={allCategory} renderItem={renderItem} /> */}
@@ -174,9 +209,7 @@ function AllProductCategory({navigation, route}) {
         </View>
         {selectedItems.length > 0 ? (
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('SelectedTempProductsScreen');
-            }}
+            onPress={LimitProduct}
             style={{
               width: '100%',
               height: responsiveHeight('6'),

@@ -119,6 +119,7 @@ function Otp({navigation}) {
         Toast.show('Otp Verify Successfully', Toast.SHORT);
         console.log('++++++++++++++++WELCOME WELCOME CONDITION++++++++++');
         const res = await handleUserGetData();
+        s;
         dispatch(setUserData(res.data?.result));
         if (res.data.result?.status == 'accepted') {
           console.log('++++++++++++++++accepted CONDITION++++++++++');
@@ -144,7 +145,7 @@ function Otp({navigation}) {
           console.log('++++++++++++++++rejected CONDITION++++++++++');
           dispatch(setLoggedIn(false));
           setButtonLoading(false);
-          navigation.navigate('AdminRejectedScreen');
+          navigation.replace('AdminRejectedScreen');
         } else {
           dispatch(setLoggedIn(false));
           setButtonLoading(false);

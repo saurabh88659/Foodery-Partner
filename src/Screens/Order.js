@@ -18,9 +18,7 @@ import React, {useState, useEffect} from 'react';
 import Header from '../component/Header';
 import Color from '../Utils/Color';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-
 //import ImagePicker from 'react-native-image-crop-picker';
-
 import {
   responsiveHeight,
   responsiveWidth,
@@ -141,7 +139,7 @@ function Order({navigation}) {
               contentContainerStyle={styles.contentContainer}
               showsVerticalScrollIndicator={false}>
               <View style={{paddingBottom: '60%'}}>
-                {orderdata.map(
+                {orderdata.reverse().map(
                   (item, index) => (
                     console.log(
                       '#######item orderdata======>>>>',
@@ -229,28 +227,34 @@ function Order({navigation}) {
                                 }}>
                                 Products :
                               </Text>
-                              {item?.orderedProducts?.map(
-                                (item, index) => (
-                                  console.log(
-                                    'item====>ofproductName in order  ',
-                                    item,
+                              <View
+                                style={{
+                                  // backgroundColor: 'red',
+                                  width: '35%',
+                                }}>
+                                {item?.orderedProducts?.map(
+                                  (item, index) => (
+                                    console.log(
+                                      'item====>ofproductName in order  ',
+                                      item,
+                                    ),
+                                    (
+                                      <Text
+                                        key={index}
+                                        numberOfLines={1}
+                                        style={{
+                                          fontSize: responsiveFontSize(2),
+                                          color: '#000',
+                                          // width: '35%',
+                                          // backgroundColor: 'red',
+                                        }}>
+                                        {' '}
+                                        {item?.productId?.productName} |
+                                      </Text>
+                                    )
                                   ),
-                                  (
-                                    <Text
-                                      key={index}
-                                      numberOfLines={1}
-                                      style={{
-                                        fontSize: responsiveFontSize(2),
-                                        color: '#000',
-                                        width: '35%',
-                                        // backgroundColor: 'red',
-                                      }}>
-                                      {' '}
-                                      {item?.productId?.productName} |
-                                    </Text>
-                                  )
-                                ),
-                              )}
+                                )}
+                              </View>
                             </View>
 
                             <View
