@@ -116,11 +116,11 @@ function Otp({navigation}) {
       }
       console.log('++++status in OTP screen ====>', JSON.stringify(res));
       if (res.data.message == 'Welcome back') {
-        Toast.show('Otp Verify Successfully', Toast.SHORT);
         console.log('++++++++++++++++WELCOME WELCOME CONDITION++++++++++');
         const res = await handleUserGetData();
-        s;
         dispatch(setUserData(res.data?.result));
+        dispatch(setLoggedIn(true));
+        Toast.show('Otp Verify Successfully', Toast.SHORT);
         if (res.data.result?.status == 'accepted') {
           console.log('++++++++++++++++accepted CONDITION++++++++++');
           dispatch(setLoggedIn(true));

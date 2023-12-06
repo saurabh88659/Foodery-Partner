@@ -60,9 +60,9 @@ export default function Profile({}) {
             <ImageBackground
               source={require('../Assests/Images/profilePicture123.png')}
               style={styles.imagebox}>
-              {userData.profileImageUrl ? (
+              {userData?.profileImageUrl ? (
                 <Image
-                  source={{uri: userData.profileImageUrl}}
+                  source={{uri: userData?.profileImageUrl}}
                   style={{
                     width: responsiveWidth(27),
                     height: responsiveWidth(27),

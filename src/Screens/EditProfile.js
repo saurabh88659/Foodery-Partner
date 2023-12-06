@@ -129,7 +129,7 @@ export default function EditProfile({navigation}) {
     if (res.data.status) {
       console.log('++=UpdateProfilePic res2 =====>', res.data);
       setImageData(null);
-      setProfileUrl(res.data?.profileImageUrl);
+      setProfileUrl(res?.data?.profileImageUrl);
       getUserData();
       setImageUrlPath(null);
       setIsLoading(false);
@@ -233,7 +233,7 @@ export default function EditProfile({navigation}) {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity activeOpacity={1} style={styles.card1}>
+      {/* <TouchableOpacity activeOpacity={1} style={styles.card1}>
         <Icon name="map-marked-alt" color={Color.DARK_PURPLE} size={19} />
 
         <TextInput
@@ -249,7 +249,7 @@ export default function EditProfile({navigation}) {
           onChangeText={onChangeText3}
           value={userData.shopsDetails.shopFullAddress}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TouchableOpacity activeOpacity={1} style={styles.card1}>
         <MaterialIcons

@@ -31,6 +31,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 export default function HeaderHome({navigation}) {
   const [notificationCounts, setNotificationCount] = useState(0);
   const userData = useSelector(state => state.requiredata.userData);
+  console.log('###userData at home header=======>>>', userData);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -69,7 +70,7 @@ export default function HeaderHome({navigation}) {
             <ImageBackground
               source={require('../Assests/Images/profilePicture123.png')}
               style={styles.imagebox}>
-              {userData.profileImageUrl ? (
+              {userData?.profileImageUrl ? (
                 <Image
                   source={{uri: userData.profileImageUrl}}
                   style={{
