@@ -30,6 +30,7 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 export default function HeaderHome({navigation}) {
   const [notificationCounts, setNotificationCount] = useState(0);
+  const userData = useSelector(state => state.requiredata.userData);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -40,18 +41,12 @@ export default function HeaderHome({navigation}) {
 
   const GetNotificationCount = async () => {
     const res = await handleGetNotificationCount();
-    console.log(
-      '++++++++++++++++++++++++++++==res of GetNotificationCount====>',
-      res.data,
-    );
     if (res.data.status) {
       setNotificationCount(res.data.count);
     } else {
       console.log('error==', res);
     }
   };
-  // const navigation=useNavigation();
-  const userData = useSelector(state => state.requiredata.userData);
 
   const isReadNotification = async () => {
     const res = await handleisReadNotification();
