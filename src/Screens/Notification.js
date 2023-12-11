@@ -160,12 +160,12 @@ export default function Notification({navigation}) {
                   <Text style={{color: '#000', fontSize: 16, width: 145}}>
                     Product Name
                   </Text>
-                  <Text style={{color: '#000', fontSize: 16}}>
+                  <Text style={{color: '#000', fontSize: 16, width: '60%'}}>
                     {product.productId?.productName}
                   </Text>
                 </View>
 
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row', marginTop: 5}}>
                   <Text style={{color: '#000', fontSize: 16, width: 145}}>
                     Qty
                   </Text>
@@ -173,7 +173,7 @@ export default function Notification({navigation}) {
                     {product.quantity}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row', marginTop: 5}}>
                   <Text style={{color: '#000', fontSize: 16, width: 145}}>
                     Product Price
                   </Text>
@@ -188,7 +188,7 @@ export default function Notification({navigation}) {
                     {product?.productId?.productPrice}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                {/* <View style={{flexDirection: 'row'}}>
                   <Text style={{color: '#000', fontSize: 16, width: 145}}>
                     Discount Price
                   </Text>
@@ -201,7 +201,7 @@ export default function Notification({navigation}) {
                     {'\u20B9'}
                     {product?.productId?.discountPrice}
                   </Text>
-                </View>
+                </View> */}
               </View>
             );
           })}

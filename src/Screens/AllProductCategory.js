@@ -47,7 +47,7 @@ function AllProductCategory({navigation, route}) {
 
   console.log(
     '#######################userData.status==========at all product',
-    userData.status,
+    userData?.status,
   );
 
   const selectedItems = useSelector(state => state.requiredata.selectedItem);

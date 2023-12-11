@@ -168,7 +168,7 @@ function SelectedTempProductsScreenComponent({onPress, buttonLoading}) {
       <StatusBar />
       {/* <Header Title={'Selected Products'} onPress={() => navigation.goBack()} /> */}
       <Text style={styles.texting1}>Selected Products</Text>
-      <View style={{paddingBottom: responsiveHeight(22)}}>
+      <View style={{paddingBottom: '10%'}}>
         <FlatList numColumns={2} data={selectedItems} renderItem={renderItem} />
       </View>
       <TouchableOpacity
@@ -176,7 +176,6 @@ function SelectedTempProductsScreenComponent({onPress, buttonLoading}) {
         style={{
           width: '100%',
           height: responsiveHeight('6'),
-
           backgroundColor: Color.DARK_GREEN,
           position: 'absolute',
           bottom: 0,

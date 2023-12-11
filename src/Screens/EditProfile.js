@@ -126,7 +126,7 @@ export default function EditProfile({navigation}) {
 
     console.log('profile pic====>', JSON.stringify(profilePic));
     const res = await handleUpdateProfilePic(profilePic);
-    if (res.data.status) {
+    if (res.data?.status) {
       console.log('++=UpdateProfilePic res2 =====>', res.data);
       setImageData(null);
       setProfileUrl(res?.data?.profileImageUrl);
@@ -138,7 +138,6 @@ export default function EditProfile({navigation}) {
       console.log('UpdateProfilePic error===', res);
     }
   };
-
   const toggleBottomNavigationView = () => {
     setVisible(!visible);
   };
@@ -149,7 +148,6 @@ export default function EditProfile({navigation}) {
       {/* -------------------------header--------------------------- */}
       <View style={styles.header}>
         <View style={styles.one}></View>
-
         <View style={styles.main}>
           <View style={styles.imageContainer}>
             <TouchableOpacity
@@ -466,6 +464,7 @@ const styles = StyleSheet.create({
     // borderColor:Color.Green_Top,
     marginTop: responsiveHeight(2),
   },
+
   imagebox: {
     borderWidth: 1,
     height: responsiveWidth(28),
@@ -477,7 +476,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     // borderColor: 'grey',
     justifyContent: 'center',
-    // backgroundColor: 'red',
+    // backgroundColor: 'red',s
   },
 
   imageContainer: {

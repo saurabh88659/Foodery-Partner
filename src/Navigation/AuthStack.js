@@ -38,6 +38,7 @@ const AuthStack = () => {
         component={AllProductCategory}
         options={headerNone}
       />
+
       <Stack.Screen
         name="SelectedTempProductsScreen"
         component={SelectedTempProductsScreen}

@@ -465,6 +465,8 @@ export default function Verification() {
                 borderRadius: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: frontAdhar ? null : 'red',
               }}>
               <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
@@ -504,6 +506,8 @@ export default function Verification() {
                 borderRadius: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: backAdhar ? null : 'red',
               }}>
               <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
@@ -576,6 +580,8 @@ export default function Verification() {
                   borderRadius: 8,
                   alignItems: 'center',
                   justifyContent: 'center',
+                  borderWidth: 1,
+                  borderColor: pancard ? null : 'red',
                 }}>
                 <Icon color={'#000'} name="camera" size={55} />
               </TouchableOpacity>
@@ -605,6 +611,8 @@ export default function Verification() {
                 borderRadius: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: selfie ? null : 'red',
               }}>
               <Icon color={'#000'} name="camera" size={55} />
             </TouchableOpacity>
@@ -737,6 +745,8 @@ export default function Verification() {
                       borderRadius: 8,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: rentBill ? null : 'red',
                     }}>
                     <Icon color={'#000'} name="camera" size={40} />
                   </TouchableOpacity>
@@ -837,6 +847,8 @@ export default function Verification() {
                       borderRadius: 8,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: electricityBill ? null : 'red',
                     }}>
                     <Icon color={'#000'} name="camera" size={40} />
                   </TouchableOpacity>

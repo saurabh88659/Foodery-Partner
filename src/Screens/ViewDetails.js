@@ -569,9 +569,10 @@ const styles = StyleSheet.create({
   },
   ItemText: {
     fontSize: responsiveFontSize(1.5),
-    alignSelf: 'center',
-    textAlign: 'center',
+    // alignSelf: 'center',
+    // textAlign: 'center',
     color: 'black',
+    width: '89%',
   },
   ItemText1: {
     fontSize: 12,

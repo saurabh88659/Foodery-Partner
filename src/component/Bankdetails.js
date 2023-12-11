@@ -114,7 +114,7 @@ export default function Bankdetails() {
         if (validUpi) {
           Toast.show(res.data.message, Toast.SHORT);
           navigation.replace('AllProductCategory');
-          dispatch(setLoggedIn(true));
+          // dispatch(setLoggedIn(true));
         } else {
           Toast.show('Please Verify Upi', Toast.SHORT);
         }
@@ -186,6 +186,7 @@ export default function Bankdetails() {
         Account Holder Name
       </Text>
       <TextInput
+        maxLength={25}
         style={{
           backgroundColor: Colors.WHITE,
           marginHorizontal: 10,
@@ -212,6 +213,7 @@ export default function Bankdetails() {
         IFSC Code
       </Text>
       <TextInput
+        maxLength={11}
         style={{
           backgroundColor: Colors.WHITE,
           marginHorizontal: 10,

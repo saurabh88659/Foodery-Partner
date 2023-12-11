@@ -70,6 +70,7 @@ export default function PersonalDetails({navigation}) {
   const [showPicker, setShowPicker] = useState(false);
   const [latitude, SetLatitude] = useState('');
   const [longitude, SetLongitude] = useState('');
+  const [ontabRefresh, setontabRefresh] = useState(false);
 
   const [currentLocationLoadingButton, SetCurrentLocationLoadingButton] =
     useState(false);
@@ -83,7 +84,7 @@ export default function PersonalDetails({navigation}) {
 
   useEffect(() => {
     getCurrloc();
-  }, [currentLocationLoadingButton]);
+  }, [currentLocationLoadingButton, ontabRefresh]);
 
   const getCurrloc = () => {
     SetCurrentLocationLoadingButton(false);
@@ -104,6 +105,7 @@ export default function PersonalDetails({navigation}) {
   }, []);
 
   const getCurrentLocation = async () => {
+    setontabRefresh(!ontabRefresh);
     SetCurrentLocationLoadingButton(true);
     if (latitude && longitude) {
       const dataObj = {
@@ -124,8 +126,8 @@ export default function PersonalDetails({navigation}) {
         setCity(res?.data?.address?.address?.city);
         setState(res?.data?.address?.address?.state);
         setpincode(res?.data?.address?.address?.postcode);
-        setShopLocation(res?.data?.address?.address?.building);
-        setShopAddress(res?.data?.address?.address?.road);
+        setShopLocation(res?.data?.address?.address?.suburbsss);
+        setShopAddress(res?.data?.address?.address?.state_district);
         SetCurrentLocationLoadingButton(false);
       } else {
         SetCurrentLocationLoadingButton(false);
