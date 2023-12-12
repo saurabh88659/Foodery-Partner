@@ -81,7 +81,12 @@ function AllProductCategory({navigation, route}) {
   };
 
   const LimitProduct = () => {
-    if (userData.status == 'complete') {
+    console.log(
+      '#######################userData.status==========at all product',
+      userData,
+    );
+
+    if (userData?.status == 'complete') {
       if (selectedItems.length > 4) {
         navigation.navigate('SelectedTempProductsScreen');
       } else {

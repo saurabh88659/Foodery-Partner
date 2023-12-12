@@ -40,7 +40,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 function AllPoductSubCategoryComponent({data, onPress}) {
   console.log('data====>', data);
-
   // const ProductId = route.params;
   // console.log('ProductIddata===>', ProductId);
   //   const ProductId = route.params.data.itemId;
@@ -78,12 +77,12 @@ function AllPoductSubCategoryComponent({data, onPress}) {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: 10,
+          // padding: 10,
           borderBottomWidth: 1,
           borderBottomColor: Color.grayShade,
           //   paddingBottom: 30,
           //   backgroundColor: 'red',
-          paddingVertical: 15,
+          // paddingVertical: 15,
           backgroundColor: Color.WHITE,
         }}>
         <View
@@ -140,9 +139,11 @@ function AllPoductSubCategoryComponent({data, onPress}) {
             justifyContent: 'center',
             // backgroundColor: Color.LIGHT_GREEN,
             flex: 1,
-            //backgroundColor: 'green',
+            // backgroundColor: 'green',
+            height: 55,
             // borderRadius: 5,
             // marginVertical: 10,
+            // flex: 1,
           }}>
           <AntDesign name={'right'} color={'#000'} size={20} />
 

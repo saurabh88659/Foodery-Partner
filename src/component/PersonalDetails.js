@@ -126,7 +126,7 @@ export default function PersonalDetails({navigation}) {
         setCity(res?.data?.address?.address?.city);
         setState(res?.data?.address?.address?.state);
         setpincode(res?.data?.address?.address?.postcode);
-        setShopLocation(res?.data?.address?.address?.suburbsss);
+        setShopLocation(res?.data?.address?.address?.buildinglimit);
         setShopAddress(res?.data?.address?.address?.state_district);
         SetCurrentLocationLoadingButton(false);
       } else {

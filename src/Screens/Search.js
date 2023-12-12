@@ -42,10 +42,7 @@ export default function Search({navigation}) {
   useEffect(() => {
     const fetchSearchResults = async () => {
       setNullMessage('');
-
       if (searchQuery.trim() === '') {
-        // dispatch(setSearchQuerySave(searchQuery));
-        // setLoading(true);
         setSearchResults([]);
         return;
       }
@@ -60,6 +57,7 @@ export default function Search({navigation}) {
         setNullMessage(res?.response?.data?.message);
       }
     };
+
     const delayDebounceFn = setTimeout(() => {
       fetchSearchResults();
     }, 300);

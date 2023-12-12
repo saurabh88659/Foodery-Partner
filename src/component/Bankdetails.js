@@ -53,12 +53,10 @@ export default function Bankdetails() {
   const [validUpi, setValidUpi] = useState(false);
 
   const ValidAccountHolder = text => {
-    if (!/^[a-zA-Z\s]+$/.test(text)) {
-      // Display a toast message for invalid input
-      Toast.show('Please enter a valid name', Toast.SHORT);
-      // If it contains invalid characters, do not update the state
-      return;
-    }
+    // if (!/^[a-zA-Z\s]+$/.test(text)) {
+    //   Toast.show('Please enter a valid name', Toast.SHORT);
+    //   return;
+    // }
     // Update the state if the input is valid (no numbers)
     onAccountHolder(text);
   };
@@ -66,34 +64,33 @@ export default function Bankdetails() {
   const ValidIfscCode = text => {
     console.log('text,,', text);
     // Check if the input contains only letters and numbers
-    if (!/^[a-zA-Z0-9]+$/.test(text)) {
-      Toast.show('Please enter valid IFSC code', Toast.SHORT);
-      // If it contains invalid characters, do not update the state
-      return;
-    }
+    // if (!/^[a-zA-Z0-9]+$/.test(text)) {
+    //   Toast.show('Please enter valid IFSC code', Toast.SHORT);
+    //   // If it contains invalid characters, do not update the state
+    //   return;
+    // }
     // Update the state if the input is valid (only letters and numbers)
     onIfscCode(text);
   };
 
   const ValidBankName = text => {
     console.log('tetx', text);
-
-    if (!/^[a-zA-Z\s]+$/.test(text)) {
-      Toast.show(
-        'Please enter a valid name without special characters',
-        Toast.SHORT,
-      );
-      return;
-    }
+    // if (!/^[a-zA-Z\s]+$/.test(text)) {
+    //   Toast.show(
+    //     'Please enter a valid name without special characters',
+    //     Toast.SHORT,
+    //   );
+    //   return;
+    // }
     onBankName(text);
   };
 
   const ValidAccount = text => {
-    console.log('tetx', text);
-    if (!/^\d+$/.test(text)) {
-      Toast.show('Please enter valid Account number', Toast.SHORT);
-      return;
-    }
+    // console.log('tetx', text);
+    // if (!/^\d+$/.test(text)) {
+    //   Toast.show('Please enter valid Account number', Toast.SHORT);
+    //   return;
+    // }
     setbankAccountNumber(text);
   };
 
@@ -109,10 +106,10 @@ export default function Bankdetails() {
     const res = await handleBankDetail(bankdataobj);
     if (res.data) {
       setButtonLoading(false);
-      console.log('res of submitBankDetails', res.data);
+      console.log('res of submitBankDetails', res?.data);
       if (res.data.success) {
         if (validUpi) {
-          Toast.show(res.data.message, Toast.SHORT);
+          Toast.show(res?.data?.message, Toast.SHORT);
           navigation.replace('AllProductCategory');
           // dispatch(setLoggedIn(true));
         } else {
