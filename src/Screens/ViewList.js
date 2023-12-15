@@ -31,6 +31,7 @@ import {
 import Toast from 'react-native-simple-toast';
 import Header from '../component/Header';
 import {useSelector} from 'react-redux';
+import Lottie from 'lottie-react-native';
 
 function Store({navigation, route}) {
   const [allCategoryProducts, setAllCategoryProducts] = useState();
@@ -193,7 +194,6 @@ function Store({navigation, route}) {
               {item.productName}
             </Text>
           </View>
-
           <View
             style={{
               flexDirection: 'row',
@@ -342,18 +342,23 @@ function Store({navigation, route}) {
         {loading ? (
           <View
             style={{
-              height: '95%',
+              height: '92%',
               width: '100%',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Lottie
-            source={require('../Assests/Lottie/greenLoadingLine.json')}
-            autoPlay
-            loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            <Lottie
+              source={require('../Assests/Lottie/greenLoadingLine.json')}
+              autoPlay
+              loop={true}
+              style={{
+                height: 190,
+                width: '100%',
+                // backgroundColor: 'red',
+                alignSelf: 'center',
+              }}
+            />
+            {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
           </View>
         ) : allCategoryProducts && allCategoryProducts.length > 0 ? (
           <FlatList
@@ -382,7 +387,6 @@ function Store({navigation, route}) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     height: responsiveHeight(100),

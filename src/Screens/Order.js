@@ -27,6 +27,7 @@ import {
 import {handleGetOrder} from '../features/APIs/apiRequest';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
+import Lottie from 'lottie-react-native';
 
 const {height, width} = Dimensions.get('window');
 function Order({navigation}) {
@@ -116,18 +117,23 @@ function Order({navigation}) {
       {loading ? (
         <View
           style={{
-            height: '50%',
+            height: '31%',
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          {/* <Lottie
+          <Lottie
             source={require('../Assests/Lottie/greenLoadingLine.json')}
             autoPlay
             loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            style={{
+              height: 190,
+              width: '100%',
+              // backgroundColor: 'red',
+              alignSelf: 'center',
+            }}
+          />
+          {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
         </View>
       ) : (
         <View>

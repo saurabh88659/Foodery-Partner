@@ -37,6 +37,7 @@ import Header from '../component/Header';
 // import Lottie from 'lottie-react-native';
 // import {ActivityIndicator} from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Lottie from 'lottie-react-native';
 
 function AllPoductSubCategoryComponent({data, onPress}) {
   console.log('data====>', data);
@@ -178,14 +179,18 @@ function AllPoductSubCategoryComponent({data, onPress}) {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Lottie
-            source={require('../Assests/Lottie/Waiting.json')}
-            autoPlay
-            loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-
-            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            <Lottie
+              source={require('../Assests/Lottie/greenLoadingLine.json')}
+              autoPlay
+              loop={true}
+              style={{
+                height: 190,
+                width: '100%',
+                // backgroundColor: 'red',
+                alignSelf: 'center',
+              }}
+            />
+            {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
           </View>
         ) : allSubCategory && allSubCategory.length > 0 ? (
           <View style={{paddingBottom: '17%'}}>

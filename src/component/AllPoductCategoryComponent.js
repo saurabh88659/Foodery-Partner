@@ -32,7 +32,7 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useSelector} from 'react-redux';
 import Header from '../component/Header';
-// import Lottie from 'lottie-react-native';
+import Lottie from 'lottie-react-native';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 function AllPoductCategoryComponent({navigation, onPress}) {
@@ -57,7 +57,7 @@ function AllPoductCategoryComponent({navigation, onPress}) {
 
   useEffect(() => {
     GetAllCategoryList();
-  }, [isFocused]);
+  }, []);
 
   const renderItem = ({item}) => {
     console.log('itmm of get all product==>', item);
@@ -143,18 +143,23 @@ function AllPoductCategoryComponent({navigation, onPress}) {
         loading ? (
           <View
             style={{
-              height: '75%',
+              height: '65%',
               width: '100%',
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Lottie
-            source={require('../Assests/Lottie/greenLoadingLine.json')}
-            autoPlay
-            loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-            <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            <Lottie
+              source={require('../Assests/Lottie/greenLoadingLine.json')}
+              autoPlay
+              loop={true}
+              style={{
+                height: 190,
+                width: '100%',
+                // backgroundColor: 'red',
+                alignSelf: 'center',
+              }}
+            />
+            {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
           </View>
         ) : allCategory && allCategory.length > 0 ? (
           <View style={{paddingBottom: '28%'}}>

@@ -16,8 +16,7 @@ import {
 } from 'react-native';
 
 import React, {useState} from 'react';
-import Colors from '../Utils/Color';
-
+import Color from '../Utils/Color';
 import {format} from 'date-fns';
 
 import {Dropdown} from 'react-native-element-dropdown';
@@ -170,12 +169,26 @@ export default function Registration({navigation, route}) {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar backgroundColor="#29C17E" />
-      <Header
+      {/* <Header
         bgColor={Colors.DARK_GREEN}
         color={Colors.WHITE}
         Title="Registration"
         // onPress={() => navigation.goBack()}
-      />
+      /> */}
+
+      <View style={{}}>
+        <View style={Styles.button}>
+          {/* <View style={Styles.back}>
+            <TouchableOpacity onPress={onPress}>
+              <FontAwesome6 name="arrow-left" color={'white'} size={25} />
+            </TouchableOpacity>
+          </View> */}
+          <View style={Styles.texting}>
+            <Text style={Styles.text}>Registration</Text>
+          </View>
+          <View style={Styles.back}></View>
+        </View>
+      </View>
 
       <Text
         style={{
@@ -378,7 +391,7 @@ export default function Registration({navigation, route}) {
                 style={{
                   width: responsiveWidth(10),
                   height: responsiveHeight(5),
-                  backgroundColor: Colors.DARK_GREEN,
+                  backgroundColor: Color.DARK_GREEN,
                 }}>
                 <Text>Okay</Text>
               </TouchableOpacity>
@@ -459,7 +472,7 @@ const Styles = StyleSheet.create({
   },
   button: {
     // paddingHorizontal: 10,
-    backgroundColor: Colors.DARK_GREEN,
+    backgroundColor: Color.DARK_GREEN,
     width: responsiveWidth(80),
     height: responsiveHeight(5),
     borderRadius: 7,
@@ -468,7 +481,7 @@ const Styles = StyleSheet.create({
     marginTop: responsiveHeight(5),
   },
   buttonText: {
-    color: Colors.WHITE,
+    color: Color.WHITE,
     fontWeight: 'bold',
     fontSize: responsiveFontSize(2),
   },
@@ -486,5 +499,41 @@ const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: responsiveWidth(3),
+  },
+  button: {
+    backgroundColor: Color.Green_Top,
+    height: responsiveHeight(8),
+    width: responsiveWidth(100),
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    // marginTop: 40,
+    // paddingHorizontal: 20,
+    // marginHorizontal: 10,
+    paddingLeft: 15,
+  },
+  back: {
+    height: responsiveHeight(8),
+    width: responsiveWidth(10),
+
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  texting: {
+    height: responsiveHeight(8),
+    width: responsiveWidth(80),
+
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  text: {
+    fontSize: responsiveFontSize(2.2),
+    color: '#fff',
+  },
+  text1: {
+    fontSize: responsiveFontSize(2),
+    color: 'purple',
   },
 });

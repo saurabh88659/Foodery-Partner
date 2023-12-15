@@ -33,6 +33,7 @@ import moment from 'moment';
 import TransactionDetailsAccountReceiveScreen from './TransactionDetailsAccountReceiveScreen';
 import TransactionDetailsWalletReceiveScreen from './TransactionDetailsWalletReceiveScreen';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import Lottie from 'lottie-react-native';
 
 export default function MyOrderHistory({navigation}) {
   const [loading, setLoading] = useState(true);
@@ -44,10 +45,8 @@ export default function MyOrderHistory({navigation}) {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (isFocused) {
-      GetVendorCurrentBalance();
-      GetTransaction();
-    }
+    GetVendorCurrentBalance();
+    GetTransaction();
   }, [isFocused]);
 
   const GetTransaction = async () => {
@@ -335,18 +334,23 @@ export default function MyOrderHistory({navigation}) {
       {loading ? (
         <View
           style={{
-            height: '75%',
+            height: '82%',
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          {/* <Lottie
+          <Lottie
             source={require('../Assests/Lottie/greenLoadingLine.json')}
             autoPlay
             loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            style={{
+              height: 190,
+              width: '100%',
+              // backgroundColor: 'red',
+              alignSelf: 'center',
+            }}
+          />
+          {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
         </View>
       ) : (
         <View>

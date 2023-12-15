@@ -27,6 +27,7 @@
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "india-pincode-search": "^1.0.2",
+    "lottie-react-native": "^6.4.1",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "react": "18.2.0",

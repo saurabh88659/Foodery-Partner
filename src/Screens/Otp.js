@@ -119,7 +119,7 @@ function Otp({navigation}) {
         console.log('++++++++++++++++WELCOME WELCOME CONDITION++++++++++');
         const res = await handleUserGetData();
         dispatch(setUserData(res.data?.result));
-        dispatch(setLoggedIn(true));
+        // dispatch(setLoggedIn(true));
         Toast.show('Otp Verify Successfully', Toast.SHORT);
         if (res.data.result?.status == 'accepted') {
           console.log('++++++++++++++++accepted CONDITION++++++++++');
@@ -138,7 +138,7 @@ function Otp({navigation}) {
         } else if (res.data.result?.status == 'pending') {
           console.log('++++++++++++++++pending CONDITION++++++++++');
           navigation.replace('Registration');
-          dispatch(setLoggedIn(false));
+          // dispatch(setLoggedIn(false));
           setButtonLoading(false);
           // navigation.replace('AllOutofStockProductScreen');
         } else if (res.data.result?.status == 'rejected') {
@@ -205,14 +205,12 @@ function Otp({navigation}) {
   };
 
   const ResendOtp = async () => {
-    setButtonLoading(true);
     const obj = {
       mobileNumber: phoneNumber,
     };
 
     const res = await LoginWithPhone(obj);
     if (res?.data) {
-      setButtonLoading(false);
       if (res.data.message == 'OTP Sent Successfully') {
         Toast.show('Otp sent successfully', Toast.SHORT);
       }

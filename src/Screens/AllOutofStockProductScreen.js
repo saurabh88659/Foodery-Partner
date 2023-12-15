@@ -31,6 +31,7 @@ import Header from '../component/Header';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import Lottie from 'lottie-react-native';
 
 function AllOutofStockProductScreen({navigation, route}) {
   const userData = useSelector(state => state.requiredata.userData);
@@ -167,18 +168,23 @@ function AllOutofStockProductScreen({navigation, route}) {
       {loading ? (
         <View
           style={{
-            height: '80%',
+            height: '75%',
             width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          {/* <Lottie
+          <Lottie
             source={require('../Assests/Lottie/greenLoadingLine.json')}
             autoPlay
             loop={true}
-            style={{height: 100, width: 100}}
-          /> */}
-          <ActivityIndicator color={Color.DARK_GREEN} size={32} />
+            style={{
+              height: 190,
+              width: '100%',
+              // backgroundColor: 'red',
+              alignSelf: 'center',
+            }}
+          />
+          {/* <ActivityIndicator color={Color.DARK_GREEN} size={32} /> */}
         </View>
       ) : (
         <View
