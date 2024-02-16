@@ -26,7 +26,7 @@ import InternetConnectivityWrapper from './src/Screens/InternetConnectivityWrapp
 const App = () => {
   const dispatch = useDispatch();
   const loggedIn = useSelector(state => state.auth.loggedIn);
-  console.log('loggedIn:====>app.js', loggedIn);
+  console.log('loggedIn:====>', loggedIn);
   const [netInfo, setNetInfo] = useState(true);
 
   useEffect(() => {
